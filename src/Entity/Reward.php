@@ -33,7 +33,7 @@ class Reward
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'id', type: 'integer')]
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
