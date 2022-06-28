@@ -24,7 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             "delete"
         ],
         attributes: [
-            "order" => ["distributed" => "DESC"],
+            "order" => ['date' => "DESC", "distributed" => "DESC"],
             "security" => "is_granted('ROLE_ADMIN')"
         ]
     )]
