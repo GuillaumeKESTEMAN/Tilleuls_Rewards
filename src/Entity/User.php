@@ -24,10 +24,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
         "delete"
     ],
     attributes: [
-        "order" => ["name" => "ASC"],
+        "order" => ["name" => "ASC", "admin" => "ASC"],
         "security" => "is_granted('ROLE_ADMIN')"
-    ],
-    order: ['name' => "ASC", "admin" => "ASC"]
+    ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial", "email" => "ipartial"])]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -138,6 +137,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         // TODO: Implement eraseCredentials() method.
     }
 
+    #[ApiProperty(readable: false)]
     public function getUserIdentifier(): string
     {
         return $this->email;

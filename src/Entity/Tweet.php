@@ -24,12 +24,11 @@ use Doctrine\ORM\Mapping as ORM;
             "delete"
         ],
         attributes: [
-            "order" => ["tweetDate" => "DESC"],
+            "order" => ["tweetUrl" => "ASC"],
             "security" => "is_granted('ROLE_ADMIN')"
-        ],
-        order: ['tweetDate' => "DESC"]
+        ]
     )]
-#[ApiFilter(SearchFilter::class, properties: ["tweetDate" => "ipartial"])]
+#[ApiFilter(SearchFilter::class, properties: ["tweetUrl" => "ipartial"])]
 class Tweet
 {
     #[ORM\Id]
@@ -44,10 +43,6 @@ class Tweet
     #[ORM\Column(name: 'tweet_url', type: 'string', length: 255)]
     #[ApiProperty(iri: "https://schema.org/URL")]
     private string $tweetUrl = '';
-
-    #[ORM\Column(name: 'tweet_date', type: 'date')]
-    #[ApiProperty(iri: "https://schema.org/DateTime")]
-    private ?\DateTime $tweetDate = null;
 
     public function getId(): ?int
     {
@@ -74,18 +69,6 @@ class Tweet
     public function setTweetUrl(string $tweetUrl): self
     {
         $this->tweetUrl = $tweetUrl;
-
-        return $this;
-    }
-
-    public function getTweetDate(): ?\DateTime
-    {
-        return $this->tweetDate;
-    }
-
-    public function setTweetDate(?\DateTime $tweetDate): self
-    {
-        $this->tweetDate = $tweetDate;
 
         return $this;
     }

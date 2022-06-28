@@ -24,12 +24,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             "delete"
         ],
         attributes: [
-            "order" => ["date" => "DESC"],
+            "order" => ["distributed" => "DESC"],
             "security" => "is_granted('ROLE_ADMIN')"
-        ],
-        order: ['date' => "DESC", "distributed" => "DESC"]
+        ]
     )]
-#[ApiFilter(SearchFilter::class, properties: ["date" => "ipartial", "distributed" => "exact"])]
+#[ApiFilter(SearchFilter::class, properties: ["date" => "partial", "distributed" => "exact"])]
 class Reward
 {
     #[ORM\Id]
@@ -42,10 +41,10 @@ class Reward
     #[ORM\JoinColumn(name: 'lot', nullable: true)]
     private ?Lot $lot;
 
-    #[ORM\ManyToOne(targetEntity: Tweet::class)]
-    #[ORM\JoinColumn(name: 'tweet')]
-    #[ApiProperty(iri: "https://schema.org/SocialMediaPosting")]
-    private ?Tweet $tweet;
+    #[ORM\ManyToOne(targetEntity: Game::class)]
+    #[ORM\JoinColumn(name: 'game')]
+    #[ApiProperty(iri: "https://schema.org/VideoGame")]
+    private ?Game $game;
 
     #[ORM\Column(name: 'date', type: 'date')]
     #[ApiProperty(iri: "https://schema.org/DateTime")]
@@ -71,14 +70,14 @@ class Reward
         return $this;
     }
 
-    public function getTweet(): ?Tweet
+    public function getGame(): ?Game
     {
-        return $this->tweet;
+        return $this->game;
     }
 
-    public function setTweet(?Tweet $tweet): self
+    public function setGame(?Game $game): self
     {
-        $this->tweet = $tweet;
+        $this->game = $game;
 
         return $this;
     }
