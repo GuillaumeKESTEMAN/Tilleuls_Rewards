@@ -26,7 +26,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         attributes: [
             "order" => ["date" => "DESC"],
             "security" => "is_granted('ROLE_ADMIN')"
-        ]
+        ],
+        order: ['date' => "DESC", "distributed" => "DESC"]
     )]
 #[ApiFilter(SearchFilter::class, properties: ["date" => "ipartial", "distributed" => "exact"])]
 class Reward
@@ -37,10 +38,12 @@ class Reward
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
-    #[ORM\Column(name: 'lot',type: 'integer', nullable: true)]
+    #[ORM\ManyToOne(targetEntity: Lot::class)]
+    #[ORM\JoinColumn(name: 'lot', nullable: true)]
     private ?Lot $lot;
 
-    #[ORM\Column(name: 'tweet', type: 'string', length: 255)]
+    #[ORM\ManyToOne(targetEntity: Tweet::class)]
+    #[ORM\JoinColumn(name: 'tweet')]
     #[ApiProperty(iri: "https://schema.org/SocialMediaPosting")]
     private ?Tweet $tweet;
 

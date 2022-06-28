@@ -26,7 +26,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
     attributes: [
         "order" => ["name" => "ASC"],
         "security" => "is_granted('ROLE_ADMIN')"
-    ]
+    ],
+    order: ['name' => "ASC", "admin" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial", "email" => "ipartial"])]
 class User implements PasswordAuthenticatedUserInterface, UserInterface

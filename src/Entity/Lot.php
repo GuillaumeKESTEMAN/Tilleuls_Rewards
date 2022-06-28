@@ -28,7 +28,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         attributes: [
             "order" => ["name" => "ASC", "quantity" => "DESC"],
             "security" => "is_granted('ROLE_ADMIN')"
-        ]
+        ],
+        order: ['name' => "ASC", "quantity" => "DESC"]
     )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial"])]
 class Lot

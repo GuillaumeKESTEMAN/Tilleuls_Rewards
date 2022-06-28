@@ -26,7 +26,8 @@ use Doctrine\ORM\Mapping as ORM;
         attributes: [
             "order" => ["tweetDate" => "DESC"],
             "security" => "is_granted('ROLE_ADMIN')"
-        ]
+        ],
+        order: ['tweetDate' => "DESC"]
     )]
 #[ApiFilter(SearchFilter::class, properties: ["tweetDate" => "ipartial"])]
 class Tweet
