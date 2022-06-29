@@ -11,23 +11,22 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TweetRepository::class)]
 #[ORM\Table(name: '`tweet`')]
-#[
-    ApiResource(
-        collectionOperations: [
-            "get"
-        ],
-        iri: "https://schema.org/SocialMediaPosting",
-        itemOperations: [
-            "get",
-            "put",
-            "patch",
-            "delete"
-        ],
-        attributes: [
-            "order" => ["tweetUrl" => "ASC"],
-            "security" => "is_granted('ROLE_ADMIN')"
-        ]
-    )]
+#[ApiResource(
+    collectionOperations: [
+        "get"
+    ],
+    iri: "https://schema.org/SocialMediaPosting",
+    itemOperations: [
+        "get",
+        "put",
+        "patch",
+        "delete"
+    ],
+    attributes: [
+        "order" => ["tweetUrl" => "ASC"],
+        "security" => "is_granted('ROLE_ADMIN')"
+    ]
+)]
 #[ApiFilter(SearchFilter::class, properties: ["tweetUrl" => "ipartial"])]
 class Tweet
 {

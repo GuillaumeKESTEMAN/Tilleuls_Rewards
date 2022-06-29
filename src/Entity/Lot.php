@@ -13,23 +13,22 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 #[ORM\Table(name: '`lot`')]
 #[UniqueEntity('name')]
-#[
-    ApiResource(
-        collectionOperations: [
-            "get",
-            "post"
-        ],
-        itemOperations: [
-            "get",
-            "put",
-            "patch",
-            "delete"
-        ],
-        attributes: [
-            "order" => ["name" => "ASC", "quantity" => "DESC"],
-            "security" => "is_granted('ROLE_ADMIN')"
-        ]
-    )]
+#[ApiResource(
+    collectionOperations: [
+        "get",
+        "post"
+    ],
+    itemOperations: [
+        "get",
+        "put",
+        "patch",
+        "delete"
+    ],
+    attributes: [
+        "order" => ["name" => "ASC", "quantity" => "DESC"],
+        "security" => "is_granted('ROLE_ADMIN')"
+    ]
+)]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial"])]
 class Lot
 {
@@ -47,9 +46,10 @@ class Lot
     #[ApiProperty(iri: "https://schema.org/Quantity")]
     private int $quantity = 0;
 
-    #[ORM\Column(name: 'picture_url', type: 'string', length: 255, nullable: true)]
-    #[ApiProperty(iri: "https://schema.org/URL")]
-    private string $pictureUrl = '';
+    #[ORM\ManyToOne(targetEntity: MediaObject::class)]
+    #[ORM\JoinColumn(name: 'image', nullable: true)]
+    #[ApiProperty(iri: 'http://schema.org/image')]
+    public ?MediaObject $image = null;
 
     public function getId(): ?int
     {
@@ -80,14 +80,14 @@ class Lot
         return $this;
     }
 
-    public function getPictureUrl(): ?string
+    public function getImage(): ?MediaObject
     {
-        return $this->pictureUrl;
+        return $this->image;
     }
 
-    public function setPictureUrl(?string $pictureUrl): self
+    public function setImage(?MediaObject $image): self
     {
-        $this->pictureUrl = $pictureUrl;
+        $this->image = $image;
 
         return $this;
     }

@@ -28,7 +28,8 @@ use Symfony\Component\Uid\Uuid;
             "order" => ["creationDate" => "DESC"],
             "security" => "is_granted('ROLE_ADMIN')"
         ]
-    )]
+    )
+]
 #[ApiFilter(SearchFilter::class, properties: ["url" => "exact", "creationDate" => "ipartial"])]
 class Game
 {

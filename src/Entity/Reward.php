@@ -12,22 +12,21 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RewardRepository::class)]
 #[ORM\Table(name: '`reward`')]
-#[
-    ApiResource(
-        collectionOperations: [
-            "get"
-        ],
-        itemOperations: [
-            "get",
-            "put",
-            "patch",
-            "delete"
-        ],
-        attributes: [
-            "order" => ['date' => "DESC", "distributed" => "DESC"],
-            "security" => "is_granted('ROLE_ADMIN')"
-        ]
-    )]
+#[ApiResource(
+    collectionOperations: [
+        "get"
+    ],
+    itemOperations: [
+        "get",
+        "put",
+        "patch",
+        "delete"
+    ],
+    attributes: [
+        "order" => ["distributed" => "DESC", 'date' => "DESC"],
+        "security" => "is_granted('ROLE_ADMIN')"
+    ]
+)]
 #[ApiFilter(SearchFilter::class, properties: ["date" => "partial", "distributed" => "exact"])]
 class Reward
 {
