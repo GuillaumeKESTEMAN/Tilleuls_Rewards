@@ -3,7 +3,7 @@
 ### Project initialization :
 - Install the symfony dependencies with `composer install`
 - Generate JWT keypair with this command : `php bin/console lexik:jwt:generate-keypair`
-- Go to the directory `my-admin/` and install the admin panel dependencies with `yarn`
+- Go to the directory `my-admin/` and install the admin panel dependencies with `yarn install`
 
 ### Database initialization :
 - Create the database : `php bin/console doctrine:database:create`
