@@ -11,4 +11,4 @@
 
 ### Project Launch :
 - Open the first terminal in the root and launch this command : `symfony serv`
-- Open a second terminal in the `my-admin/` directory and launch this command : `yarn start
+- Open a second terminal in the `my-admin/` directory and launch this command : `yarn start`
