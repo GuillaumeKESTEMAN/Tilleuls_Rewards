@@ -37,19 +37,19 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
     private string $name = '';
 
-    #[ORM\Column(name: 'email', type: 'string', length: 255)]
-    #[ApiProperty(iri: "https://schema.org/email")]
+    #[ORM\Column(name: 'email', type: 'string', length: 255, nullable: false)]
+    #[ApiProperty(iri: "https://schema.org/email", )]
     private string $email = '';
 
-    #[ORM\Column(name: 'password', type: 'string', length: 255)]
+    #[ORM\Column(name: 'password', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(readable: false, writable: false, iri: "https://schema.org/accessCode")]
     private string $password = '';
 
-    #[ORM\Column(name: 'admin', type: 'boolean')]
+    #[ORM\Column(name: 'admin', type: 'boolean', nullable: false)]
     #[ApiProperty(readable: false, writable: false)]
     private bool $admin = false;
 

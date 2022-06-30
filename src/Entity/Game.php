@@ -34,28 +34,32 @@ use Symfony\Component\Uid\Uuid;
 class Game
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy:"CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Tweet::class)]
-    #[ORM\JoinColumn(name: 'tweet')]
+    #[ORM\JoinColumn(name: 'tweet', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/SocialMediaPosting")]
-    private ?Tweet $tweet;
+    private ?Tweet $tweet = null;
 
-    #[ORM\Column(name: 'url', type: 'string', length: 255)]
+    #[ORM\ManyToOne(targetEntity: Player::class)]
+    #[ORM\JoinColumn(name: 'player', nullable: false)]
+    private ?Player $player = null;
+
+    #[ORM\Column(name: 'url', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/URL")]
-    private string $url;
+    private string $url = '';
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
     #[ApiProperty(iri: "https://schema.org/Rating")]
-    private string $score;
+    private ?int $score = null;
 
-    #[ORM\Column(name: 'creation_date', type: 'date')]
+    #[ORM\Column(name: 'creation_date', type: 'datetime', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/dateCreated")]
-    private ?\DateTime $creationDate;
+    private ?\DateTime $creationDate = null;
 
     public function getId(): ?Uuid
     {
@@ -73,6 +77,24 @@ class Game
 
         return $this;
     }
+
+    /**
+     * @return Player|null
+     */
+    public function getPlayer(): ?Player
+    {
+        return $this->player;
+    }
+
+    /**
+     * @param Player|null $player
+     */
+    public function setPlayer(?Player $player): void
+    {
+        $this->player = $player;
+    }
+
+
 
     public function getUrl(): ?string
     {

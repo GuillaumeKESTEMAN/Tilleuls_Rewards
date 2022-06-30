@@ -23,11 +23,11 @@ use Doctrine\ORM\Mapping as ORM;
         "delete"
     ],
     attributes: [
-        "order" => ["tweetUrl" => "ASC"],
+        "order" => ["creationDate" => "DESC"],
         "security" => "is_granted('ROLE_ADMIN')"
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ["tweetUrl" => "ipartial"])]
+#[ApiFilter(SearchFilter::class, properties: ["tweetId" => "exact", "creationDate" => "exact"])]
 class Tweet
 {
     #[ORM\Id]
@@ -36,12 +36,17 @@ class Tweet
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
-    #[ORM\Column(name: 'player', type: 'integer')]
-    private ?Player $player;
+    #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
+    #[ORM\JoinColumn(name: 'player', nullable: false)]
+    private ?Player $player = null;
 
-    #[ORM\Column(name: 'tweet_url', type: 'string', length: 255)]
-    #[ApiProperty(iri: "https://schema.org/URL")]
-    private string $tweetUrl = '';
+    #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, nullable: false)]
+    #[ApiProperty(iri: "https://schema.org/identifier")]
+    private string $tweetId = '';
+
+    #[ORM\Column(name: 'creation_date', type: 'datetime', nullable: false)]
+    #[ApiProperty(iri: "https://schema.org/dateCreated")]
+    private ?\DateTime $creationDate = null;
 
     public function getId(): ?int
     {
@@ -60,14 +65,26 @@ class Tweet
         return $this;
     }
 
-    public function getTweetUrl(): ?string
+    public function getTweetId(): ?string
     {
-        return $this->tweetUrl;
+        return $this->tweetId;
     }
 
-    public function setTweetUrl(string $tweetUrl): self
+    public function setTweetId(string $tweetId): self
     {
-        $this->tweetUrl = $tweetUrl;
+        $this->tweetId = $tweetId;
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?\DateTime
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(?\DateTime $creationDate): self
+    {
+        $this->creationDate = $creationDate;
 
         return $this;
     }

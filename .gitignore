@@ -37,3 +37,8 @@ yarn-error.log
 ###> public/media ###
 /public/media/
 ###< public/media ###
+
+###> controller/testcontroller ###
+/src/Controller/TestController.php
+/templates/test
+###< controller/testcontroller ###

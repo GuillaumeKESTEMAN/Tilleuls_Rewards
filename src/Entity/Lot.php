@@ -38,17 +38,17 @@ class Lot
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
     private string $name = '';
 
-    #[ORM\Column(name: 'quantity', type: 'integer')]
+    #[ORM\Column(name: 'quantity', type: 'integer', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/Quantity")]
     private int $quantity = 0;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(name: 'image', nullable: true)]
-    #[ApiProperty(iri: 'http://schema.org/image')]
+    #[ApiProperty(iri: 'https://schema.org/image')]
     public ?MediaObject $image = null;
 
     public function getId(): ?int

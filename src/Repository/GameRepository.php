@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Game;
+use App\Entity\Tweet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,13 +23,26 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
-    public function add(Game $entity, bool $flush = false): void
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function add(Game $game, bool $flush = false): bool
     {
-        $this->getEntityManager()->persist($entity);
+        $lastGame = $this->findOneByPlayer($game->getPlayer()->getId());
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
+        if (null === $lastGame || date_diff($lastGame->getCreationDate(), new \DateTime)['d'] < 1) {
+            $this->getEntityManager()->persist($game);
+
+            if ($flush) {
+                $this->getEntityManager()->flush();
+
+                $game->setUrl($_ENV["GAME_URL"] . $game->getId());
+                $this->getEntityManager()->persist($game);
+                $this->getEntityManager()->flush();
+            }
+            return true;
         }
+        return false;
     }
 
     public function remove(Game $entity, bool $flush = false): void
@@ -54,13 +69,18 @@ class GameRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Game
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneByPlayer(int $playerId): ?Game
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.player = :val')
+            ->orderBy('p.creationDate')
+            ->setParameter('val', $playerId)
+            ->orderBy('p.creationDate', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

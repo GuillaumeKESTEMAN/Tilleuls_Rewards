@@ -38,18 +38,18 @@ class Reward
 
     #[ORM\ManyToOne(targetEntity: Lot::class)]
     #[ORM\JoinColumn(name: 'lot', nullable: true)]
-    private ?Lot $lot;
+    private ?Lot $lot = null;
 
     #[ORM\ManyToOne(targetEntity: Game::class)]
-    #[ORM\JoinColumn(name: 'game')]
+    #[ORM\JoinColumn(name: 'game', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/VideoGame")]
-    private ?Game $game;
+    private ?Game $game = null;
 
-    #[ORM\Column(name: 'date', type: 'date')]
+    #[ORM\Column(name: 'date', type: 'datetime', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/DateTime")]
     private ?\DateTime $date = null;
 
-    #[ORM\Column(name: 'distributed', type: 'boolean')]
+    #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]
     private bool $distributed = false;
 
     public function getId(): ?int

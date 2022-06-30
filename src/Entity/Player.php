@@ -7,6 +7,8 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PlayerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -37,13 +39,22 @@ class Player
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
     private string $name = '';
 
-    #[ORM\Column(name: 'twitter_account_url', type: 'string', length: 255)]
-    #[ApiProperty(iri: "https://schema.org/URL")]
-    private string $twitterAccountUrl = '';
+    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
+    #[ApiProperty(iri: "https://schema.org/identifier")]
+    private string $twitterAccountId = '';
+
+    #[ORM\OneToMany(mappedBy: 'player', targetEntity: Tweet::class, orphanRemoval: true)]
+    #[ApiProperty(iri: "https://schema.org/Collection")]
+    private Collection $tweets;
+
+    public function __construct()
+    {
+        $this->tweets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -62,14 +73,43 @@ class Player
         return $this;
     }
 
-    public function getTwitterAccountUrl(): ?string
+    public function getTwitterAccountId(): ?string
     {
-        return $this->twitterAccountUrl;
+        return $this->twitterAccountId;
     }
 
-    public function setTwitterAccountUrl(string $twitterAccountUrl): self
+    public function setTwitterAccountId(string $twitterAccountId): self
     {
-        $this->twitterAccountUrl = $twitterAccountUrl;
+        $this->twitterAccountId = $twitterAccountId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tweet>
+     */
+    public function getTweets(): Collection
+    {
+        return $this->tweets;
+    }
+
+    public function addTweet(Tweet $tweet): self
+    {
+        $tweet->setPlayer($this);
+        if (!in_array($tweet, (array)$this->tweets)) {
+            $this->tweets[] = $tweet;
+        }
+
+        return $this;
+    }
+
+    public function removeTweet(Tweet $tweet): self
+    {
+        if ($this->tweets->removeElement($tweet)) {
+            if ($tweet->getPlayer() === $this) {
+                $tweet->setPlayer(null);
+            }
+        }
 
         return $this;
     }
