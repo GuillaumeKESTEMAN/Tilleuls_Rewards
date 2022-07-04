@@ -13,7 +13,6 @@ use App\TwitterApiService;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,7 +45,7 @@ class TwitterApiRecentTweetsCommand extends Command
         $this->tweetRepository = $tweetRepository;
         $this->gameRepository = $gameRepository;
 
-        $myUrl = 'account/verify_credentials.json';
+        $myUrl = 'account/verify_credentials';
         $me = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, [], '1.1');
         $this->myId = $me->id ?: null;
 
@@ -64,7 +63,7 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function followingMe(string $userId): boolean
+    private function followingMe(string $userId): bool
     {
         if ($this->myId !== null) {
             $myUrl = 'friendships/show';
@@ -76,7 +75,6 @@ class TwitterApiRecentTweetsCommand extends Command
 
             return $friendships->relationship->source->following;
         }
-
         return false;
     }
 
@@ -125,8 +123,6 @@ class TwitterApiRecentTweetsCommand extends Command
                                 $player->setTwitterAccountId($user->id);
 
                                 $this->playerRepository->add($player, true);
-
-                                $io->info($user->username . ' added !');
                             }
 
                             $recentTweet = new Tweet();
@@ -136,31 +132,26 @@ class TwitterApiRecentTweetsCommand extends Command
 
                             $this->tweetRepository->add($recentTweet, true);
 
-                            $io->info('tweet n°' . $tweet->id . ' added !');
-
                             $game = new Game();
                             $game->setTweet($recentTweet);
-                            $game->setCreationDate(new \DateTime);
+                            $game->setCreationDate(new DateTime);
                             $game->setPlayer($player);
 
                             if ($this->gameRepository->add($game, true)) {
-                                $io->info('Game created successfully !');
-
                                 if ($input->getOption('reply-game-url')) {
                                     $postTweetUrl = 'tweets';
                                     $params = [
-                                        'text' => 'Thanks ' . $player->getName() . ' to talk about us.\n We want to give you a little gift but to get it you must play a little game 😁\n' . $game->getUrl(),
-                                        'reply' => $tweet->id
+                                        'text' => 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . ' We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $game->getUrl(),
+                                        'reply' => [
+                                            'in_reply_to_tweet_id' => $tweet->id
+                                        ]
                                     ];
                                     $tweets = TwitterApiService::makeAnPostTwitterApiRequest($postTweetUrl, $params);
-
-                                    $io->info('Reply to the tweet made !');
                                 }
                             }
                         }
                     }
                 }
-
                 $io->success('Database updated successfully');
             }
         } else {

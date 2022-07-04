@@ -34,7 +34,7 @@ class TwitterApiService
         $connection->setApiVersion($apiVersion);
         $response = $connection->post($url, $params, $json);
 
-        if ($connection->getLastHttpCode() === 200) {
+        if ($connection->getLastHttpCode() === 201) {
             return $response;
         } else {
             throw new BadRequestHttpException($response->errors[0]->message);
