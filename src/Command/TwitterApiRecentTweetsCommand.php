@@ -27,7 +27,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 
 #[AsCommand(
     name: 'app:comment:getRecentTweets',
-    description: 'Add a short description for your command',
+    description: 'Get recent tweets with a query to update DB and reply to play a game',
 )]
 class TwitterApiRecentTweetsCommand extends Command
 {
@@ -35,11 +35,20 @@ class TwitterApiRecentTweetsCommand extends Command
     private TweetRepository $tweetRepository;
     private GameRepository $gameRepository;
 
+    private ?string $myId;
+
+    /**
+     * @throws TwitterOAuthException
+     */
     public function __construct(PlayerRepository $playerRepository, TweetRepository $tweetRepository, GameRepository $gameRepository)
     {
         $this->playerRepository = $playerRepository;
         $this->tweetRepository = $tweetRepository;
         $this->gameRepository = $gameRepository;
+
+        $myUrl = 'account/verify_credentials.json';
+        $me = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, [], '1.1');
+        $this->myId = $me->id ?: null;
 
         parent::__construct();
     }
@@ -55,15 +64,19 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function followMe(array $data): boolean
+    private function followingMe(string $userId): boolean
     {
-        $myUrl = 'users/';
-        $me = TwitterApiService::makeAnGetTwitterApiRequest($myUrl);
-        foreach ($data as $follow) {
-            if($follow->id === $me->id) {
-                return true;
-            }
+        if ($this->myId !== null) {
+            $myUrl = 'friendships/show';
+            $params = [
+                'source_id' => $userId,
+                'target_id' => $this->myId
+            ];
+            $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
+
+            return $friendships->relationship->source->following;
         }
+
         return false;
     }
 
@@ -105,9 +118,7 @@ class TwitterApiRecentTweetsCommand extends Command
                         $user = $tweets->includes->users[$index];
                         $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
 
-                        $userFollowingUrl = 'users/' . $user->id . '/following';
-                        $userFollowing = TwitterApiService::makeAnGetTwitterApiRequest($userFollowingUrl);
-                        if ($userFollowing->meta->result_count > 0 && $this->followMe((array)$userFollowing->data)) {
+                        if ($this->followingMe($user->id)) {
                             if (null === $player) {
                                 $player = new Player();
                                 $player->setName($user->name);
@@ -142,6 +153,8 @@ class TwitterApiRecentTweetsCommand extends Command
                                         'reply' => $tweet->id
                                     ];
                                     $tweets = TwitterApiService::makeAnPostTwitterApiRequest($postTweetUrl, $params);
+
+                                    $io->info('Reply to the tweet made !');
                                 }
                             }
                         }
