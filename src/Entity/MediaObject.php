@@ -71,6 +71,7 @@ class MediaObject
      * @Vich\UploadableField(mapping="media_object", fileNameProperty="filePath")
      */
     #[Assert\NotNull(groups: ['media_object_create'])]
+    #[Assert\NotBlank]
     private ?File $file = null;
 
     #[ORM\Column(name: 'file_path', nullable: true)]

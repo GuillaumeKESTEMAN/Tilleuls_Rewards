@@ -61,6 +61,10 @@ class Game
     #[ApiProperty(iri: "https://schema.org/dateCreated")]
     private ?\DateTime $creationDate = null;
 
+    #[ORM\Column(name: 'play_date', type: 'datetime', nullable: true)]
+    #[ApiProperty(iri: "https://schema.org/DateTime")]
+    private ?\DateTime $playDate = null;
+
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -130,5 +134,15 @@ class Game
         $this->creationDate = $creationDate;
 
         return $this;
+    }
+
+    public function getPlayDate(): ?\DateTime
+    {
+        return $this->playDate;
+    }
+
+    public function setPlayDate(?\DateTime $playDate): void
+    {
+        $this->playDate = $playDate;
     }
 }

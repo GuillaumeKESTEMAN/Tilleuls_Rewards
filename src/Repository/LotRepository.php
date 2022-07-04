@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Lot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +39,28 @@ class LotRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getRandom(int $numberOfLotReturn = 1): ?array
+    {
+        $rows = $this->createQueryBuilder('l')
+            ->select('COUNT(l.id)')
+            ->where('l.quantity > 0')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        $rows = $rows ? $rows[1] : 0;
+        $offset = max(0, rand(0, $rows - $numberOfLotReturn));
+
+        return $this->createQueryBuilder('l')
+            ->setMaxResults($numberOfLotReturn)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

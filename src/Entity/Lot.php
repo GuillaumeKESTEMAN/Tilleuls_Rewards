@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\LotRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 #[ORM\Table(name: '`lot`')]
@@ -39,12 +40,20 @@ class Lot
     private int $id;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank]
     #[ApiProperty(iri: "https://schema.org/name")]
     private string $name = '';
 
     #[ORM\Column(name: 'quantity', type: 'integer', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
     #[ApiProperty(iri: "https://schema.org/Quantity")]
     private int $quantity = 0;
+
+    #[ORM\Column(name: 'message', type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the user name in the message, write : %user%', iri: "https://schema.org/Message")]
+    private string $message = '';
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(name: 'image', nullable: true)]
@@ -78,6 +87,19 @@ class Lot
         $this->quantity = $quantity;
 
         return $this;
+    }
+
+    public function getMessage(?string $username = null): ?string
+    {
+        if (null !== $username) {
+            return str_replace("%user%", $username, $this->message);
+        }
+        return $this->message;
+    }
+
+    public function setMessage(string $message): void
+    {
+        $this->message = $message;
     }
 
     public function getImage(): ?MediaObject
