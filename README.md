@@ -12,3 +12,10 @@
 ### Project Launch :
 - Open the first terminal in the root and launch this command : `symfony serv`
 - Open a second terminal in the `my-admin/` directory and launch this command : `yarn start`
+
+### Project Custom Commands :
+#### app:comment:getRecentTweets
+Command to get recent tweets with a query to update DB and a query to reply to play a game
+- query -> Argument to the query parameter (ex : `#something`)
+- update-db -> Boolean to update database (ex : `--update-db`)
+- reply-game-url -> Boolean to reply with game URL (ex : `--reply-game-url`)
