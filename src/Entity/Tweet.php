@@ -42,7 +42,7 @@ class Tweet
 
     #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/identifier")]
-    private string $tweetId = '';
+    private ?string $tweetId = null;
 
     #[ORM\Column(name: 'creation_date', type: 'datetime', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/dateCreated")]

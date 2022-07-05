@@ -41,14 +41,18 @@ class Player
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
-    private string $name = '';
+    private ?string $name = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/identifier")]
-    private string $twitterAccountId = '';
+    #[ApiProperty(writable: false, iri: "https://schema.org/identifier")]
+    private ?string $twitterAccountId = null;
+
+    #[ORM\Column(name: 'last_play_date', type: 'datetime', nullable: true)]
+    #[ApiProperty(writable: false, iri: "https://schema.org/DateTime")]
+    private ?\DateTime $lastPlayDate = null;
 
     #[ORM\OneToMany(mappedBy: 'player', targetEntity: Tweet::class, orphanRemoval: true)]
-    #[ApiProperty(iri: "https://schema.org/Collection")]
+    #[ApiProperty(readable: false, writable: false, iri: "https://schema.org/Collection")]
     private Collection $tweets;
 
     public function __construct()
@@ -83,6 +87,16 @@ class Player
         $this->twitterAccountId = $twitterAccountId;
 
         return $this;
+    }
+
+    public function getLastPlayDate(): ?\DateTime
+    {
+        return $this->lastPlayDate;
+    }
+
+    public function setLastPlayDate(?\DateTime $lastPlayDate): void
+    {
+        $this->lastPlayDate = $lastPlayDate;
     }
 
     /**

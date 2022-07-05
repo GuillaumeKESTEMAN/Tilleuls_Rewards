@@ -39,7 +39,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
-    private string $name = '';
+    private ?string $name = null;
 
     #[ORM\Column(name: 'email', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/email", )]
@@ -47,7 +47,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\Column(name: 'password', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(readable: false, writable: false, iri: "https://schema.org/accessCode")]
-    private string $password = '';
+    private ?string $password = null;
 
     #[ORM\Column(name: 'admin', type: 'boolean', nullable: false)]
     #[ApiProperty(readable: false, writable: false)]
@@ -76,7 +76,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }

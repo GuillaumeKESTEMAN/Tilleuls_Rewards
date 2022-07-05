@@ -2,12 +2,12 @@
 import Head from "next/head";
 import {Navigate, Route} from "react-router-dom";
 import {
-    CreateGuesser,
-    fetchHydra as baseFetchHydra,
-    hydraDataProvider as baseHydraDataProvider, ResourceGuesser,
+    CreateGuesser, EditGuesser,
+    fetchHydra as baseFetchHydra, FieldGuesser,
+    hydraDataProvider as baseHydraDataProvider, InputGuesser, ListGuesser, ResourceGuesser, ShowGuesser,
     useIntrospection,
 } from "@api-platform/admin";
-import {FileField, FileInput} from "react-admin";
+import {FileField, FileInput, ReferenceInput, AutocompleteInput, TextField} from "react-admin";
 import {parseHydraDocumentation} from "@api-platform/api-doc-parser";
 import authProvider from "./utils/authProvider.tsx";
 import {ENTRYPOINT} from "./config/entrypoint.ts";
@@ -32,12 +32,67 @@ const NavigateToLogin = () => {
     return <Navigate to="/login"/>;
 };
 
+const LotsList = props => (
+    <ListGuesser {...props}>
+        <FieldGuesser source="name" />
+        <FieldGuesser source="quantity" />
+        <FieldGuesser source="message" />
+        <TextField source="image" />
+    </ListGuesser>
+);
+
+const LotsShow = props => (
+    <ShowGuesser {...props}>
+        <FieldGuesser source="name" addLabel={true} />
+        <FieldGuesser source="quantity" addLabel={true} />
+        <FieldGuesser source="message" addLabel={true} />
+        <TextField source="image" addLabel={true} />
+    </ShowGuesser>
+);
+
+const LotsCreate = props => (
+    <CreateGuesser {...props}>
+        <InputGuesser source="name"/>
+        <InputGuesser source="quantity" defaultValue={0}/>
+        <InputGuesser source="message"/>
+
+        <ReferenceInput
+            reference="media_objects"
+            source="image"
+        >
+            <AutocompleteInput label="Image" optionText="name" filterToQuery={searchText => ({title: searchText})}/>
+        </ReferenceInput>
+    </CreateGuesser>
+);
+
+const LotsEdit = props => (
+    <EditGuesser {...props}>
+        <InputGuesser source="name"/>
+        <InputGuesser source="quantity"/>
+        <InputGuesser source="message"/>
+
+        <ReferenceInput
+            reference="media_objects"
+            source="image"
+        >
+            <AutocompleteInput label="Image" optionText="name" filterToQuery={searchText => ({title: searchText})}/>
+        </ReferenceInput>
+    </EditGuesser>
+);
+
 const MediaObjectsCreate = props => (
     <CreateGuesser {...props}>
+        <InputGuesser source="name"/>
         <FileInput source="file" name="file">
             <FileField source="src" title="media_object"/>
         </FileInput>
     </CreateGuesser>
+);
+
+const MediaObjectsEdit = props => (
+    <EditGuesser {...props}>
+        <InputGuesser source="name"/>
+    </EditGuesser>
 );
 
 const apiDocumentationParser = async () => {
@@ -73,10 +128,10 @@ const AdminLoader = () => {
     if (typeof window !== "undefined") {
         const {HydraAdmin} = require("@api-platform/admin");
         return (<HydraAdmin dataProvider={dataProvider} authProvider={authProvider} entrypoint={ENTRYPOINT}>
-            <ResourceGuesser name="lots" />
-            <ResourceGuesser name="rewards" />
-            <ResourceGuesser name="players" />
-            <ResourceGuesser name="media_objects" create={MediaObjectsCreate}/>
+            <ResourceGuesser name="lots" list={LotsList} show={LotsShow} create={LotsCreate} edit={LotsEdit}/>
+            <ResourceGuesser name="rewards"/>
+            <ResourceGuesser name="players"/>
+            <ResourceGuesser name="media_objects" edit={MediaObjectsEdit} create={MediaObjectsCreate}/>
         </HydraAdmin>);
     }
 

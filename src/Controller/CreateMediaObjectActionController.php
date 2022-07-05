@@ -43,6 +43,7 @@ final class CreateMediaObjectActionController extends AbstractController
 
         $mediaObject = new MediaObject();
         $mediaObject->setFile($uploadedFile);
+        $mediaObject->setName($request->get('name'));
 
         return $mediaObject;
     }

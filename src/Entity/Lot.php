@@ -42,18 +42,18 @@ class Lot
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
     #[ApiProperty(iri: "https://schema.org/name")]
-    private string $name = '';
+    private ?string $name = null;
 
     #[ORM\Column(name: 'quantity', type: 'integer', nullable: false)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
     #[ApiProperty(iri: "https://schema.org/Quantity")]
-    private int $quantity = 0;
+    private ?int $quantity = null;
 
     #[ORM\Column(name: 'message', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
     #[ApiProperty(description: 'Message that will be sent to players. To write the user name in the message, write : %user%', iri: "https://schema.org/Message")]
-    private string $message = '';
+    private ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(name: 'image', nullable: true)]

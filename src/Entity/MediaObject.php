@@ -20,6 +20,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity]
 #[ORM\Table(name: '`media_object`')]
 #[UniqueEntity('filePath')]
+#[UniqueEntity('name')]
 #[ApiResource(
     collectionOperations: [
         'get',
@@ -34,6 +35,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                             'schema' => [
                                 'type' => 'object',
                                 'properties' => [
+                                    'name' => [
+                                        'type' => 'string',
+                                    ],
                                     'file' => [
                                         'type' => 'string',
                                         'format' => 'binary',
@@ -63,7 +67,13 @@ class MediaObject
     #[ORM\Id, ORM\Column, ORM\GeneratedValue]
     private ?int $id = null;
 
-    #[ApiProperty(iri: 'http://schema.org/contentUrl')]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank]
+    #[ApiProperty(iri: 'https://schema.org/name')]
+    #[Groups(['media_object:read'])]
+    public ?string $name = null;
+
+    #[ApiProperty(writable: false, iri: 'https://schema.org/contentUrl')]
     #[Groups(['media_object:read'])]
     public ?string $contentUrl = null;
 
@@ -80,6 +90,16 @@ class MediaObject
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     /**

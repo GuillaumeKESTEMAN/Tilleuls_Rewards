@@ -51,7 +51,7 @@ class Game
 
     #[ORM\Column(name: 'url', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/URL")]
-    private string $url = '';
+    private ?string $url = null;
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
     #[ApiProperty(iri: "https://schema.org/Rating")]
