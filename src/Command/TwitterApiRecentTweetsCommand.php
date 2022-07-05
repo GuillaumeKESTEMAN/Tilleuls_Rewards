@@ -35,20 +35,12 @@ class TwitterApiRecentTweetsCommand extends Command
     private TweetRepository $tweetRepository;
     private GameRepository $gameRepository;
 
-    private ?string $myId;
 
-    /**
-     * @throws TwitterOAuthException
-     */
     public function __construct(PlayerRepository $playerRepository, TweetRepository $tweetRepository, GameRepository $gameRepository)
     {
         $this->playerRepository = $playerRepository;
         $this->tweetRepository = $tweetRepository;
         $this->gameRepository = $gameRepository;
-
-        $myUrl = 'account/verify_credentials';
-        $me = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, [], '1.1');
-        $this->myId = $me->id ?: null;
 
         parent::__construct();
     }
@@ -58,25 +50,23 @@ class TwitterApiRecentTweetsCommand extends Command
         $this
             ->addArgument('query', InputArgument::OPTIONAL, 'Argument to the query parameter')
             ->addOption('update-db', null, InputOption::VALUE_NONE, 'Update database')
-            ->addOption('reply-game-url', null, InputOption::VALUE_NONE, 'Reply with game URL');
+            ->addOption('reply-game-url', null, InputOption::VALUE_NONE, 'Reply with game URL')
+            ->addOption('need-follow', null, InputOption::VALUE_REQUIRED, 'The user must follow this twitter account to be registered', $_ENV["TWITTER_ACCOUNT_TO_FOLLOW"]);
     }
 
     /**
      * @throws TwitterOAuthException
      */
-    private function followingMe(string $userId): bool
+    private function followingMe(string $userId, string $targetId): bool
     {
-        if ($this->myId !== null) {
-            $myUrl = 'friendships/show';
-            $params = [
-                'source_id' => $userId,
-                'target_id' => $this->myId
-            ];
-            $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
+        $myUrl = 'friendships/show';
+        $params = [
+            'source_id' => $userId,
+            'target_id' => $targetId
+        ];
+        $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
 
-            return $friendships->relationship->source->following;
-        }
-        return false;
+        return $friendships->relationship->source->following;
     }
 
     /**
@@ -134,7 +124,7 @@ class TwitterApiRecentTweetsCommand extends Command
                         }
 
                         if (null !== $user) {
-                            if ($this->followingMe($user->id)) {
+                            if ($this->followingMe($user->id, $input->getOption('need-follow'))) {
                                 $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
                                 $lastGame = null;
 
@@ -180,10 +170,10 @@ class TwitterApiRecentTweetsCommand extends Command
                                         $postTweetUrl = 'tweets';
                                         $params = [
                                             'text' => 'Thanks ' . $player->getUsername() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $lastGame->getUrl(),
-                                                'reply' => [
-                                                    'in_reply_to_tweet_id' => $tweet->id
-                                                ]
-                                            ];
+                                            'reply' => [
+                                                'in_reply_to_tweet_id' => $tweet->id
+                                            ]
+                                        ];
                                         TwitterApiService::makeAnPostTwitterApiRequest($postTweetUrl, $params);
                                     }
                                 }
