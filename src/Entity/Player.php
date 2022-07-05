@@ -39,9 +39,9 @@ class Player
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'username', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
-    private ?string $name = null;
+    private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(writable: false, iri: "https://schema.org/identifier")]
@@ -65,14 +65,14 @@ class Player
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getUsername(): ?string
     {
-        return $this->name;
+        return $this->username;
     }
 
-    public function setName(string $name): self
+    public function setUsername(string $username): self
     {
-        $this->name = $name;
+        $this->username = $username;
 
         return $this;
     }

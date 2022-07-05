@@ -28,15 +28,17 @@ class GameRepository extends ServiceEntityRepository
      */
     public function add(Game $game, bool $flush = false): bool
     {
-        $lastGame = $this->findOneByPlayer($game->getPlayer()->getId());
+        $lastGame = $this->findOneByPlayer($game->getPlayer());
 
-        if (null === $lastGame || date_diff($lastGame->getCreationDate(), new \DateTime)['d'] < 1) {
+        if (null === $lastGame || date_diff($lastGame->getCreationDate(), new \DateTime)->d >= 1) {
+            $game->setCreationDate(new \DateTime);
             $this->getEntityManager()->persist($game);
+            $game->setUrl($_ENV["GAME_URL"]);
 
             if ($flush) {
                 $this->getEntityManager()->flush();
 
-                $game->setUrl($_ENV["GAME_URL"] . $game->getId());
+                $game->setUrl($game->getUrl() . $game->getId());
                 $this->getEntityManager()->persist($game);
                 $this->getEntityManager()->flush();
             }
@@ -72,12 +74,12 @@ class GameRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findOneByPlayer(int $playerId): ?Game
+    public function findOneByPlayer($player): ?Game
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.player = :val')
             ->orderBy('p.creationDate')
-            ->setParameter('val', $playerId)
+            ->setParameter('val', $player)
             ->orderBy('p.creationDate', 'DESC')
             ->setMaxResults(1)
             ->getQuery()

@@ -11,6 +11,7 @@ use App\Repository\PlayerRepository;
 use App\Repository\TweetRepository;
 use App\TwitterApiService;
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -65,17 +66,18 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function followingMe(string $userId): bool
     {
-        if ($this->myId !== null) {
-            $myUrl = 'friendships/show';
-            $params = [
-                'source_id' => $userId,
-                'target_id' => $this->myId
-            ];
-            $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
-
-            return $friendships->relationship->source->following;
-        }
-        return false;
+//        if ($this->myId !== null) {
+//            $myUrl = 'friendships/show';
+//            $params = [
+//                'source_id' => $userId,
+//                'target_id' => $this->myId
+//            ];
+//            $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
+//
+//            return $friendships->relationship->source->following;
+//        }
+//        return false;
+        return true;
     }
 
     /**
@@ -110,45 +112,85 @@ class TwitterApiRecentTweetsCommand extends Command
 
             if ($input->getOption('update-db')) {
                 foreach ($tweetsData as $index => $tweet) {
-                    $recentTweet = $this->tweetRepository->findOneByTweetId($tweet->id);
+                    $tweetAlreadyExists = $this->tweetRepository->findOneByTweetId($tweet->id);
 
-                    if (null === $recentTweet) {
-                        $user = $tweets->includes->users[$index];
-                        $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
+                    if (null === $tweetAlreadyExists) {
+                        $user = null;
 
-                        if ($this->followingMe($user->id)) {
-                            if (null === $player) {
-                                $player = new Player();
-                                $player->setName($user->name);
-                                $player->setTwitterAccountId($user->id);
-
-                                $this->playerRepository->add($player, true);
-                            }
-
-                            $recentTweet = new Tweet();
-                            $recentTweet->setPlayer($player);
-                            $recentTweet->setTweetId($tweet->id);
-                            $recentTweet->setCreationDate(new DateTime($tweet->created_at));
-
-                            $this->tweetRepository->add($recentTweet, true);
-
-                            $game = new Game();
-                            $game->setTweet($recentTweet);
-                            $game->setCreationDate(new DateTime);
-                            $game->setPlayer($player);
-
-                            if ($this->gameRepository->add($game, true)) {
-                                if ($input->getOption('reply-game-url')) {
-                                    $postTweetUrl = 'tweets';
-                                    $params = [
-                                        'text' => 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . ' We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $game->getUrl(),
-                                        'reply' => [
-                                            'in_reply_to_tweet_id' => $tweet->id
-                                        ]
-                                    ];
-                                    $tweets = TwitterApiService::makeAnPostTwitterApiRequest($postTweetUrl, $params);
+                        try {
+                            $user = $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : throw new Exception;
+                        } catch (Exception) {
+                            foreach ($tweets->includes->users as $tweetUser) {
+                                if ($tweetUser->id === $tweet->author_id) {
+                                    $user = $tweetUser;
+                                    break;
                                 }
                             }
+
+                            if (null === $user) {
+                                $getUserUrl = 'users/' . $tweet->author_id;
+                                $user = TwitterApiService::makeAnGetTwitterApiRequest($getUserUrl, []);
+                                $user = $user->data;
+                            }
+                        }
+
+                        if (null !== $user) {
+                            if ($this->followingMe($user->id)) {
+                                $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
+                                $lastGame = null;
+
+                                if (null === $player) {
+                                    $player = new Player();
+                                    $player->setUsername($user->username);
+                                    $player->setTwitterAccountId($user->id);
+
+                                    $this->playerRepository->add($player, true);
+                                } else {
+                                    $lastGame = $this->gameRepository->findOneByPlayer($player);
+                                }
+
+                                if (null === $lastGame || null === $lastGame->getPlayDate() || date_diff($lastGame->getPlayDate(), new \DateTime)->d >= 1) {
+                                    $tweetCreationDate = new DateTime($tweet->created_at, new DateTimeZone('UTC'));
+                                    $tweetCreationDate->setTimezone(new DateTimeZone('Europe/Paris'));
+
+                                    $recentTweet = new Tweet();
+                                    $recentTweet->setPlayer($player);
+                                    $recentTweet->setTweetId($tweet->id);
+                                    $recentTweet->setCreationDate($tweetCreationDate);
+
+                                    $this->tweetRepository->add($recentTweet, true);
+
+                                    $game = new Game();
+                                    $game->setTweet($recentTweet);
+                                    $game->setPlayer($player);
+
+                                    if ($this->gameRepository->add($game, true)) {
+                                        if ($input->getOption('reply-game-url')) {
+                                            $postTweetUrl = 'tweets';
+                                            $params = [
+                                                'text' => 'Thanks ' . $player->getUsername() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $game->getUrl(),
+                                                'reply' => [
+                                                    'in_reply_to_tweet_id' => $tweet->id
+                                                ]
+                                            ];
+                                            TwitterApiService::makeAnPostTwitterApiRequest($postTweetUrl, $params);
+                                        }
+                                    }
+                                } else {
+                                    if ($input->getOption('reply-game-url')) {
+                                        $postTweetUrl = 'tweets';
+                                        $params = [
+                                            'text' => 'Thanks ' . $player->getUsername() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $lastGame->getUrl(),
+                                                'reply' => [
+                                                    'in_reply_to_tweet_id' => $tweet->id
+                                                ]
+                                            ];
+                                        TwitterApiService::makeAnPostTwitterApiRequest($postTweetUrl, $params);
+                                    }
+                                }
+                            }
+                        } else {
+                            $io->error('User not found for the tweet n°' . $tweet->id);
                         }
                     }
                 }

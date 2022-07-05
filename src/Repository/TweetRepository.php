@@ -40,20 +40,6 @@ class TweetRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Tweet[] Returns an array of Tweet objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
     /**
      * @throws NonUniqueResultException
@@ -66,6 +52,21 @@ class TweetRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
+            ;
+    }
+
+    /**
+     * @return Tweet[] Returns an array of Tweet objects
+     */
+    public function findByPlayerTweets($player, int $maxResults = 10): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.player = :player')
+            ->setParameter('player', $player)
+            ->orderBy('t.creationDate', 'DESC')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult()
             ;
     }
 }
