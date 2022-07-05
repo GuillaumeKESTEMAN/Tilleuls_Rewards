@@ -66,18 +66,17 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function followingMe(string $userId): bool
     {
-//        if ($this->myId !== null) {
-//            $myUrl = 'friendships/show';
-//            $params = [
-//                'source_id' => $userId,
-//                'target_id' => $this->myId
-//            ];
-//            $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
-//
-//            return $friendships->relationship->source->following;
-//        }
-//        return false;
-        return true;
+        if ($this->myId !== null) {
+            $myUrl = 'friendships/show';
+            $params = [
+                'source_id' => $userId,
+                'target_id' => $this->myId
+            ];
+            $friendships = TwitterApiService::makeAnGetTwitterApiRequest($myUrl, $params, '1.1');
+
+            return $friendships->relationship->source->following;
+        }
+        return false;
     }
 
     /**
