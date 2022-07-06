@@ -10,7 +10,7 @@
 - Execute the migrations : `php bin/console doctrine:migrations:migrate`
 
 ### Project Launch :
-- Open the first terminal in the root and launch this command : `symfony serv`
+- Open the first terminal in the root and launch this command : `symfony serve`
 - Open a second terminal in the `my-admin/` directory and launch this command : `yarn start`
 
 ### Project Custom Commands :
