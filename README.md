@@ -19,3 +19,4 @@ Command to get recent tweets with a query to update DB and a query to reply to p
 - query -> Argument to the query parameter (ex : `#something`)
 - update-db -> Boolean to update database (ex : `--update-db`)
 - reply-game-url -> Boolean to reply with game URL (ex : `--reply-game-url`)
+- need-follow -> twitter account id for the condition that asks if the twitter account that made the tweet follows this account (ex : `--need-follow 123456`)
