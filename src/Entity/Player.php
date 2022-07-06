@@ -26,11 +26,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         "delete"
     ],
     attributes: [
-        "order" => ["name" => "ASC"],
+        "order" => ["username" => "ASC"],
         "security" => "is_granted('ROLE_ADMIN')"
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial"])]
+#[ApiFilter(SearchFilter::class, properties: ["username" => "ipartial"])]
 class Player
 {
     #[ORM\Id]
