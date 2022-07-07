@@ -95,7 +95,7 @@ const MediaObjectsCreate = props => (
 
 const MediaObjectsEdit = props => (
     <EditGuesser {...props}>
-        <InputGuesser source="name"/>
+        <InputGuesser disabled={true} source="name"/>
     </EditGuesser>
 );
 
