@@ -49,9 +49,9 @@ class TwitterApiRecentTweetsCommand extends Command
     {
         $this
             ->addArgument('query', InputArgument::OPTIONAL, 'Argument to the query parameter')
+            ->addOption('need-follow', null, InputOption::VALUE_REQUIRED, 'The user must follow this twitter account to be registered', $_ENV["TWITTER_ACCOUNT_TO_FOLLOW"])
             ->addOption('update-db', null, InputOption::VALUE_NONE, 'Update database')
-            ->addOption('reply-game-url', null, InputOption::VALUE_NONE, 'Reply with game URL')
-            ->addOption('need-follow', null, InputOption::VALUE_REQUIRED, 'The user must follow this twitter account to be registered', $_ENV["TWITTER_ACCOUNT_TO_FOLLOW"]);
+            ->addOption('reply-game-url', null, InputOption::VALUE_NONE, 'Reply with game URL');
     }
 
     /**
