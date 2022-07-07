@@ -7,7 +7,7 @@ import {
     hydraDataProvider as baseHydraDataProvider, InputGuesser, ListGuesser, ResourceGuesser, ShowGuesser,
     useIntrospection,
 } from "@api-platform/admin";
-import {FileField, FileInput, ReferenceInput, AutocompleteInput, TextField} from "react-admin";
+import {FileField, FileInput, ReferenceInput, AutocompleteInput, ReferenceField} from "react-admin";
 import {parseHydraDocumentation} from "@api-platform/api-doc-parser";
 import authProvider from "./utils/authProvider.tsx";
 import {ENTRYPOINT} from "./config/entrypoint.ts";
@@ -37,7 +37,9 @@ const LotsList = props => (
         <FieldGuesser source="name" />
         <FieldGuesser source="quantity" />
         <FieldGuesser source="message" />
-        <TextField source="image" />
+        <ReferenceField label="Image" source="image" reference="media_objects">
+            <FieldGuesser source="name" addLabel={true} />
+        </ReferenceField>
     </ListGuesser>
 );
 
@@ -46,7 +48,9 @@ const LotsShow = props => (
         <FieldGuesser source="name" addLabel={true} />
         <FieldGuesser source="quantity" addLabel={true} />
         <FieldGuesser source="message" addLabel={true} />
-        <TextField source="image" addLabel={true} />
+        <ReferenceField label="Image" source="image" reference="media_objects">
+            <FieldGuesser source="name" addLabel={true} />
+        </ReferenceField>
     </ShowGuesser>
 );
 
