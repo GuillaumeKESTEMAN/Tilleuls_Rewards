@@ -21,8 +21,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     ],
     itemOperations: [
         "get",
-        "put",
-        "patch",
         "delete"
     ],
     attributes: [

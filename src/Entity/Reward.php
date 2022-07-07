@@ -42,11 +42,11 @@ class Reward
 
     #[ORM\ManyToOne(targetEntity: Game::class)]
     #[ORM\JoinColumn(name: 'game', nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/VideoGame")]
+    #[ApiProperty(writable: false, iri: "https://schema.org/VideoGame")]
     private ?Game $game = null;
 
     #[ORM\Column(name: 'date', type: 'datetime', nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/DateTime")]
+    #[ApiProperty(writable: false, iri: "https://schema.org/DateTime")]
     private ?\DateTime $date = null;
 
     #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]
