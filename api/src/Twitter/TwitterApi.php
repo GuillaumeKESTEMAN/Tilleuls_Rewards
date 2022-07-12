@@ -1,20 +1,35 @@
 <?php
 
-namespace App;
+declare(strict_types=1);
+
+namespace App\Twitter;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;
-use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class TwitterApiService
+class TwitterApi
 {
+    public function __construct(
+        private string $twitterConsumerKey,
+        private string $twitterConsumerSecret,
+        private string $twitterAccessToken,
+        private string $twitterAccessTokenSecret
+    )
+    {
+    }
+
+    private function getConnection(): TwitterOAuth
+    {
+        return new TwitterOAuth($this->twitterConsumerKey, $this->twitterConsumerSecret, $this->twitterAccessToken, $this->twitterAccessTokenSecret);
+    }
+
     /**
      * @throws TwitterOAuthException
      */
-    public static function makeAnGetTwitterApiRequest(string $url, array $params = [], string $apiVersion = '2'): ?stdClass
+    public function makeAnGetTwitterApiRequest(string $url, array $params = [], string $apiVersion = '2'): array|object
     {
-        $connection = new TwitterOAuth($_ENV["TWITTER_CONSUMER_KEY"], $_ENV["TWITTER_CONSUMER_SECRET"], $_ENV["TWITTER_ACCESS_TOKEN"], $_ENV["TWITTER_ACCESS_TOKEN_SECRET"]);
+        $connection = $this->getConnection();
         $connection->setApiVersion($apiVersion);
         $response = $connection->get($url, $params);
 
@@ -28,9 +43,9 @@ class TwitterApiService
     /**
      * @throws TwitterOAuthException
      */
-    public static function makeAnPostTwitterApiRequest(string $url, array $params = [], bool $json = true, string $apiVersion = '2'): ?stdClass
+    public function makeAnPostTwitterApiRequest(string $url, array $params = [], bool $json = true, string $apiVersion = '2'): array|object
     {
-        $connection = new TwitterOAuth($_ENV["TWITTER_CONSUMER_KEY"], $_ENV["TWITTER_CONSUMER_SECRET"], $_ENV["TWITTER_ACCESS_TOKEN"], $_ENV["TWITTER_ACCESS_TOKEN_SECRET"]);
+        $connection = $this->getConnection();
         $connection->setApiVersion($apiVersion);
         $response = $connection->post($url, $params, $json);
 

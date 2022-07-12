@@ -58,7 +58,7 @@ const LotsCreate = props => (
     <CreateGuesser {...props}>
         <InputGuesser source="name"/>
         <InputGuesser source="quantity" defaultValue={0}/>
-        <InputGuesser source="message"/>
+        <InputGuesser source="message" multiline />
 
         <ReferenceInput
             reference="media_objects"
@@ -73,7 +73,7 @@ const LotsEdit = props => (
     <EditGuesser {...props}>
         <InputGuesser source="name"/>
         <InputGuesser source="quantity"/>
-        <InputGuesser source="message"/>
+        <InputGuesser source="message" multiline />
 
         <ReferenceInput
             reference="media_objects"

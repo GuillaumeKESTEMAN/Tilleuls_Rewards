@@ -6,8 +6,8 @@ export default {
     login: ({ username, password }) => {
         const request = new Request(`${ENTRYPOINT}/login`, {
             method: 'POST',
-            body: JSON.stringify({ email: username, password }),
-            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify({ username, password }),
+            headers: new Headers({ 'Content-Type': 'application/ld+json' }),
         });
         return fetch(request)
             .then((response) => {

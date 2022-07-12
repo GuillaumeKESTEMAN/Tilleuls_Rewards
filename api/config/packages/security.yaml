@@ -6,9 +6,9 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
+            memory:
+                users:
+                    '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: ['ROLE_ADMIN'] }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -19,8 +19,6 @@ security:
             provider: app_user_provider
             json_login:
                 check_path: /api/login
-                username_path: email
-                password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             jwt: ~
