@@ -8,17 +8,17 @@ start-all:
 	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
 	docker-compose exec php bin/console doctrine:fixtures:load --no-interaction
 	sleep 5
-	cd my-admin/ && yarn start
+	cd admin/ && yarn start
 
 stop-all:
 	docker-compose down
 
 install:
-	mkdir -p public/media
+	mkdir -p api/public/media
 	sudo chown -R $(user):docker .
 	chmod -R g+w .
 	docker-compose build --pull --no-cache
-	cd my-admin/ && yarn install
+	cd admin/ && yarn install
 
 kill-docker-builds:
 	docker-compose stop && docker-compose kill && docker-compose down --volumes --remove-orphans

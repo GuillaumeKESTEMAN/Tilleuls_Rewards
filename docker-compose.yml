@@ -3,7 +3,7 @@ version: "3.4"
 services:
   php:
     build:
-      context: .
+      context: ./api
       target: symfony_php
       args:
         SYMFONY_VERSION: ${SYMFONY_VERSION:-}
@@ -12,6 +12,8 @@ services:
     restart: unless-stopped
     volumes:
       - php_socket:/var/run/php
+      - ./api:/srv/api:rw,cached
+      - ./api/var:/srv/api/var:rw
     healthcheck:
       interval: 10s
       timeout: 3s
@@ -28,7 +30,7 @@ services:
 
   caddy:
     build:
-      context: .
+      context: api/
       target: symfony_caddy
     depends_on:
       - php
@@ -41,6 +43,8 @@ services:
       - php_socket:/var/run/php
       - caddy_data:/data
       - caddy_config:/config
+      - ./api/docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./api/public:/srv/api/public:ro
     ports:
       # HTTP
       - target: 80

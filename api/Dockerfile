@@ -75,7 +75,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
-WORKDIR /srv/app
+WORKDIR /srv/api
 
 # Allow to choose skeleton
 ARG SKELETON="symfony/skeleton"
@@ -111,7 +111,8 @@ RUN set -eux; \
 	composer symfony:dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync
-VOLUME /srv/app/var
+VOLUME /srv/api/var
+VOLUME /srv/api/config/jwt
 
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
@@ -126,9 +127,9 @@ RUN xcaddy build \
 
 FROM caddy:${CADDY_VERSION} AS symfony_caddy
 
-WORKDIR /srv/app
+WORKDIR /srv/api
 
 COPY --from=dunglas/mercure:v0.11 /srv/public /srv/mercure-assets/
 COPY --from=symfony_caddy_builder /usr/bin/caddy /usr/bin/caddy
-COPY --from=symfony_php /srv/app/public public/
+COPY --from=symfony_php /srv/api/public public/
 COPY docker/caddy/Caddyfile /etc/caddy/Caddyfile

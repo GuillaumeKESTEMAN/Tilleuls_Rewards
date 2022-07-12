@@ -5,7 +5,7 @@
 
   or
 - Build docker with `docker-compose build --pull --no-cache`
-- Go to the directory `my-admin/` and install the admin panel dependencies with `yarn install`
+- Go to the directory `admin/` and install the admin panel dependencies with `yarn install`
 #### Generate JWT keypair :
 - Generate JWT keypair with this command : `php bin/console lexik:jwt:generate-keypair`
 
@@ -18,7 +18,7 @@
 or
 - Open a terminal in the root and launch this command : `docker-compose up -d`
 - Initialize the database with : `docker-compose exec php bin/console doctrine:fixtures:load`
-- And go to the `my-admin/` directory and launch this command : `yarn start`
+- And go to the `admin/` directory and launch this command : `yarn start`
 
 ### Project Stop :
 - Terminate the command `make`/`make start`/`yarn start`

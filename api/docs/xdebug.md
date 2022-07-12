@@ -80,7 +80,7 @@ Otherwise, you can create a [PHP Remote Debug](https://www.jetbrains.com/help/ph
   * Host: `https://localhost` (or the one defined with `SERVER_NAME`)
   * Port: `443`
   * Debugger: `Xdebug`
-  * Absolute path on the server: `/srv/app`
+  * Absolute path on the server: `/srv/api`
 * IDE key: `PHPSTORM`
 
 You can now use the debugger.
