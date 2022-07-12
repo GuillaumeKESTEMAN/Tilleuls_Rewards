@@ -4,7 +4,6 @@
 - Install all dependencies of the project with the `make install` command
 
   or
-- Install the symfony dependencies with `composer install`
 - Build docker with `docker-compose build --pull --no-cache`
 - Go to the directory `my-admin/` and install the admin panel dependencies with `yarn install`
 #### Generate JWT keypair :
