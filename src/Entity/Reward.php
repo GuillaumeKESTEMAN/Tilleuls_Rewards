@@ -5,7 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Repository\RewardRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -23,11 +24,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         "delete"
     ],
     attributes: [
-        "order" => ["distributed" => "DESC", 'date' => "DESC"],
+        "order" => ["distributed" => "ASC", 'date' => "DESC"],
         "security" => "is_granted('ROLE_ADMIN')"
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ["date" => "partial", "distributed" => "exact"])]
+#[ApiFilter(BooleanFilter::class, properties: ["distributed" => "exact"])]
+#[ApiFilter(DateFilter::class, properties: ["date"])]
 class Reward
 {
     #[ORM\Id]

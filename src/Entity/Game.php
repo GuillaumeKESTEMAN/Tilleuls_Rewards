@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +31,8 @@ use Symfony\Component\Uid\Uuid;
         ]
     )
 ]
-#[ApiFilter(SearchFilter::class, properties: ["url" => "exact", "creationDate" => "ipartial"])]
+#[ApiFilter(SearchFilter::class, properties: ["url" => "partial"])]
+#[ApiFilter(DateFilter::class, properties: ["creationDate"])]
 class Game
 {
     #[ORM\Id]

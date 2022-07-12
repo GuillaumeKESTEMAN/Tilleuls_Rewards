@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TweetRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,7 +28,8 @@ use Doctrine\ORM\Mapping as ORM;
         "security" => "is_granted('ROLE_ADMIN')"
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ["tweetId" => "exact", "creationDate" => "exact"])]
+#[ApiFilter(SearchFilter::class, properties: ["tweetId" => "exact"])]
+#[ApiFilter(DateFilter::class, properties: ["creationDate"])]
 class Tweet
 {
     #[ORM\Id]
