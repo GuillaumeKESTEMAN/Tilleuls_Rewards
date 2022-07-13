@@ -11,6 +11,7 @@ import {FileField, FileInput, ReferenceInput, AutocompleteInput, ReferenceField}
 import {parseHydraDocumentation} from "@api-platform/api-doc-parser";
 import authProvider from "./utils/authProvider.tsx";
 import {ENTRYPOINT} from "./config/entrypoint.ts";
+import {LOT_PLACE_HOLDER} from "./config/lotPlaceHolder.ts";
 
 
 const getHeaders = () => localStorage.getItem("token") ? {
@@ -58,7 +59,7 @@ const LotsCreate = props => (
     <CreateGuesser {...props}>
         <InputGuesser source="name"/>
         <InputGuesser source="quantity" defaultValue={0}/>
-        <InputGuesser source="message" multiline />
+        <InputGuesser source="message" multiline placeholder={LOT_PLACE_HOLDER} />
 
         <ReferenceInput
             reference="media_objects"
@@ -73,7 +74,7 @@ const LotsEdit = props => (
     <EditGuesser {...props}>
         <InputGuesser source="name"/>
         <InputGuesser source="quantity"/>
-        <InputGuesser source="message" multiline />
+        <InputGuesser source="message" multiline placeholder={LOT_PLACE_HOLDER} />
 
         <ReferenceInput
             reference="media_objects"

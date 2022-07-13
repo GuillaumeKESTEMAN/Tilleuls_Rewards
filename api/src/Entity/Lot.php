@@ -47,9 +47,9 @@ class Lot
     #[ApiProperty(iri: "https://schema.org/Quantity")]
     private ?int $quantity = null;
 
-    #[ORM\Column(name: 'message', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'message', type: 'string', nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the user name in the message, write : %user%', iri: "https://schema.org/Message")]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the username in the message, write : %username% and same for the userhandle to mention it (%@userhandle%)', iri: "https://schema.org/Message")]
     private ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
@@ -82,10 +82,14 @@ class Lot
         $this->quantity = $quantity;
     }
 
-    public function getMessage(?string $username = null): ?string
+    public function getMessage(?string $username = null, ?string $userhandle = null): ?string
     {
         if (null !== $username) {
-            return str_replace("%user%", $username, $this->message);
+            return str_replace("%username%", $username, $this->message);
+        }
+
+        if (null !== $userhandle) {
+            return str_replace("%@userhandle%", "@".$userhandle, $this->message);
         }
         return $this->message;
     }
