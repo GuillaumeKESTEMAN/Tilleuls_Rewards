@@ -7,6 +7,7 @@ use App\Factory\LotFactory;
 use App\Factory\PlayerFactory;
 use App\Factory\RewardFactory;
 use App\Factory\TweetFactory;
+use App\Factory\TwitterHashtagFactory;
 use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -20,6 +21,7 @@ class AppFixtures extends Fixture
         TweetFactory::new()->createMany(15);
         GameFactory::new()->createMany(10);
         RewardFactory::new()->createMany(10);
+        TwitterHashtagFactory::new()->createMany(10);
 
         // $product = new Product();
         // $manager->persist($product);
