@@ -27,7 +27,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         'post' => [
             'controller' => CreateMediaObjectActionController::class,
             'deserialize' => false,
-            'validation_groups' => ['Default', 'media_object_create'],
+            'validation_groups' => ['media_object_create'],
             'openapi_context' => [
                 'requestBody' => [
                     'content' => [

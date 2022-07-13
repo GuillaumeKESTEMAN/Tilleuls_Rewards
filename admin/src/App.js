@@ -10,6 +10,8 @@ import {parseHydraDocumentation} from "@api-platform/api-doc-parser";
 import authProvider from "./utils/authProvider.tsx";
 import {LotCreate, LotShow, LotEdit, LotsList} from "./components/lot.ts";
 import {MediaObjectCreate, MediaObjectEdit} from "./components/mediaObject.ts";
+import {TwitterHashtagCreate, TwitterHashtagEdit} from "./components/twitterHashtag.ts";
+import {TwitterAccountToFollowCreate, TwitterAccountToFollowEdit, TwitterAccountToFollowList, TwitterAccountToFollowShow} from "./components/twitterAccountToFollow.ts";
 import {ENTRYPOINT} from "./config/entrypoint.ts";
 
 const getHeaders = () => localStorage.getItem("token") ? {
@@ -67,7 +69,9 @@ const AdminLoader = () => {
       <ResourceGuesser name="lots" list={LotsList} show={LotShow} create={LotCreate} edit={LotEdit}/>
       <ResourceGuesser name="rewards"/>
       <ResourceGuesser name="players"/>
-      <ResourceGuesser name="media_objects" edit={MediaObjectEdit} create={MediaObjectCreate}/>
+      <ResourceGuesser name="twitter_account_to_follows" list={TwitterAccountToFollowList} show={TwitterAccountToFollowShow} create={TwitterAccountToFollowCreate} edit={TwitterAccountToFollowEdit} />
+      <ResourceGuesser name="twitter_hashtags" create={TwitterHashtagCreate} edit={TwitterHashtagEdit} />
+      <ResourceGuesser name="media_objects" create={MediaObjectCreate} edit={MediaObjectEdit}/>
     </HydraAdmin>);
   }
 
