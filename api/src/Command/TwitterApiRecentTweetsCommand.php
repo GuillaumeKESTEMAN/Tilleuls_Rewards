@@ -133,6 +133,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
             if (null === $player) {
                 $player = new Player();
+                $player->setName($user->name);
                 $player->setUsername($user->username);
                 $player->setTwitterAccountId($user->id);
 
@@ -148,7 +149,6 @@ class TwitterApiRecentTweetsCommand extends Command
                 $recentTweet = new Tweet();
                 $recentTweet->setPlayer($player);
                 $recentTweet->setTweetId($tweet->id);
-                $recentTweet->setCreationDate($tweetCreationDate);
 
                 $this->tweetRepository->add($recentTweet, true);
 

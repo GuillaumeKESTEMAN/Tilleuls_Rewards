@@ -54,19 +54,4 @@ class TweetRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
             ;
     }
-
-    /**
-     * @return Tweet[] Returns an array of Tweet objects
-     */
-    public function findByPlayerTweets($player, int $maxResults = 10): array
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.player = :player')
-            ->setParameter('player', $player)
-            ->orderBy('t.creationDate', 'DESC')
-            ->setMaxResults($maxResults)
-            ->getQuery()
-            ->getResult()
-            ;
-    }
 }

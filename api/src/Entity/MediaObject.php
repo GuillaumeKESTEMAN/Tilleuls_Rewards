@@ -55,11 +55,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         'get',
         'delete'
     ],
-    attributes: [
-        "order" => ["id" => "DESC"],
-        "security" => "is_granted('ROLE_ADMIN')"
-    ],
-    normalizationContext: ['groups' => ['media_object:read']]
+    normalizationContext: ['groups' => ['media_object:read']],
+    order: ["id" => "DESC"],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial"])]
 class MediaObject

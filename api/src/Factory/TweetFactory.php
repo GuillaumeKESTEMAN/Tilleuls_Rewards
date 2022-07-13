@@ -40,7 +40,6 @@ final class TweetFactory extends ModelFactory
         return [
             // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
             'tweetId' => self::faker()->unique()->uuid,
-            'creationDate' => self::faker()->dateTime,
             'player' => PlayerFactory::random()
         ];
     }

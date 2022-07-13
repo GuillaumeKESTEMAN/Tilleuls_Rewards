@@ -40,7 +40,7 @@ final class RewardFactory extends ModelFactory
         return [
             'lot' => LotFactory::random(),
             'game' => GameFactory::random(),
-            'date' => self::faker()->dateTime,
+            'winDate' => self::faker()->dateTime,
             'distributed' => self::faker()->boolean(),
         ];
     }

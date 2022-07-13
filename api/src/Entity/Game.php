@@ -20,15 +20,10 @@ use Symfony\Component\Uid\Uuid;
         ],
         iri: "https://schema.org/VideoGame",
         itemOperations: [
-            "get",
-            "put",
-            "patch",
-            "delete"
+            "get"
         ],
-        attributes: [
-            "order" => ["creationDate" => "DESC"],
-            "security" => "is_granted('ROLE_ADMIN')"
-        ]
+        order: ["creationDate" => "DESC"],
+        security: "is_granted('ROLE_ADMIN')"
     )
 ]
 #[ApiFilter(SearchFilter::class, properties: ["url" => "partial"])]
@@ -37,7 +32,7 @@ class Game
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy:"CUSTOM")]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private Uuid $id;
@@ -77,11 +72,9 @@ class Game
         return $this->tweet;
     }
 
-    public function setTweet(?Tweet $tweet): self
+    public function setTweet(?Tweet $tweet): void
     {
         $this->tweet = $tweet;
-
-        return $this;
     }
 
     /**
@@ -101,17 +94,14 @@ class Game
     }
 
 
-
     public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    public function setUrl(string $url): self
+    public function setUrl(string $url): void
     {
         $this->url = $url;
-
-        return $this;
     }
 
     public function getScore(): ?int
@@ -119,11 +109,9 @@ class Game
         return $this->score;
     }
 
-    public function setScore(?int $score): self
+    public function setScore(?int $score): void
     {
         $this->score = $score;
-
-        return $this;
     }
 
     public function getCreationDate(): ?\DateTime
@@ -131,11 +119,9 @@ class Game
         return $this->creationDate;
     }
 
-    public function setCreationDate(?\DateTime $creationDate): self
+    public function setCreationDate(?\DateTime $creationDate): void
     {
         $this->creationDate = $creationDate;
-
-        return $this;
     }
 
     public function getPlayDate(): ?\DateTime

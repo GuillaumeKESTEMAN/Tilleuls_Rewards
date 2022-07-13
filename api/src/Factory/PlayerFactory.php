@@ -38,7 +38,7 @@ final class PlayerFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
+            'name' => self::faker()->unique()->name(),
             'username' => self::faker()->unique()->name(),
             'twitterAccountId' => self::faker()->uuid(),
         ];

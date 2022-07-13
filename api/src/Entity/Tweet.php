@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TweetRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,23 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TweetRepository::class)]
 #[ORM\Table(name: '`tweet`')]
 #[ApiResource(
-    collectionOperations: [
-        "get"
-    ],
+    collectionOperations: [],
     iri: "https://schema.org/SocialMediaPosting",
-    itemOperations: [
-        "get",
-        "put",
-        "patch",
-        "delete"
-    ],
-    attributes: [
-        "order" => ["creationDate" => "DESC"],
-        "security" => "is_granted('ROLE_ADMIN')"
-    ]
+    itemOperations: ["get"],
+    order: ["id" => "ASC"],
+    security: "is_granted('ROLE_ADMIN')"
 )]
-#[ApiFilter(SearchFilter::class, properties: ["tweetId" => "exact"])]
-#[ApiFilter(DateFilter::class, properties: ["creationDate"])]
+#[ApiFilter(SearchFilter::class, properties: ["tweetId" => "partial"])]
 class Tweet
 {
     #[ORM\Id]
@@ -46,10 +35,6 @@ class Tweet
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private ?string $tweetId = null;
 
-    #[ORM\Column(name: 'creation_date', type: 'datetime', nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/dateCreated")]
-    private ?\DateTime $creationDate = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -60,11 +45,9 @@ class Tweet
         return $this->player;
     }
 
-    public function setPlayer(?Player $player): self
+    public function setPlayer(?Player $player): void
     {
         $this->player = $player;
-
-        return $this;
     }
 
     public function getTweetId(): ?string
@@ -72,22 +55,8 @@ class Tweet
         return $this->tweetId;
     }
 
-    public function setTweetId(string $tweetId): self
+    public function setTweetId(string $tweetId): void
     {
         $this->tweetId = $tweetId;
-
-        return $this;
-    }
-
-    public function getCreationDate(): ?\DateTime
-    {
-        return $this->creationDate;
-    }
-
-    public function setCreationDate(?\DateTime $creationDate): self
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
     }
 }

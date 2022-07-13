@@ -20,15 +20,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         "get"
     ],
     itemOperations: [
-        "get",
-        "delete"
+        "get"
     ],
-    attributes: [
-        "order" => ["username" => "ASC"],
-        "security" => "is_granted('ROLE_ADMIN')"
-    ]
+    order: ["name" => "ASC"],
+    security: "is_granted('ROLE_ADMIN')"
 )]
-#[ApiFilter(SearchFilter::class, properties: ["username" => "ipartial"])]
+#[ApiFilter(SearchFilter::class, properties: ["username" => "ipartial", "name" => "ipartial"])]
 class Player
 {
     #[ORM\Id]
@@ -36,6 +33,10 @@ class Player
     #[ORM\Column(name: 'id', type: 'integer')]
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private int $id;
+
+    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[ApiProperty(iri: "https://schema.org/name")]
+    private ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, nullable: false)]
     #[ApiProperty(iri: "https://schema.org/name")]
@@ -63,16 +64,30 @@ class Player
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string|null $name
+     */
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username): self
+    public function setUsername(string $username): void
     {
         $this->username = $username;
-
-        return $this;
     }
 
     public function getTwitterAccountId(): ?string
@@ -80,11 +95,9 @@ class Player
         return $this->twitterAccountId;
     }
 
-    public function setTwitterAccountId(string $twitterAccountId): self
+    public function setTwitterAccountId(string $twitterAccountId): void
     {
         $this->twitterAccountId = $twitterAccountId;
-
-        return $this;
     }
 
     public function getLastPlayDate(): ?\DateTime
@@ -105,24 +118,20 @@ class Player
         return $this->tweets;
     }
 
-    public function addTweet(Tweet $tweet): self
+    public function addTweet(Tweet $tweet): void
     {
         $tweet->setPlayer($this);
         if (!in_array($tweet, (array)$this->tweets)) {
             $this->tweets[] = $tweet;
         }
-
-        return $this;
     }
 
-    public function removeTweet(Tweet $tweet): self
+    public function removeTweet(Tweet $tweet): void
     {
         if ($this->tweets->removeElement($tweet)) {
             if ($tweet->getPlayer() === $this) {
                 $tweet->setPlayer(null);
             }
         }
-
-        return $this;
     }
 }

@@ -22,13 +22,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     itemOperations: [
         "get",
         "put",
-        "patch",
         "delete"
     ],
-    attributes: [
-        "order" => ["name" => "ASC", "quantity" => "DESC"],
-        "security" => "is_granted('ROLE_ADMIN')"
-    ]
+    order: ["name" => "ASC", "quantity" => "DESC"],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial"])]
 class Lot
@@ -70,11 +67,9 @@ class Lot
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     public function getQuantity(): ?int
@@ -82,11 +77,9 @@ class Lot
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): self
+    public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
-
-        return $this;
     }
 
     public function getMessage(?string $username = null): ?string
@@ -107,10 +100,8 @@ class Lot
         return $this->image;
     }
 
-    public function setImage(?MediaObject $image): self
+    public function setImage(?MediaObject $image): void
     {
         $this->image = $image;
-
-        return $this;
     }
 }

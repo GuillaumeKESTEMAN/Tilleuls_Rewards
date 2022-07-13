@@ -18,18 +18,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         "get"
     ],
     itemOperations: [
-        "get",
-        "put",
-        "patch",
-        "delete"
+        "get"
     ],
-    attributes: [
-        "order" => ["distributed" => "ASC", 'date' => "DESC"],
-        "security" => "is_granted('ROLE_ADMIN')"
-    ]
+    order: ["distributed" => "ASC", 'winDate' => "DESC"],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[ApiFilter(BooleanFilter::class, properties: ["distributed" => "exact"])]
-#[ApiFilter(DateFilter::class, properties: ["date"])]
+#[ApiFilter(DateFilter::class, properties: ["winDate"])]
 class Reward
 {
     #[ORM\Id]
@@ -47,9 +42,9 @@ class Reward
     #[ApiProperty(writable: false, iri: "https://schema.org/VideoGame")]
     private ?Game $game = null;
 
-    #[ORM\Column(name: 'date', type: 'datetime', nullable: false)]
+    #[ORM\Column(name: 'win_date', type: 'datetime', nullable: false)]
     #[ApiProperty(writable: false, iri: "https://schema.org/DateTime")]
-    private ?\DateTime $date = null;
+    private ?\DateTime $winDate = null;
 
     #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]
     private bool $distributed = false;
@@ -64,11 +59,9 @@ class Reward
         return $this->lot;
     }
 
-    public function setLot(?Lot $lot): self
+    public function setLot(?Lot $lot): void
     {
         $this->lot = $lot;
-
-        return $this;
     }
 
     public function getGame(): ?Game
@@ -76,23 +69,19 @@ class Reward
         return $this->game;
     }
 
-    public function setGame(?Game $game): self
+    public function setGame(?Game $game): void
     {
         $this->game = $game;
-
-        return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getWinDate(): ?\DateTimeInterface
     {
-        return $this->date;
+        return $this->winDate;
     }
 
-    public function setDate(?\DateTimeInterface $date): self
+    public function setWinDate(?\DateTimeInterface $winDate): void
     {
-        $this->date = $date;
-
-        return $this;
+        $this->winDate = $winDate;
     }
 
     public function isDistributed(): ?bool
@@ -100,10 +89,8 @@ class Reward
         return $this->distributed;
     }
 
-    public function setDistributed(bool $distributed): self
+    public function setDistributed(bool $distributed): void
     {
         $this->distributed = $distributed;
-
-        return $this;
     }
 }
