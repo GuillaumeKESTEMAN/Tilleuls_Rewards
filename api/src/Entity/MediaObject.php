@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -62,8 +63,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial"])]
 class MediaObject
 {
-    #[ORM\Id, ORM\Column, ORM\GeneratedValue]
-    private ?int $id = null;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
+    private ?Uuid $id = null;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
@@ -85,7 +89,7 @@ class MediaObject
     #[ORM\Column(name: 'file_path', nullable: true)]
     private ?string $filePath = null;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

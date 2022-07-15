@@ -37,7 +37,7 @@ class Game
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private Uuid $id;
 
-    #[ORM\ManyToOne(targetEntity: Tweet::class)]
+    #[ORM\OneToOne(targetEntity: Tweet::class)]
     #[ORM\JoinColumn(name: 'tweet', nullable: false)]
     #[ApiProperty(iri: "https://schema.org/SocialMediaPosting")]
     private ?Tweet $tweet = null;

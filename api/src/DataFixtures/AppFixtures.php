@@ -18,13 +18,9 @@ class AppFixtures extends Fixture
     {
         LotFactory::new()->createMany(10);
         PlayerFactory::new()->createMany(10);
-        TweetFactory::new()->createMany(15);
         GameFactory::new()->createMany(10);
         RewardFactory::new()->createMany(10);
         TwitterHashtagFactory::new()->createMany(10);
-
-        // $product = new Product();
-        // $manager->persist($product);
 
         $manager->flush();
     }

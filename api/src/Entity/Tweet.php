@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TweetRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TweetRepository::class)]
 #[ORM\Table(name: '`tweet`')]
@@ -22,10 +23,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Tweet
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'id', type: 'integer')]
+    #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
     #[ApiProperty(iri: "https://schema.org/identifier")]
-    private int $id;
+    private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
     #[ORM\JoinColumn(name: 'player', nullable: false)]
@@ -35,7 +37,7 @@ class Tweet
     #[ApiProperty(iri: "https://schema.org/identifier")]
     private ?string $tweetId = null;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

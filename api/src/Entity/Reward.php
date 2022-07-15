@@ -10,6 +10,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Repository\RewardRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: RewardRepository::class)]
 #[ORM\Table(name: '`reward`')]
@@ -28,10 +29,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Reward
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'id', type: 'integer')]
+    #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
     #[ApiProperty(iri: "https://schema.org/identifier")]
-    private int $id;
+    private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Lot::class)]
     #[ORM\JoinColumn(name: 'lot', nullable: true)]
@@ -49,7 +51,7 @@ class Reward
     #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]
     private bool $distributed = false;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

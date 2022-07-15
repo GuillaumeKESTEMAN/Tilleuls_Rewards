@@ -15,6 +15,7 @@ abstract class CommonRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+        return null;
     }
 
     public function remove(object $entity, bool $flush = false): void

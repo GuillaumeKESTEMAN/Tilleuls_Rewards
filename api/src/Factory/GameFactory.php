@@ -38,7 +38,7 @@ final class GameFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'tweet' => TweetFactory::random(),
+            'tweet' => TweetFactory::new(),
             'player' => PlayerFactory::random(),
             'url' => $_ENV['GAME_URL'] . self::faker()->uuid,
             'creationDate' => self::faker()->dateTime
