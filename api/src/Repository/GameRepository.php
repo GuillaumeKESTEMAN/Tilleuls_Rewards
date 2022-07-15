@@ -3,20 +3,18 @@
 namespace App\Repository;
 
 use App\Entity\Game;
-use App\Entity\Tweet;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Game>
+ * @extends CommonRepository<Game>
  *
  * @method Game|null find($id, $lockMode = null, $lockVersion = null)
  * @method Game|null findOneBy(array $criteria, array $orderBy = null)
  * @method Game[]    findAll()
  * @method Game[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GameRepository extends ServiceEntityRepository
+class GameRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -26,34 +24,25 @@ class GameRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function add(Game $game, bool $flush = false): bool
+    public function add(object $entity, bool $flush = false): bool
     {
-        $lastGame = $this->findOneByPlayer($game->getPlayer());
+        $lastGame = $this->findOneByPlayer($entity->getPlayer());
 
         if (null === $lastGame || date_diff($lastGame->getCreationDate(), new \DateTime)->d >= 1) {
-            $game->setCreationDate(new \DateTime);
-            $this->getEntityManager()->persist($game);
-            $game->setUrl($_ENV["GAME_URL"]);
+            $entity->setCreationDate(new \DateTime);
+            $this->getEntityManager()->persist($entity);
+            $entity->setUrl($_ENV["GAME_URL"]);
 
             if ($flush) {
                 $this->getEntityManager()->flush();
 
-                $game->setUrl($game->getUrl() . $game->getId());
-                $this->getEntityManager()->persist($game);
+                $entity->setUrl($entity->getUrl() . $entity->getId());
+                $this->getEntityManager()->persist($entity);
                 $this->getEntityManager()->flush();
             }
             return true;
         }
         return false;
-    }
-
-    public function remove(Game $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
 //    /**

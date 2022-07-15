@@ -3,42 +3,22 @@
 namespace App\Repository;
 
 use App\Entity\Lot;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Lot>
+ * @extends CommonRepository<Lot>
  *
  * @method Lot|null find($id, $lockMode = null, $lockVersion = null)
  * @method Lot|null findOneBy(array $criteria, array $orderBy = null)
  * @method Lot[]    findAll()
  * @method Lot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LotRepository extends ServiceEntityRepository
+class LotRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Lot::class);
-    }
-
-    public function add(Lot $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Lot $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     /**
@@ -47,20 +27,56 @@ class LotRepository extends ServiceEntityRepository
     public function getRandom(int $numberOfLotReturn = 1): ?array
     {
         $rows = $this->createQueryBuilder('l')
-            ->select('COUNT(l.id)')
             ->where('l.quantity > 0')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        $rows = $rows ? $rows[1] : 0;
-        $offset = max(0, rand(0, $rows - $numberOfLotReturn));
-
-        return $this->createQueryBuilder('l')
-            ->setMaxResults($numberOfLotReturn)
-            ->setFirstResult($offset)
             ->getQuery()
             ->getResult();
+
+        $totalQuantity = 0;
+        $numbersLot = [];
+
+        $dataReturn = [];
+
+        for ($i = 0; $i < $numberOfLotReturn; $i++) {
+            foreach ($rows as $row) {
+                if ($row->getQuantity() <= 0) {
+                    continue;
+                }
+
+                $data = [];
+                $data['id'] = $row->getId();
+                $data['min'] = $totalQuantity;
+                $totalQuantity += $row->getQuantity();
+                $data['max'] = $totalQuantity;
+
+                $numbersLot[] = $data;
+            }
+
+            if ($totalQuantity <= 0) {
+                return null;
+            }
+
+            $randomNumber = rand(0, $totalQuantity - 1);
+            $lot = null;
+
+            foreach ($numbersLot as $numberLot) {
+                if ($numberLot['min'] <= $randomNumber && $numberLot['max'] > $randomNumber) {
+                    foreach ($rows as $key => $row) {
+                        if($row->getId() === $numberLot['id']) {
+                            $row->setQuantity($row->getQuantity() - 1);
+
+                            $this->add($row, true);
+
+                            $rows[$key] = $row;
+                            $lot = $row;
+                            break;
+                        }
+                    }
+                }
+            }
+            $dataReturn[] = $lot;
+        }
+
+        return $dataReturn;
     }
 
 //    /**
