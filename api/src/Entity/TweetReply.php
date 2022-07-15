@@ -45,7 +45,7 @@ class TweetReply
 
     #[ORM\Column(name: 'message', type: 'string', nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the username in the message, write : %username%, same for the userhandle (%@userhandle%) and same for game link (%game%)', iri: "https://schema.org/Message")]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention (%@userhandle%) and same for game link (%game%)', iri: "https://schema.org/Message")]
     private ?string $message = null;
 
     public function getId(): Uuid
@@ -70,15 +70,15 @@ class TweetReply
     }
 
     /**
-     * @param string|null $username
+     * @param string|null $name
      * @param string|null $userhandle
      * @param string|null $gameLink
      * @return string|null
      */
-    public function getMessage(?string $username = null, ?string $userhandle = null, ?string $gameLink = null): ?string
+    public function getMessage(?string $name = null, ?string $userhandle = null, ?string $gameLink = null): ?string
     {
-        if (null !== $username) {
-            return str_replace("%username%", $username, $this->message);
+        if (null !== $name) {
+            return str_replace("%player_name%", $name, $this->message);
         }
 
         if (null !== $userhandle) {
