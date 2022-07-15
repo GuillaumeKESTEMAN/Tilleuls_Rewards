@@ -1,6 +1,6 @@
 # Tilleuls_Rewards
 
-### Project initialization :
+### Project Initialization :
 - Install all dependencies of the project with the `make install` command
 
   or
@@ -9,7 +9,7 @@
 #### Generate JWT keypair :
 - Generate JWT keypair with this command : `php bin/console lexik:jwt:generate-keypair`
 
-### Database initialization :
+### Database Initialization :
 - Initialize database with `make new-db`
 
 or
@@ -17,7 +17,7 @@ or
 - Create a new database : `docker-compose exec php bin/console doctrine:database:create`
 - And migrate the migrations : `docker-compose exec php bin/console doctrine:migrations:migrate`
 
-### Database data initialization :
+### Database Data Initialization :
 - Initialize data in database with `docker-compose exec php bin/console doctrine:fixtures:load --no-interaction`
 
 ### Project Launch :
