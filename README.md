@@ -10,7 +10,15 @@
 - Generate JWT keypair with this command : `php bin/console lexik:jwt:generate-keypair`
 
 ### Database initialization :
-- Initialize data in database `docker-compose exec php bin/console doctrine:fixtures:load --no-interaction`
+- Initialize database with `make new-db`
+
+or
+- Drop the existing database if it exists : `docker-compose exec php bin/console doctrine:database:drop --force`
+- Create a new database : `docker-compose exec php bin/console doctrine:database:create`
+- And migrate the migrations : `docker-compose exec php bin/console doctrine:migrations:migrate`
+
+### Database data initialization :
+- Initialize data in database with `docker-compose exec php bin/console doctrine:fixtures:load --no-interaction`
 
 ### Project Launch :
 - Launch this command : `make start` or just `make`

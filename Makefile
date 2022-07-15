@@ -22,3 +22,9 @@ install:
 
 kill-docker-builds:
 	docker-compose stop && docker-compose kill && docker-compose down --volumes --remove-orphans
+
+new-db:
+	docker-compose up -d
+	docker-compose exec php bin/console doctrine:database:drop --force --if-exists
+	docker-compose exec php bin/console doctrine:database:create
+	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
