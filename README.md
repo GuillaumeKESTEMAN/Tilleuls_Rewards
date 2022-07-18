@@ -1,7 +1,7 @@
 # Tilleuls_Rewards
 
 ### Project Initialization :
-- Install all dependencies of the project with the `make install` command
+- Install all dependencies of the project with the `make install` command and then create JWT keypair by the command : `make jwt-keypair`
 
   or
 - Build docker with `docker-compose build --pull --no-cache`
