@@ -14,10 +14,10 @@ stop-all:
 	docker-compose down
 
 install:
-	mkdir -p api/public/media
-	sudo chown -R $(user):docker .
-	chmod -R g+w .
 	docker-compose build --pull --no-cache
+	docker-compose up -d
+	docker-compose exec php bin/console lexik:jwt:generate-keypair --overwrite
+	docker-compose down
 	cd admin/ && yarn install
 
 kill-docker-builds:

@@ -89,10 +89,6 @@ ENV STABILITY ${STABILITY}
 ARG SYMFONY_VERSION=""
 ENV SYMFONY_VERSION ${SYMFONY_VERSION}
 
-# Download the Symfony skeleton and leverage Docker cache layers
-RUN composer create-project "${SKELETON} ${SYMFONY_VERSION}" . --stability=$STABILITY --prefer-dist --no-dev --no-progress --no-interaction; \
-	composer clear-cache
-
 ###> recipes ###
 ###> doctrine/doctrine-bundle ###
 RUN apk add --no-cache --virtual .pgsql-deps postgresql-dev; \
@@ -105,7 +101,7 @@ RUN apk add --no-cache --virtual .pgsql-deps postgresql-dev; \
 COPY . .
 
 RUN set -eux; \
-	mkdir -p var/cache var/log; \
+	mkdir -p var/cache var/log public/media; \
 	composer install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction; \
 	composer dump-autoload --classmap-authoritative --no-dev; \
 	composer symfony:dump-env prod; \
@@ -113,6 +109,7 @@ RUN set -eux; \
 	chmod +x bin/console; sync
 VOLUME /srv/api/var
 VOLUME /srv/api/config/jwt
+VOLUME /srv/api/public/media
 
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]

@@ -5,9 +5,14 @@
 
   or
 - Build docker with `docker-compose build --pull --no-cache`
+- Launch docker-compose with `docker-compose up -d`
+- Generate JWT keypair with `docker-compose exec php bin/console lexik:jwt:generate-keypair`
+- Stop docker-compose with `docker-compose down`
 - Go to the directory `admin/` and install the admin panel dependencies with `yarn install`
-#### Generate JWT keypair :
-- Generate JWT keypair with this command : `php bin/console lexik:jwt:generate-keypair`
+
+### Database Schema :
+
+[On this pdf](/doc/schema.pdf)
 
 ### Database Initialization :
 - Initialize database with `make new-db`
