@@ -1,5 +1,3 @@
-pwd := $(shell pwd)
-
 start:
 	bash -c "trap 'trap - SIGINT SIGTERM ERR; $(MAKE) stop-all; exit 1' SIGINT SIGTERM ERR; $(MAKE) start-all"
 
