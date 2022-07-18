@@ -9,3 +9,5 @@ api_platform:
             apiKey:
                 name: Authorization
                 type: header
+    defaults:
+        security: 'is_granted("ROLE_USER")'

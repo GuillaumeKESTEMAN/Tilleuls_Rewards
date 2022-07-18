@@ -21,16 +21,18 @@ class AddTwitterAccountToFollowActionController extends AbstractController
      */
     public function __invoke(TwitterAccountToFollow $data): TwitterAccountToFollow
     {
+        //TODO custom constraint
         if($data->getTwitterAccountUsername()[0] === '@') {
             $data->setTwitterAccountUsername(substr($data->getTwitterAccountUsername(), 1));
         }
 
-        $user = $this->twitterApi->makeAnGetTwitterApiRequest('users/by/username/' . $data->getTwitterAccountUsername());
+        $user = $this->twitterApi->get('users/by/username/' . $data->getTwitterAccountUsername());
 
         if (property_exists($user, "errors")) {
             throw new BadRequestHttpException($user->errors[0]->detail);
         }
 
+        //TODO persister decoration
         $data->setTwitterAccountId($user->data->id);
         $data->setTwitterAccountName($user->data->name);
 

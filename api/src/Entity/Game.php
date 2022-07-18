@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
-#[ORM\Table(name: '`game`')]
 #[
     ApiResource(
         collectionOperations: [
@@ -22,8 +21,7 @@ use Symfony\Component\Uid\Uuid;
         itemOperations: [
             "get"
         ],
-        order: ["creationDate" => "DESC"],
-        security: "is_granted('ROLE_ADMIN')"
+        order: ["creationDate" => "DESC"]
     )
 ]
 #[ApiFilter(SearchFilter::class, properties: ["url" => "partial"])]
@@ -45,10 +43,6 @@ class Game
     #[ORM\ManyToOne(targetEntity: Player::class)]
     #[ORM\JoinColumn(name: 'player', nullable: false)]
     private ?Player $player = null;
-
-    #[ORM\Column(name: 'url', type: 'string', length: 255, nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/URL")]
-    private ?string $url = null;
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
     #[ApiProperty(iri: "https://schema.org/Rating")]
@@ -91,17 +85,6 @@ class Game
     public function setPlayer(?Player $player): void
     {
         $this->player = $player;
-    }
-
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    public function setUrl(string $url): void
-    {
-        $this->url = $url;
     }
 
     public function getScore(): ?int

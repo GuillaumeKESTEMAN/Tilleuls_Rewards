@@ -16,6 +16,7 @@ services:
             $twitterConsumerSecret: '%env(TWITTER_CONSUMER_SECRET)%'
             $twitterAccessToken: '%env(TWITTER_ACCESS_TOKEN)%'
             $twitterAccessTokenSecret: '%env(TWITTER_ACCESS_TOKEN_SECRET)%'
+            $communicationWebsiteUrl: '%env(COMMUNICATION_WEBSITE_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

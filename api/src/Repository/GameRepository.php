@@ -24,25 +24,22 @@ class GameRepository extends CommonRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function add(object $entity, bool $flush = false): bool
+    public function persistAndFlush(object $entity, bool $flush = false): bool
     {
         $lastGame = $this->findOneByPlayer($entity->getPlayer());
 
-        if (null === $lastGame || date_diff($lastGame->getCreationDate(), new \DateTime)->d >= 1) {
-            $entity->setCreationDate(new \DateTime);
-            $this->getEntityManager()->persist($entity);
-            $entity->setUrl($_ENV["GAME_URL"]);
-
-            if ($flush) {
-                $this->getEntityManager()->flush();
-
-                $entity->setUrl($entity->getUrl() . $entity->getId());
-                $this->getEntityManager()->persist($entity);
-                $this->getEntityManager()->flush();
-            }
-            return true;
+        if (null !== $lastGame && date_diff($lastGame->getCreationDate(), new \DateTime)->d < 1) {
+            return false;
         }
-        return false;
+
+        $entity->setCreationDate(new \DateTime);
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+
+        return true;
     }
 
 //    /**

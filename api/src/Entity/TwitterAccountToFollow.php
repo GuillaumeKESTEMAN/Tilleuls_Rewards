@@ -7,7 +7,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Controller\AddTwitterHashtagActionController;
+use App\Controller\AddTwitterAccountToFollowActionController;
 use App\Repository\TwitterAccountToFollowRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -22,18 +22,17 @@ use Symfony\Component\Validator\Constraints as Assert;
     collectionOperations: [
         "get",
         "post" => [
-            'controller' => AddTwitterHashtagActionController::class
+            'controller' => AddTwitterAccountToFollowActionController::class
         ]
     ],
     itemOperations: [
         "get",
         "put" => [
-            'controller' => AddTwitterHashtagActionController::class
+            'controller' => AddTwitterAccountToFollowActionController::class
         ],
         "delete"
     ],
-    order: ["active" => "DESC", "twitterAccountName" => "ASC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["active" => "DESC", "twitterAccountName" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["twitterAccountName" => "ipartial", "twitterAccountUsername" => "ipartial"])]
 #[ApiFilter(BooleanFilter::class, properties: ["active" => "exact"])]
@@ -53,7 +52,6 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(iri: "https://schema.org/name")]
     private ?string $twitterAccountUsername = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]

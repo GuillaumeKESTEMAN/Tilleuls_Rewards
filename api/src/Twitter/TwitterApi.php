@@ -10,6 +10,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TwitterApi
 {
+    private array $memoize = [];
+
     public function __construct(
         private string $twitterConsumerKey,
         private string $twitterConsumerSecret,
@@ -19,6 +21,9 @@ class TwitterApi
     {
     }
 
+    /**
+     * @return TwitterOAuth
+     */
     private function getConnection(): TwitterOAuth
     {
         return new TwitterOAuth($this->twitterConsumerKey, $this->twitterConsumerSecret, $this->twitterAccessToken, $this->twitterAccessTokenSecret);
@@ -27,23 +32,30 @@ class TwitterApi
     /**
      * @throws TwitterOAuthException
      */
-    public function makeAnGetTwitterApiRequest(string $url, array $params = [], string $apiVersion = '2'): array|object
+    public function get(string $url, array $params = [], string $apiVersion = '2'): array|object
     {
+        $request = serialize([$url, $params]);
+
+        if($response = $this->memoize[$request] ?? null) {
+            return $response;
+        }
+
         $connection = $this->getConnection();
         $connection->setApiVersion($apiVersion);
         $response = $connection->get($url, $params);
 
         if ($connection->getLastHttpCode() === 200) {
+            $this->memoize[$request] = $response;
             return $response;
-        } else {
-            throw new BadRequestHttpException($response->errors[0]->message);
         }
+
+        throw new BadRequestHttpException($response->errors[0]->message);
     }
 
     /**
      * @throws TwitterOAuthException
      */
-    public function makeAnPostTwitterApiRequest(string $url, array $params = [], bool $json = true, string $apiVersion = '2'): array|object
+    public function post(string $url, array $params = [], bool $json = true, string $apiVersion = '2'): array|object
     {
         $connection = $this->getConnection();
         $connection->setApiVersion($apiVersion);
@@ -51,8 +63,8 @@ class TwitterApi
 
         if ($connection->getLastHttpCode() === 201) {
             return $response;
-        } else {
-            throw new BadRequestHttpException($response->errors[0]->message);
         }
+
+        throw new BadRequestHttpException($response->errors[0]->message);
     }
 }

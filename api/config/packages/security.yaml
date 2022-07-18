@@ -8,7 +8,7 @@ security:
         app_user_provider:
             memory:
                 users:
-                    '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: ['ROLE_ADMIN'] }
+                    '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: ['ROLE_USER'] }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

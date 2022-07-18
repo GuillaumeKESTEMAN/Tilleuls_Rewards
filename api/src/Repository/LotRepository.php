@@ -24,55 +24,45 @@ class LotRepository extends CommonRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function getRandom(int $numberOfLotReturn = 1): ?array
+    public function getRandom(int $numberOfLotReturn = 1): array
     {
-        $rows = $this->createQueryBuilder('l')
+        /** @var Lot[] $lots */
+        $lots = $this->createQueryBuilder('l')
             ->where('l.quantity > 0')
             ->getQuery()
             ->getResult();
 
-        $totalQuantity = 0;
-        $numbersLot = [];
-
         $dataReturn = [];
 
         for ($i = 0; $i < $numberOfLotReturn; $i++) {
-            foreach ($rows as $row) {
-                if ($row->getQuantity() <= 0) {
+            $totalQuantity = 0;
+            foreach ($lots as $lot) {
+                if ($lot->getQuantity() <= 0) {
                     continue;
                 }
 
-                $data = [];
-                $data['id'] = $row->getId();
-                $data['min'] = $totalQuantity;
-                $totalQuantity += $row->getQuantity();
-                $data['max'] = $totalQuantity;
-
-                $numbersLot[] = $data;
+                $lot->min = $totalQuantity;
+                $totalQuantity += $lot->getQuantity();
+                $lot->max = $totalQuantity;
             }
 
             if ($totalQuantity <= 0) {
-                return null;
+                return $dataReturn;
             }
 
-            $randomNumber = rand(0, $totalQuantity - 1);
-            $lot = null;
+            $randomNumber = random_int(0, $totalQuantity - 1);
 
-            foreach ($numbersLot as $numberLot) {
-                if ($numberLot['min'] <= $randomNumber && $numberLot['max'] > $randomNumber) {
-                    foreach ($rows as $key => $row) {
-                        if($row->getId() === $numberLot['id']) {
-                            $row->setQuantity($row->getQuantity() - 1);
+            $filteredLots = array_filter($lots, static fn (Lot $lot) => $lot->min <= $randomNumber && $lot->max > $randomNumber);
+            $lot = reset($filteredLots);
 
-                            $this->add($row, true);
-
-                            $rows[$key] = $row;
-                            $lot = $row;
-                            break;
-                        }
-                    }
-                }
+            if (false === $lot) {
+                // TODO add logs
+                return [];
             }
+
+            $lot->setQuantity($lot->getQuantity() - 1);
+            $this->persistAndFlush($lot, true);
+
             $dataReturn[] = $lot;
         }
 

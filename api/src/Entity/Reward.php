@@ -21,8 +21,7 @@ use Symfony\Component\Uid\Uuid;
     itemOperations: [
         "get"
     ],
-    order: ["distributed" => "ASC", 'winDate' => "DESC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["distributed" => "ASC", 'winDate' => "DESC"]
 )]
 #[ApiFilter(BooleanFilter::class, properties: ["distributed" => "exact"])]
 #[ApiFilter(DateFilter::class, properties: ["winDate"])]

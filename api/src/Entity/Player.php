@@ -23,8 +23,7 @@ use Symfony\Component\Uid\Uuid;
     itemOperations: [
         "get"
     ],
-    order: ["name" => "ASC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["name" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["username" => "ipartial", "name" => "ipartial"])]
 class Player
@@ -41,7 +40,6 @@ class Player
     private ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/name")]
     private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]

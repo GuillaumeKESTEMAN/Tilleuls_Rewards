@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Image;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -57,8 +58,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         'delete'
     ],
     normalizationContext: ['groups' => ['media_object:read']],
-    order: ["id" => "DESC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["id" => "DESC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial"])]
 class MediaObject
@@ -70,7 +70,7 @@ class MediaObject
     private ?Uuid $id = null;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['media_object_create'])]
     #[ApiProperty(iri: 'https://schema.org/name')]
     #[Groups(['media_object:read'])]
     public ?string $name = null;
@@ -83,7 +83,19 @@ class MediaObject
      * @Vich\UploadableField(mapping="media_object", fileNameProperty="filePath")
      */
     #[Assert\NotNull(groups: ['media_object_create'])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['media_object_create'])]
+    #[Assert\Image([
+        'maxSize' => "5M",
+        'minWidth' => 100,
+        'maxWidth' => 2000,
+        'minHeight' => 100,
+        'maxHeight' => 2000,
+        'mimeTypes' => [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+        ],
+    ], groups: ['media_object_create'])]
     private ?File $file = null;
 
     #[ORM\Column(name: 'file_path', nullable: true)]

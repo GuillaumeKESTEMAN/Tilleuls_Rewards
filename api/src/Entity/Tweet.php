@@ -16,8 +16,7 @@ use Symfony\Component\Uid\Uuid;
     collectionOperations: [],
     iri: "https://schema.org/SocialMediaPosting",
     itemOperations: ["get"],
-    order: ["id" => "ASC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["id" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["tweetId" => "partial"])]
 class Tweet

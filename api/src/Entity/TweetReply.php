@@ -25,8 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         "put",
         "delete"
     ],
-    order: ["name" => "ASC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["name" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "partial"])]
 class TweetReply
@@ -45,7 +44,7 @@ class TweetReply
 
     #[ORM\Column(name: 'message', type: 'string', nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention (%@userhandle%) and same for game link (%game%)', iri: "https://schema.org/Message")]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention (%@userhandle%) and same for communication website link (%website_url%)', iri: "https://schema.org/Message")]
     private ?string $message = null;
 
     public function getId(): Uuid
@@ -86,7 +85,7 @@ class TweetReply
         }
 
         if (null !== $gameLink) {
-            return str_replace("%game%", $gameLink, $this->message);
+            return str_replace("%website_url%", $gameLink, $this->message);
         }
 
         return $this->message;

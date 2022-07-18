@@ -32,7 +32,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 )]
 class TwitterApiRecentTweetsCommand extends Command
 {
-    public function __construct(private TwitterApi $twitterApi, private PlayerRepository $playerRepository, private TweetRepository $tweetRepository, private GameRepository $gameRepository, private TweetReplyRepository $tweetReplyRepository)
+    public function __construct(private TwitterApi $twitterApi, private PlayerRepository $playerRepository, private TweetRepository $tweetRepository, private GameRepository $gameRepository, private TweetReplyRepository $tweetReplyRepository, private string $communicationWebsiteUrl)
     {
         parent::__construct();
     }
@@ -51,11 +51,10 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function followingMe(string $userId, string $targetId): bool
     {
-        $params = [
+        $friendships = $this->twitterApi->get('friendships/show', [
             'source_id' => $userId,
             'target_id' => $targetId
-        ];
-        $friendships = $this->twitterApi->makeAnGetTwitterApiRequest('friendships/show', $params, '1.1');
+        ], '1.1');
 
         return $friendships->relationship->source->following;
     }
@@ -78,7 +77,7 @@ class TwitterApiRecentTweetsCommand extends Command
             'tweet.fields' => 'created_at'
         ];
 
-        $tweets = $this->twitterApi->makeAnGetTwitterApiRequest('tweets/search/recent', $params);
+        $tweets = $this->twitterApi->get('tweets/search/recent', $params);
         $tweetsData = $tweets->meta->result_count > 0 ? $tweets->data : null;
 
         if (!$tweetsData) {
@@ -112,7 +111,7 @@ class TwitterApiRecentTweetsCommand extends Command
                 }
 
                 if (null === $user) {
-                    $user = $this->twitterApi->makeAnGetTwitterApiRequest('users/' . $tweet->author_id);
+                    $user = $this->twitterApi->get('users/' . $tweet->author_id);
                     $user = $user->data;
                 }
             }
@@ -124,7 +123,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
             if (!$this->followingMe($user->id, $input->getOption('need-follow'))) {
                 if ($input->getOption('reply-game-url')) {
-                    $accountToFollow = $this->twitterApi->makeAnGetTwitterApiRequest('users/' . $input->getOption('need-follow'));
+                    $accountToFollow = $this->twitterApi->get('users/' . $input->getOption('need-follow'));
                     $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow this account: @' . $accountToFollow->data->username;
 
                     $params = [
@@ -134,7 +133,7 @@ class TwitterApiRecentTweetsCommand extends Command
                         ]
                     ];
 
-                    $this->twitterApi->makeAnPostTwitterApiRequest('tweets', $params);
+                    $this->twitterApi->post('tweets', $params);
                 }
                 continue;
             }
@@ -148,7 +147,7 @@ class TwitterApiRecentTweetsCommand extends Command
                 $player->setUsername($user->username);
                 $player->setTwitterAccountId($user->id);
 
-                $this->playerRepository->add($player, true);
+                $this->playerRepository->persistAndFlush($player, true);
             } else {
                 $lastGame = $this->gameRepository->findOneByPlayer($player);
             }
@@ -161,15 +160,15 @@ class TwitterApiRecentTweetsCommand extends Command
                 $recentTweet->setPlayer($player);
                 $recentTweet->setTweetId($tweet->id);
 
-                $this->tweetRepository->add($recentTweet, true);
+                $this->tweetRepository->persistAndFlush($recentTweet, true);
 
                 $game = new Game();
                 $game->setTweet($recentTweet);
                 $game->setPlayer($player);
 
-                if ($this->gameRepository->add($game, true)) {
+                if ($this->gameRepository->persistAndFlush($game, true)) {
                     if ($input->getOption('reply-game-url')) {
-                        $message = $this->tweetReplyRepository->findOneByName("on_new_game")?->getMessage($player->getName(), $player->getUsername(), $game->getUrl()) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $game->getUrl();
+                        $message = $this->tweetReplyRepository->findOneByName("on_new_game")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $this->communicationWebsiteUrl;
 
                         $params = [
                             'text' => $message,
@@ -178,12 +177,12 @@ class TwitterApiRecentTweetsCommand extends Command
                             ]
                         ];
 
-                        $this->twitterApi->makeAnPostTwitterApiRequest('tweets', $params);
+                        $this->twitterApi->post('tweets', $params);
                     }
                 }
             } else {
                 if ($input->getOption('reply-game-url')) {
-                    $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($player->getName(), $player->getUsername(), $game->getUrl()) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $lastGame->getUrl();
+                    $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $this->communicationWebsiteUrl;
 
                     $params = [
                         'text' => $message,
@@ -192,7 +191,7 @@ class TwitterApiRecentTweetsCommand extends Command
                         ]
                     ];
 
-                    $this->twitterApi->makeAnPostTwitterApiRequest('tweets', $params);
+                    $this->twitterApi->post('tweets', $params);
                 }
             }
         }

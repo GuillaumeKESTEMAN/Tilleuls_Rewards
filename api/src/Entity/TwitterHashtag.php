@@ -20,19 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         "get",
-        "post" => [
-            "controller" => AddTwitterHashtagActionController::class,
-        ]
+        "post"
     ],
     itemOperations: [
         "get",
-        "put" => [
-            "controller" => AddTwitterHashtagActionController::class,
-        ],
+        "put",
         "delete"
     ],
-    order: ["active" => "DESC"],
-    security: "is_granted('ROLE_ADMIN')"
+    order: ["active" => "DESC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["hashtag" => "ipartial"])]
 #[ApiFilter(BooleanFilter::class, properties: ["active" => "exact"])]
@@ -70,6 +65,10 @@ class TwitterHashtag
      */
     public function setHashtag(?string $hashtag): void
     {
+        if($hashtag[0] !== '#') {
+            $hashtag = '#' . $hashtag;
+        }
+
         $this->hashtag = $hashtag;
     }
 

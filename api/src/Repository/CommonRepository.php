@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 abstract class CommonRepository extends ServiceEntityRepository
 {
-    public function add(object $entity, bool $flush = false): ?bool
+    public function persistAndFlush(object $entity, bool $flush = false): ?bool
     {
         $this->getEntityManager()->persist($entity);
 
@@ -18,7 +18,7 @@ abstract class CommonRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function remove(object $entity, bool $flush = false): void
+    public function removeAndFlush(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
