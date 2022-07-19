@@ -135,7 +135,7 @@ class TwitterApiRecentTweetsCommand extends Command
                     if ($input->getOption('reply-game-url')) {
                         $twitterAccountsUsernamesToFollow = array_map(static function(TwitterAccountToFollow $twitterAccountToFollow) { return $twitterAccountToFollow->getTwitterAccountUsername(); }, $this->twitterAccountToFollowRepository->getAllActive());
                         $twitterAccountsUsernamesToFollow = implode(', ', $twitterAccountsUsernamesToFollow);
-                        $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow one of this accounts: ' . $twitterAccountsUsernamesToFollow;
+                        $message = $this->tweetReplyRepository->findOneByName("need_to_follow_us")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow one of this accounts: ' . $twitterAccountsUsernamesToFollow;
 
                         $params = [
                             'text' => $message,

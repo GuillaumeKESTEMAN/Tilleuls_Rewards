@@ -87,7 +87,7 @@ class TweetReply
         }
 
         if (null !== $gameLink) {
-            return str_replace("%website_url%", $gameLink, $this->message);
+            return str_replace("%website_url%", $gameLink ?? 'no_link', $this->message);
         }
 
         return $this->message;
