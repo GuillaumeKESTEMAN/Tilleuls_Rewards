@@ -96,6 +96,11 @@ class TwitterAccountToFollow
      */
     public function setTwitterAccountUsername(?string $twitterAccountUsername): void
     {
+        $twitterAccountUsername = str_replace(' ', '', $twitterAccountUsername);
+        if($twitterAccountUsername[0] !== '@') {
+            $twitterAccountUsername = '@' . $twitterAccountUsername;
+        }
+
         $this->twitterAccountUsername = $twitterAccountUsername;
     }
 

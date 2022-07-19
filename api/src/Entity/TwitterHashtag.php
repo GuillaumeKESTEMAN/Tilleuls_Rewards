@@ -65,6 +65,7 @@ class TwitterHashtag
      */
     public function setHashtag(?string $hashtag): void
     {
+        $hashtag = str_replace(' ', '', $hashtag);
         if($hashtag[0] !== '#') {
             $hashtag = '#' . $hashtag;
         }
