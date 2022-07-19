@@ -36,7 +36,7 @@ final class TwitterHashtagFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'hashtag' => self::faker()->word(),
+            'hashtag' => '#' . self::faker()->word(),
             'active' => self::faker()->boolean(),
         ];
     }
