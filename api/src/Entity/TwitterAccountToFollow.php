@@ -14,10 +14,12 @@ use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\AddTwitterAccountToFollowActionController;
 use App\Repository\TwitterAccountToFollowRepository;
+use App\State\TwitterAccountToFollowProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as AcmeAssert;
 
 #[ORM\Entity(repositoryClass: TwitterAccountToFollowRepository::class)]
 #[UniqueEntity('twitterAccountId')]
@@ -25,9 +27,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(controller: AddTwitterAccountToFollowActionController::class),
+        new Post(processor: TwitterAccountToFollowProcessor::class),
         new Get(),
-        new Put(controller: AddTwitterAccountToFollowActionController::class),
+        new Put(processor: TwitterAccountToFollowProcessor::class),
         new Delete()
     ],
     order: ["active" => "DESC", "twitterAccountName" => "ASC"]
@@ -44,16 +46,15 @@ class TwitterAccountToFollow
     private Uuid $id;
 
     #[ORM\Column(name: 'twitter_account_name', type: 'string', length: 255, nullable: false)]
-    #[Assert\NotBlank]
     #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $twitterAccountName = null;
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
+    #[AcmeAssert\ExistsInTwitter]
     private ?string $twitterAccountUsername = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
-    #[Assert\NotBlank]
     #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 
