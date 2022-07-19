@@ -2,24 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use App\Repository\RewardRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: RewardRepository::class)]
-#[ORM\Table(name: '`reward`')]
 #[ApiResource(
-    collectionOperations: [
-        "get"
-    ],
-    itemOperations: [
-        "get"
+    operations: [
+        new GetCollection(),
+        new Get()
     ],
     order: ["distributed" => "ASC", 'winDate' => "DESC"]
 )]
@@ -31,7 +30,7 @@ class Reward
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(iri: "https://schema.org/identifier")]
+    #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Lot::class)]
@@ -40,11 +39,11 @@ class Reward
 
     #[ORM\ManyToOne(targetEntity: Game::class)]
     #[ORM\JoinColumn(name: 'game', nullable: false)]
-    #[ApiProperty(writable: false, iri: "https://schema.org/VideoGame")]
+    #[ApiProperty(writable: false, types: ["https://schema.org/VideoGame"])]
     private ?Game $game = null;
 
     #[ORM\Column(name: 'win_date', type: 'datetime', nullable: false)]
-    #[ApiProperty(writable: false, iri: "https://schema.org/DateTime")]
+    #[ApiProperty(writable: false, types: ["https://schema.org/DateTime"])]
     private ?\DateTime $winDate = null;
 
     #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]

@@ -2,10 +2,14 @@
 // api/src/Entity/MediaObject.php
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\CreateMediaObjectActionController;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,7 +17,6 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\Image;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -24,13 +27,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[UniqueEntity('filePath')]
 #[UniqueEntity('name')]
 #[ApiResource(
-    collectionOperations: [
-        'get',
-        'post' => [
-            'controller' => CreateMediaObjectActionController::class,
-            'deserialize' => false,
-            'validation_groups' => ['media_object_create'],
-            'openapi_context' => [
+    types: ['https://schema.org/MediaObject'],
+    operations: [
+        new GetCollection(),
+        new Post(
+            controller: CreateMediaObjectActionController::class,
+            openapiContext: [
                 'requestBody' => [
                     'content' => [
                         'multipart/form-data' => [
@@ -50,12 +52,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                     ],
                 ],
             ],
-        ],
-    ],
-    iri: 'http://schema.org/MediaObject',
-    itemOperations: [
-        'get',
-        'delete'
+            validationContext: ['groups' => ['Default', 'media_object_create']],
+            deserialize: false,
+        ),
+        new Get(),
+        new Delete()
     ],
     normalizationContext: ['groups' => ['media_object:read']],
     order: ["id" => "DESC"]
@@ -71,11 +72,11 @@ class MediaObject
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
-    #[ApiProperty(iri: 'https://schema.org/name')]
+    #[ApiProperty(types: ['https://schema.org/name'])]
     #[Groups(['media_object:read'])]
     public ?string $name = null;
 
-    #[ApiProperty(writable: false, iri: 'https://schema.org/contentUrl')]
+    #[ApiProperty(writable: false, types: ['https://schema.org/contentUrl'])]
     #[Groups(['media_object:read'])]
     public ?string $contentUrl = null;
 

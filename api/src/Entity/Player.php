@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
 use App\Repository\PlayerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,14 +16,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
-#[ORM\Table(name: '`player`')]
 #[UniqueEntity('name')]
 #[ApiResource(
-    collectionOperations: [
-        "get"
-    ],
-    itemOperations: [
-        "get"
+    operations: [
+        new GetCollection(),
+        new Get()
     ],
     order: ["name" => "ASC"]
 )]
@@ -32,26 +31,26 @@ class Player
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(iri: "https://schema.org/identifier")]
+    #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/name")]
+    #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, nullable: false)]
     private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
-    #[ApiProperty(writable: false, iri: "https://schema.org/identifier")]
+    #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 
     #[ORM\Column(name: 'last_play_date', type: 'datetime', nullable: true)]
-    #[ApiProperty(writable: false, iri: "https://schema.org/DateTime")]
+    #[ApiProperty(writable: false, types: ["https://schema.org/DateTime"])]
     private ?\DateTime $lastPlayDate = null;
 
     #[ORM\OneToMany(mappedBy: 'player', targetEntity: Tweet::class, orphanRemoval: true)]
-    #[ApiProperty(readable: false, writable: false, iri: "https://schema.org/Collection")]
+    #[ApiProperty(readable: false, writable: false, types: ["https://schema.org/Collection"])]
     private Collection $tweets;
 
     public function __construct()

@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\AddTwitterAccountToFollowActionController;
 use App\Repository\TwitterAccountToFollowRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,22 +20,15 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TwitterAccountToFollowRepository::class)]
-#[ORM\Table(name: '`twitter_account_to_follow`')]
 #[UniqueEntity('twitterAccountId')]
 #[UniqueEntity('twitterAccountName')]
 #[ApiResource(
-    collectionOperations: [
-        "get",
-        "post" => [
-            'controller' => AddTwitterAccountToFollowActionController::class
-        ]
-    ],
-    itemOperations: [
-        "get",
-        "put" => [
-            'controller' => AddTwitterAccountToFollowActionController::class
-        ],
-        "delete"
+    operations: [
+        new GetCollection(),
+        new Post(controller: AddTwitterAccountToFollowActionController::class),
+        new Get(),
+        new Put(controller: AddTwitterAccountToFollowActionController::class),
+        new Delete()
     ],
     order: ["active" => "DESC", "twitterAccountName" => "ASC"]
 )]
@@ -42,12 +40,12 @@ class TwitterAccountToFollow
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(iri: "https://schema.org/identifier")]
+    #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
     #[ORM\Column(name: 'twitter_account_name', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(iri: "https://schema.org/name")]
+    #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $twitterAccountName = null;
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, nullable: false)]
@@ -56,7 +54,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(writable: false, iri: "https://schema.org/identifier")]
+    #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 
     #[ORM\Column(name: 'active', type: 'boolean', nullable: false)]

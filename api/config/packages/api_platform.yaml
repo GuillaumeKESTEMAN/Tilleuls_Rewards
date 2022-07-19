@@ -11,3 +11,4 @@ api_platform:
                 type: header
     defaults:
         security: 'is_granted("ROLE_USER")'
+    metadata_backward_compatibility_layer: false

@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -14,12 +16,10 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[
     ApiResource(
-        collectionOperations: [
-            "get"
-        ],
-        iri: "https://schema.org/VideoGame",
-        itemOperations: [
-            "get"
+        types: ["https://schema.org/VideoGame"],
+        operations: [
+            new GetCollection(),
+            new Get(),
         ],
         order: ["creationDate" => "DESC"]
     )
@@ -32,12 +32,12 @@ class Game
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(iri: "https://schema.org/identifier")]
+    #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
     #[ORM\OneToOne(targetEntity: Tweet::class)]
     #[ORM\JoinColumn(name: 'tweet', nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/SocialMediaPosting")]
+    #[ApiProperty(types: ["https://schema.org/SocialMediaPosting"])]
     private ?Tweet $tweet = null;
 
     #[ORM\ManyToOne(targetEntity: Player::class)]
@@ -45,15 +45,15 @@ class Game
     private ?Player $player = null;
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
-    #[ApiProperty(iri: "https://schema.org/Rating")]
+    #[ApiProperty(types: ["https://schema.org/Rating"])]
     private ?int $score = null;
 
     #[ORM\Column(name: 'creation_date', type: 'datetime', nullable: false)]
-    #[ApiProperty(iri: "https://schema.org/dateCreated")]
+    #[ApiProperty(types: ["https://schema.org/dateCreated"])]
     private ?\DateTime $creationDate = null;
 
     #[ORM\Column(name: 'play_date', type: 'datetime', nullable: true)]
-    #[ApiProperty(iri: "https://schema.org/DateTime")]
+    #[ApiProperty(types: ["https://schema.org/DateTime"])]
     private ?\DateTime $playDate = null;
 
     public function getId(): ?Uuid

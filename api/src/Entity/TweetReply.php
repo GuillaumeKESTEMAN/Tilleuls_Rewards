@@ -2,10 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TweetReplyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,17 +18,14 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TweetReplyRepository::class)]
-#[ORM\Table(name: '`tweet_reply`')]
 #[UniqueEntity('name')]
 #[ApiResource(
-    collectionOperations: [
-        "get",
-        "post"
-    ],
-    itemOperations: [
-        "get",
-        "put",
-        "delete"
+    operations: [
+        new GetCollection(),
+        new Post(),
+        new Get(),
+        new Put(),
+        new Delete()
     ],
     order: ["name" => "ASC"]
 )]
@@ -34,17 +36,17 @@ class TweetReply
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(iri: "https://schema.org/identifier")]
+    #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(iri: "https://schema.org/name")]
+    #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $name = null;
 
     #[ORM\Column(name: 'message', type: 'string', nullable: false)]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention (%@userhandle%) and same for communication website link (%website_url%)', iri: "https://schema.org/Message")]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention (%@userhandle%) and same for communication website link (%website_url%)', types: ["https://schema.org/Message"])]
     private ?string $message = null;
 
     public function getId(): Uuid
