@@ -20,20 +20,18 @@ class TwitterHashtagRepository extends CommonRepository
         parent::__construct($registry, TwitterHashtag::class);
     }
 
-//    /**
-//     * @return TwitterHashtag[] Returns an array of TwitterHashtag objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return TwitterHashtag[] Returns an array of TwitterHashtag objects
+     */
+    public function getAllActive(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.active = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?TwitterHashtag
 //    {

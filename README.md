@@ -38,9 +38,7 @@ or
 - If you didn't use the make command, you must terminate docker-compose with `docker-compose down`
 
 ### Project Custom Commands :
-#### app:comment:getRecentTweets (`docker-compose exec php bin/console app:comment:getRecentTweets query`)
+#### app:comment:getRecentTweets (`docker-compose exec php bin/console app:comment:getRecentTweets`)
 Command to get recent tweets with a query to update DB and a query to reply to play a game
-- query -> Argument to the query parameter (ex : `#something`)
-- need-follow -> Twitter account id for the condition that asks if the Twitter account that made the tweet follows this account (ex : `--need-follow 123456`)
 - update-db -> Boolean to update database (ex : `--update-db`)
 - reply-game-url -> Boolean to reply with game URL (ex : `--reply-game-url`)

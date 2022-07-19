@@ -35,13 +35,16 @@ class TwitterAccountToFollowRepository extends CommonRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?TwitterAccountToFollow
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @return TwitterAccountToFollow[]
+     */
+    public function getAllActive(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.active = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
