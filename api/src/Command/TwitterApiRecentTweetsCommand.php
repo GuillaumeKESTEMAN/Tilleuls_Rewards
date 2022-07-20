@@ -18,6 +18,7 @@ use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
+use stdClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -43,8 +44,53 @@ class TwitterApiRecentTweetsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('update-db', null, InputOption::VALUE_NONE, 'Update database')
-            ->addOption('reply-game-url', null, InputOption::VALUE_NONE, 'Reply with game URL');
+            ->addOption('update-db', null, InputOption::VALUE_OPTIONAL, 'Update database', false)
+            ->addOption('reply-game-url', null, InputOption::VALUE_OPTIONAL, 'Reply with game URL', false);
+    }
+
+    /**
+     * @param string $hashtag
+     * @return stdClass|null
+     * @throws TwitterOAuthException
+     */
+    private function getRecentTweets(string $hashtag): ?stdClass
+    {
+        $params = [
+            'query' => $hashtag,
+            'expansions' => 'author_id',
+            'tweet.fields' => 'created_at'
+        ];
+
+        $tweets = $this->twitterApi->get('tweets/search/recent', $params);
+        return $tweets->meta->result_count > 0 ? $tweets : null;
+    }
+
+    /**
+     * @param stdClass $tweets
+     * @param stdClass $tweet
+     * @param int $index
+     * @return stdClass|null
+     * @throws TwitterOAuthException
+     */
+    private function setUser(stdClass $tweets, stdClass $tweet, int $index): ?stdClass
+    {
+        $user = null;
+        try {
+            $user = $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : throw new Exception;
+        } catch (Exception) {
+            foreach ($tweets->includes->users as $tweetUser) {
+                if ($tweetUser->id === $tweet->author_id) {
+                    $user = $tweetUser;
+                    break;
+                }
+            }
+
+            if (null === $user) {
+                $user = $this->twitterApi->get('users/' . $tweet->author_id);
+                $user = $user->data ?? null;
+            }
+        }
+        return $user;
     }
 
     /**
@@ -60,12 +106,59 @@ class TwitterApiRecentTweetsCommand extends Command
                 'target_id' => $twitterAccountToFollow->getTwitterAccountId()
             ], '1.1');
 
-            if($friendships->relationship->source->following) {
+            if ($friendships->relationship->source->following) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param bool $replyGameUrl
+     * @param stdClass $user
+     * @param stdClass $tweet
+     * @return void
+     * @throws NonUniqueResultException
+     * @throws TwitterOAuthException
+     */
+    private function notFollowAccounts(bool $replyGameUrl, stdClass $user, stdClass $tweet): void
+    {
+        if ($replyGameUrl) {
+            $twitterAccountsUsernamesToFollow = array_map(static function (TwitterAccountToFollow $twitterAccountToFollow) {
+                return $twitterAccountToFollow->getTwitterAccountUsername();
+            }, $this->twitterAccountToFollowRepository->getAllActive());
+            $twitterAccountsUsernamesToFollow = implode(', ', $twitterAccountsUsernamesToFollow);
+            $message = $this->tweetReplyRepository->findOneByName("need_to_follow_us")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow one of this accounts: ' . $twitterAccountsUsernamesToFollow;
+
+            $params = [
+                'text' => $message,
+                'reply' => [
+                    'in_reply_to_tweet_id' => $tweet->id
+                ]
+            ];
+
+            $this->twitterApi->post('tweets', $params);
+        }
+    }
+
+
+    /**
+     * @param string $tweetId
+     * @param string $message
+     * @return void
+     * @throws TwitterOAuthException
+     */
+    private function newReply(string $tweetId, string $message): void
+    {
+        $params = [
+            'text' => $message,
+            'reply' => [
+                'in_reply_to_tweet_id' => $tweetId
+            ]
+        ];
+
+        $this->twitterApi->post('tweets', $params);
     }
 
     /**
@@ -81,71 +174,33 @@ class TwitterApiRecentTweetsCommand extends Command
         $hashtags = $this->twitterHashtagRepository->getAllActive();
 
         foreach ($hashtags as $hashtag) {
-            $params = [
-                'query' => $hashtag->getHashtag(),
-                'expansions' => 'author_id',
-                'tweet.fields' => 'created_at'
-            ];
+            $tweets = $this->getRecentTweets($hashtag->getHashtag());
 
-            $tweets = $this->twitterApi->get('tweets/search/recent', $params);
-            $tweetsData = $tweets->meta->result_count > 0 ? $tweets->data : null;
-
-            if (!$tweetsData) {
-                $io->success('Aucun tweet trouvé');
-                return Command::SUCCESS;
+            if (!$tweets) {
+                $io->success('Aucun tweet trouvé pour : ' . $hashtag->getHashtag());
+                continue;
             }
 
-            $io->success('Tweets trouvés');
+            $io->success('Tweets trouvés pour : ' . $hashtag->getHashtag());
 
             if (!$input->getOption('update-db')) {
-                return Command::SUCCESS;
+                continue;
             }
 
-            foreach ($tweetsData as $index => $tweet) {
+            foreach ($tweets->data as $index => $tweet) {
                 $tweetAlreadyExists = $this->tweetRepository->findOneByTweetId($tweet->id);
 
                 if (null !== $tweetAlreadyExists) {
                     continue;
                 }
 
-                $user = null;
-
-                try {
-                    $user = $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : throw new Exception;
-                } catch (Exception) {
-                    foreach ($tweets->includes->users as $tweetUser) {
-                        if ($tweetUser->id === $tweet->author_id) {
-                            $user = $tweetUser;
-                            break;
-                        }
-                    }
-
-                    if (null === $user) {
-                        $user = $this->twitterApi->get('users/' . $tweet->author_id);
-                        $user = $user->data;
-                    }
-                }
-
-                if (null === $user) {
+                if (null === ($user = $this->setUser($tweets, $tweet, $index))) {
                     $io->error('User not found for the tweet n°' . $tweet->id);
                     continue;
                 }
 
                 if (!$this->followingMe($user->id)) {
-                    if ($input->getOption('reply-game-url')) {
-                        $twitterAccountsUsernamesToFollow = array_map(static function(TwitterAccountToFollow $twitterAccountToFollow) { return $twitterAccountToFollow->getTwitterAccountUsername(); }, $this->twitterAccountToFollowRepository->getAllActive());
-                        $twitterAccountsUsernamesToFollow = implode(', ', $twitterAccountsUsernamesToFollow);
-                        $message = $this->tweetReplyRepository->findOneByName("need_to_follow_us")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow one of this accounts: ' . $twitterAccountsUsernamesToFollow;
-
-                        $params = [
-                            'text' => $message,
-                            'reply' => [
-                                'in_reply_to_tweet_id' => $tweet->id
-                            ]
-                        ];
-
-                        $this->twitterApi->post('tweets', $params);
-                    }
+                    $this->notFollowAccounts($input->getOption('reply-game-url'), $user, $tweet);
                     continue;
                 }
 
@@ -164,9 +219,6 @@ class TwitterApiRecentTweetsCommand extends Command
                 }
 
                 if (null === $lastGame || null === $lastGame->getPlayDate() || date_diff($lastGame->getPlayDate(), new \DateTime)->d >= 1) {
-                    $tweetCreationDate = new DateTime($tweet->created_at, new DateTimeZone('UTC'));
-                    $tweetCreationDate->setTimezone(new DateTimeZone('Europe/Paris'));
-
                     $recentTweet = new Tweet();
                     $recentTweet->setPlayer($player);
                     $recentTweet->setTweetId($tweet->id);
@@ -177,33 +229,13 @@ class TwitterApiRecentTweetsCommand extends Command
                     $game->setTweet($recentTweet);
                     $game->setPlayer($player);
 
-                    if ($this->gameRepository->persistAndFlush($game, true)) {
-                        if ($input->getOption('reply-game-url')) {
-                            $message = $this->tweetReplyRepository->findOneByName("on_new_game")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $this->communicationWebsiteUrl;
-
-                            $params = [
-                                'text' => $message,
-                                'reply' => [
-                                    'in_reply_to_tweet_id' => $tweet->id
-                                ]
-                            ];
-
-                            $this->twitterApi->post('tweets', $params);
-                        }
+                    if ($this->gameRepository->persistAndFlush($game, true) && $input->getOption('reply-game-url')) {
+                        $message = $this->tweetReplyRepository->findOneByName("on_new_game")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $this->communicationWebsiteUrl;
+                        $this->newReply($tweet->id, $message);
                     }
-                } else {
-                    if ($input->getOption('reply-game-url')) {
-                        $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $this->communicationWebsiteUrl;
-
-                        $params = [
-                            'text' => $message,
-                            'reply' => [
-                                'in_reply_to_tweet_id' => $tweet->id
-                            ]
-                        ];
-
-                        $this->twitterApi->post('tweets', $params);
-                    }
+                } else if ($input->getOption('reply-game-url')) {
+                    $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $this->communicationWebsiteUrl;
+                    $this->newReply($tweet->id, $message);
                 }
             }
         }
