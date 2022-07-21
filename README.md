@@ -37,6 +37,13 @@ or
 - Terminate the command `make`/`make start`/`yarn start`
 - If you didn't use the make command, you must terminate docker-compose with `docker-compose down`
 
+### Project Tests :
+- Launch the project
+- Import a picture in [api/fixtures/files/](https://github.com/GuillaumeKESTEMAN/Tilleuls_Rewards/tree/main/api/fixtures/files) with the name : 'image.jpg' (for MediaObject tests)
+- To launch all tests use : `make tests`
+- To launch security tests use : `make tests-security`
+- To launch api tests use : `make tests-api`
+
 ### Project Custom Commands :
 #### app:comment:getRecentTweets (`docker-compose exec php bin/console app:comment:getRecentTweets`)
 Command to get recent tweets with a query to update DB and a query to reply to play a game

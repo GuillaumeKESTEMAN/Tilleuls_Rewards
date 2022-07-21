@@ -61,7 +61,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     normalizationContext: ['groups' => ['media_object:read']],
     order: ["id" => "DESC"]
 )]
-#[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial"])]
+#[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial", "name" => "partial"])]
 class MediaObject
 {
     #[ORM\Id]

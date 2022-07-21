@@ -18,10 +18,14 @@ class TwitterAccountToFollowProcessor implements ProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param $data
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
+     * @return object
      * @throws TwitterOAuthException
      */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
         $user = $this->twitterApi->get('users/by/username/' . substr($data->getTwitterAccountUsername(), 1));
 

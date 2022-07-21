@@ -23,7 +23,7 @@ use App\Validator as AcmeAssert;
 
 #[ORM\Entity(repositoryClass: TwitterAccountToFollowRepository::class)]
 #[UniqueEntity('twitterAccountId')]
-#[UniqueEntity('twitterAccountName')]
+#[UniqueEntity('twitterAccountUsername')]
 #[ApiResource(
     operations: [
         new GetCollection(),
