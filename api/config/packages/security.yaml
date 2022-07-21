@@ -50,7 +50,12 @@ when@test:
             # are not important, waste resources and increase test times. The following
             # reduces the work factor to the lowest possible values.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: auto
+                algorithm: plaintext
                 cost: 4 # Lowest possible value for bcrypt
                 time_cost: 3 # Lowest possible value for argon
                 memory_cost: 10 # Lowest possible value for argon
+        providers:
+            app_user_provider:
+                memory:
+                    users:
+                        '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: [ 'ROLE_USER' ] }
