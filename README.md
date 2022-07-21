@@ -14,6 +14,8 @@
 
 [On this pdf](/doc/schema.pdf)
 
+[On this sql file](/doc/schema.sql)
+
 ### Database Initialization :
 - Initialize database with `make new-db`
 
