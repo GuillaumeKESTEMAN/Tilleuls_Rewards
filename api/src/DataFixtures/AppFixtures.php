@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
     {
         if($_ENV['APP_ENV'] === 'dev') {
             LotFactory::new()->createMany(20);
-            PlayerTestFactory::new()->createMany(20);
+            PlayerFactory::new()->createMany(20);
             GameFactory::new()->createMany(20);
             RewardFactory::new()->createMany(20);
             TwitterHashtagFactory::new()->createMany(20);

@@ -37,7 +37,7 @@ final class PlayerFactory extends ModelFactory
     {
         return [
             'name' => self::faker()->unique()->name(),
-            'username' => self::faker()->unique()->name(),
+            'username' => '@'.self::faker()->unique()->word(),
             'twitterAccountId' => self::faker()->uuid(),
         ];
     }
