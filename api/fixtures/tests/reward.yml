@@ -1,0 +1,12 @@
+App\Entity\Reward:
+    reward_{1..59}:
+        lot: '@lot_<numberBetween(1, 59)>'
+        game (unique): '@game_<numberBetween(1, 59)>'
+        winDate: <date_create()>
+        distributed: <boolean()>
+    
+    reward_60:
+        lot: '@lot_60'
+        game (unique): '@game_60'
+        winDate: <identity(new \DateTime('2022-01-01 12:30:00.000000'))>
+        distributed: <boolean()>

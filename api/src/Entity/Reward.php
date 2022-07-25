@@ -37,8 +37,8 @@ class Reward
     #[ORM\JoinColumn(name: 'lot', nullable: true)]
     private ?Lot $lot = null;
 
-    #[ORM\ManyToOne(targetEntity: Game::class)]
-    #[ORM\JoinColumn(name: 'game', nullable: false)]
+    #[ORM\OneToOne(targetEntity: Game::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'game', unique: true, nullable: false)]
     #[ApiProperty(writable: false, types: ["https://schema.org/VideoGame"])]
     private ?Game $game = null;
 

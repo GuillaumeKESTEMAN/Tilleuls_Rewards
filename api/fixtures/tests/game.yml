@@ -1,0 +1,9 @@
+App\Entity\Game:
+    game_{1..59}:
+        tweet (unique): '@tweet_<numberBetween(1, 59)>'
+        player: '@player_<numberBetween(1, 59)>'
+        creationDate: <date_create()>
+    game_60:
+        tweet (unique): '@tweet_60'
+        player: '@player_60'
+        creationDate: <identity(new \DateTime('2022-01-01 12:30:00.000000'))>

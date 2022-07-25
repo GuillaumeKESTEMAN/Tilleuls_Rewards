@@ -35,12 +35,12 @@ class Game
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\OneToOne(targetEntity: Tweet::class)]
+    #[ORM\OneToOne(targetEntity: Tweet::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'tweet', nullable: false)]
     #[ApiProperty(types: ["https://schema.org/SocialMediaPosting"])]
     private ?Tweet $tweet = null;
 
-    #[ORM\ManyToOne(targetEntity: Player::class)]
+    #[ORM\ManyToOne(targetEntity: Player::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'player', nullable: false)]
     private ?Player $player = null;
 

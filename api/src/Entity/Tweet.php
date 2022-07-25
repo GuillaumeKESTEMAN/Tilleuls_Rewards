@@ -29,7 +29,7 @@ class Tweet
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
+    #[ORM\ManyToOne(targetEntity: Player::class, cascade: ['persist'], inversedBy: 'tweets')]
     #[ORM\JoinColumn(name: 'player', nullable: false)]
     private ?Player $player = null;
 

@@ -2,4 +2,6 @@ when@dev: &dev
     hautelook_alice:
         fixtures_path: fixtures
 
-when@test: *dev
+when@test: &test
+    hautelook_alice:
+        fixtures_path: fixtures/tests

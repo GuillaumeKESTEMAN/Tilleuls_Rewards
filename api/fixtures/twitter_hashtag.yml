@@ -1,0 +1,4 @@
+App\Entity\TwitterHashtag:
+    twitter_hashtag_{1..20}:
+        hashtag: <word()>
+        active: <boolean()>

@@ -1,0 +1,4 @@
+App\Entity\TwitterHashtag:
+    twitter_hashtag:
+        hashtag: getTest
+        active: <boolean()>

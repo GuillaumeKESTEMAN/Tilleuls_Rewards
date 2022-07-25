@@ -25,14 +25,14 @@ or
 - And migrate the migrations : `docker-compose exec php bin/console doctrine:migrations:migrate`
 
 ### Database Data Initialization :
-- Initialize data in database with `docker-compose exec php bin/console doctrine:fixtures:load --no-interaction`
+- Initialize data in database with `docker-compose exec php bin/console hautelook:fixtures:load`
 
 ### Project Launch :
 - Launch this command : `make start` or just `make`
 
 or
 - Open a terminal in the root and launch this command : `docker-compose up -d`
-- Initialize the database with : `docker-compose exec php bin/console doctrine:fixtures:load`
+- Initialize the database with : `docker-compose exec php bin/console hautelook:fixtures:load`
 - And go to the `admin/` directory and launch this command : `yarn start`
 
 ### Project Stop :
@@ -41,7 +41,7 @@ or
 
 ### Project Tests :
 - Launch the project
-- Import a picture in [api/fixtures/files/](https://github.com/GuillaumeKESTEMAN/Tilleuls_Rewards/tree/main/api/fixtures/files) with the name : 'image.jpg' (for MediaObject tests)
+- Import a picture in [api/fixtures/tests/files/](https://github.com/GuillaumeKESTEMAN/Tilleuls_Rewards/tree/main/api/fixtures/files) with the name : 'image.jpg' (for MediaObject tests)
 - To launch all tests use : `make tests`
 - To launch security tests use : `make tests-security`
 - To launch api tests use : `make tests-api`

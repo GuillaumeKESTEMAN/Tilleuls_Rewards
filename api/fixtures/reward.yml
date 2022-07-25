@@ -1,0 +1,6 @@
+App\Entity\Reward:
+    reward_{1..20}:
+        lot: '@lot_<numberBetween(1, 20)>'
+        game (unique): '@game_<numberBetween(1, 20)>'
+        winDate: <date_create()>
+        distributed: <boolean()>

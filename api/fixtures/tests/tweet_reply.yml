@@ -1,0 +1,4 @@
+App\Entity\TweetReply:
+    tweet_reply:
+        name: on_new_game
+        message: <sentence()>

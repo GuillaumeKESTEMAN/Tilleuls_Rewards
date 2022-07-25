@@ -1,0 +1,10 @@
+App\Entity\Player:
+    player_{1..59}:
+        name: <name()>
+        username: \@<username()>
+        twitterAccountId: <uniqid()>
+
+    player_60:
+        name: Test Account Name
+        username: \@TestAccountUsername
+        twitterAccountId: <uniqid()>

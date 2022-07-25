@@ -92,3 +92,9 @@ else
 	docker-compose exec php bin/console --env=test doctrine:fixtures:load --no-interaction
 	docker-compose exec php bin/phpunit tests/Api
 endif
+
+fixtures:
+	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
+
+fixtures-test:
+	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
