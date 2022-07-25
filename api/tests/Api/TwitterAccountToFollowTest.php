@@ -6,6 +6,7 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\TwitterAccountToFollow;
+use App\Tests\Security\LoginTest;
 use DateTime;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -25,10 +26,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/twitter_account_to_follows', ['auth_bearer' => $token]);
 
@@ -61,11 +59,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testGetTwitterAccountToFollow(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(TwitterAccountToFollow::class, ['twitterAccountUsername' => '@me']);
@@ -92,11 +86,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testCreateTwitterAccountToFollow(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $response = static::createClient()->request('POST', '/api/twitter_account_to_follows', [
             'auth_bearer' => $token,
@@ -127,10 +117,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testCreateInvalidTwitterAccountToFollow(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $invalidTwitterUsernameAccount = 'invalidTwitterUsernameAccount';
 
@@ -162,10 +149,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testUpdateTwitterAccountToFollow(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
@@ -194,10 +178,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testDeleteTwitterAccountToFollow(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(TwitterAccountToFollow::class, ['twitterAccountUsername' => '@symfony']);

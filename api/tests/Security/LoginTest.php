@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Security;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class LoginTest extends ApiTestCase
@@ -22,5 +26,26 @@ class LoginTest extends ApiTestCase
         self::assertResponseIsSuccessful();
 
         self::assertResponseHeaderSame('content-type', 'application/json');
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public static function getLoginToken(): string
+    {
+        $token = static::createClient()->request('POST', '/api/login', ['json' => [
+            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
+            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
+        ]]);
+
+        self::assertResponseIsSuccessful();
+
+        self::assertResponseHeaderSame('content-type', 'application/json');
+
+        return $token->toArray()['token'];
     }
 }

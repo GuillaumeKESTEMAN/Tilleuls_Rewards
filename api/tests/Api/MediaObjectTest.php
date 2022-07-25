@@ -6,6 +6,7 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\MediaObject;
+use App\Tests\Security\LoginTest;
 use DateTime;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -26,10 +27,7 @@ class MediaObjectTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/media_objects', ['auth_bearer' => $token]);
 
@@ -62,10 +60,7 @@ class MediaObjectTest extends ApiTestCase
      */
     public function testGetMediaObject(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $iri = $this->findIriBy(MediaObject::class, ['filePath' => 'image.jpg']);
 
@@ -90,10 +85,7 @@ class MediaObjectTest extends ApiTestCase
      */
     public function testCreateAMediaObject(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $file = new UploadedFile('fixtures/files/test_image.jpg', 'test_image.jpg');
 
@@ -127,10 +119,7 @@ class MediaObjectTest extends ApiTestCase
      */
     public function testCreateInvalidMediaObject(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $file = new UploadedFile('fixtures/files/invalid_file.txt', 'invalid_file.txt');
 
@@ -184,10 +173,7 @@ class MediaObjectTest extends ApiTestCase
      */
     public function testDeleteMediaObject(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $iri = $this->findIriBy(MediaObject::class, ['name' => 'My file uploaded']);
 

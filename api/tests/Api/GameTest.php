@@ -6,6 +6,7 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Game;
+use App\Tests\Security\LoginTest;
 use DateTime;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -24,10 +25,7 @@ class GameTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/games', ['auth_bearer' => $token]);
 
@@ -67,10 +65,7 @@ class GameTest extends ApiTestCase
      */
     public function testGetGame(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $iri = $this->findIriBy(Game::class, ['creationDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 

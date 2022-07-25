@@ -6,6 +6,7 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\TwitterHashtag;
+use App\Tests\Security\LoginTest;
 use DateTime;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -25,10 +26,7 @@ class TwitterHashtagTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/twitter_hashtags', ['auth_bearer' => $token]);
 
@@ -68,11 +66,7 @@ class TwitterHashtagTest extends ApiTestCase
      */
     public function testGetTwitterHashtag(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest']);
@@ -99,11 +93,7 @@ class TwitterHashtagTest extends ApiTestCase
      */
     public function testCreateTwitterHashtag(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $response = static::createClient()->request('POST', '/api/twitter_hashtags', [
             'auth_bearer' => $token,
@@ -134,10 +124,7 @@ class TwitterHashtagTest extends ApiTestCase
      */
     public function testUpdateTwitterHashtag(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
@@ -164,10 +151,7 @@ class TwitterHashtagTest extends ApiTestCase
      */
     public function testDeleteTwitterHashtag(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest2.0']);

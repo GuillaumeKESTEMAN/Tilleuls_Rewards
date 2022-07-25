@@ -4,6 +4,7 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\TweetReply;
+use App\Tests\Security\LoginTest;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -22,10 +23,7 @@ class TweetReplyTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/tweet_replies', ['auth_bearer' => $token]);
 
@@ -58,11 +56,7 @@ class TweetReplyTest extends ApiTestCase
      */
     public function testGetTweetReply(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(TweetReply::class, ['name' => 'on_new_game']);
@@ -89,11 +83,7 @@ class TweetReplyTest extends ApiTestCase
      */
     public function testCreateTweetReply(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $response = static::createClient()->request('POST', '/api/tweet_replies', [
             'auth_bearer' => $token,
@@ -124,10 +114,7 @@ class TweetReplyTest extends ApiTestCase
      */
     public function testUpdateTweetReply(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
@@ -155,10 +142,7 @@ class TweetReplyTest extends ApiTestCase
      */
     public function testDeleteTweetReply(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(TweetReply::class, ['name' => 'need_to_follow_us']);

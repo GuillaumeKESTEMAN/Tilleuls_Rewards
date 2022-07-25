@@ -6,6 +6,7 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Lot;
+use App\Tests\Security\LoginTest;
 use DateTime;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -25,10 +26,7 @@ class LotTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/lots', ['auth_bearer' => $token]);
 
@@ -68,11 +66,7 @@ class LotTest extends ApiTestCase
      */
     public function testGetLot(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(Lot::class, ['name' => 'Lot de test']);
@@ -99,11 +93,7 @@ class LotTest extends ApiTestCase
      */
     public function testCreateLot(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $response = static::createClient()->request('POST', '/api/lots', [
             'auth_bearer' => $token,
@@ -136,10 +126,7 @@ class LotTest extends ApiTestCase
      */
     public function testUpdateLot(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
@@ -166,10 +153,7 @@ class LotTest extends ApiTestCase
      */
     public function testDeleteLot(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(Lot::class, ['name' => 'Lot de test 2.0']);

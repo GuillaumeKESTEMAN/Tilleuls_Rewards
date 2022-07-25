@@ -7,6 +7,7 @@ namespace App\Tests\Api;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Player;
 use App\Entity\Tweet;
+use App\Tests\Security\LoginTest;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -24,10 +25,7 @@ class TweetTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
+        $token = LoginTest::getLoginToken();
         // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
         $response = static::createClient()->request('GET', '/api/tweets', ['auth_bearer' => $token]);
 
@@ -43,11 +41,7 @@ class TweetTest extends ApiTestCase
      */
     public function testGetTweet(): void
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
-            'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
-        ]])->toArray()['token'];
-
+        $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
         $iri = $this->findIriBy(Tweet::class, ['tweetId' => '123456']);
