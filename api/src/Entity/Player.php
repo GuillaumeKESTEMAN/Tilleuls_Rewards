@@ -16,7 +16,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
-#[UniqueEntity('name')]
+#[UniqueEntity('username')]
+#[UniqueEntity('twitterAccountId')]
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -38,10 +39,10 @@ class Player
     #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $name = null;
 
-    #[ORM\Column(name: 'username', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true, nullable: false)]
     private ?string $username = null;
 
-    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true, nullable: false)]
     #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 
@@ -119,18 +120,16 @@ class Player
 
     public function addTweet(Tweet $tweet): void
     {
-        $tweet->setPlayer($this);
-        if (!in_array($tweet, (array)$this->tweets)) {
-            $this->tweets[] = $tweet;
+        if (!$this->tweets->contains($tweet)) {
+            $this->tweets->add($tweet);
+            $tweet->setPlayer($this);
         }
     }
 
     public function removeTweet(Tweet $tweet): void
     {
-        if ($this->tweets->removeElement($tweet)) {
-            if ($tweet->getPlayer() === $this) {
-                $tweet->setPlayer(null);
-            }
+        if ($this->tweets->removeElement($tweet) && $tweet->getPlayer() === $this) {
+            $tweet->setPlayer(null);
         }
     }
 }

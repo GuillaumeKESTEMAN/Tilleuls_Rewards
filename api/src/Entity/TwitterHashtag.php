@@ -41,7 +41,7 @@ class TwitterHashtag
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'hashtag', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'hashtag', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank]
     private ?string $hashtag = null;
 

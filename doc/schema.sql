@@ -15,8 +15,6 @@ CREATE TABLE "lot" (
 CREATE TABLE "reward" (
   "id" uuid PRIMARY KEY,
   "lot" int,
-  "game" int NOT NULL,
-  "win_date" datetime NOT NULL DEFAULT (now()),
   "distributed" boolean NOT NULL DEFAULT false
 );
 
@@ -24,10 +22,10 @@ CREATE TABLE "game" (
   "id" uuid PRIMARY KEY,
   "tweet" int NOT NULL,
   "player" int NOT NULL,
-  "url" string NOT NULL,
   "score" int,
   "creation_date" datetime NOT NULL DEFAULT (now()),
-  "play_date" datetime
+  "play_date" datetime,
+  "reward" int NOT NULL
 );
 
 CREATE TABLE "tweet" (
@@ -68,10 +66,10 @@ ALTER TABLE "lot" ADD FOREIGN KEY ("image") REFERENCES "media_object" ("id");
 
 ALTER TABLE "reward" ADD FOREIGN KEY ("lot") REFERENCES "lot" ("id");
 
-ALTER TABLE "reward" ADD FOREIGN KEY ("game") REFERENCES "game" ("id");
-
 ALTER TABLE "game" ADD FOREIGN KEY ("tweet") REFERENCES "tweet" ("id");
 
 ALTER TABLE "game" ADD FOREIGN KEY ("player") REFERENCES "player" ("id");
+
+ALTER TABLE "game" ADD FOREIGN KEY ("reward") REFERENCES "reward" ("id");
 
 ALTER TABLE "tweet" ADD FOREIGN KEY ("player") REFERENCES "player" ("id");

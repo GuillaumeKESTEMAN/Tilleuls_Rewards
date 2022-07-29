@@ -5,9 +5,11 @@ namespace App\Command;
 use Abraham\TwitterOAuth\TwitterOAuthException;
 use App\Entity\Game;
 use App\Entity\Player;
+use App\Entity\Reward;
 use App\Entity\Tweet;
 use App\Entity\TwitterAccountToFollow;
 use App\Repository\GameRepository;
+use App\Repository\LotRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TweetReplyRepository;
 use App\Repository\TweetRepository;
@@ -33,7 +35,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 )]
 class TwitterApiRecentTweetsCommand extends Command
 {
-    public function __construct(private TwitterApi $twitterApi, private PlayerRepository $playerRepository, private TweetRepository $tweetRepository, private GameRepository $gameRepository, private TweetReplyRepository $tweetReplyRepository, private TwitterAccountToFollowRepository $twitterAccountToFollowRepository, private TwitterHashtagRepository $twitterHashtagRepository, private string $communicationWebsiteUrl)
+    public function __construct(private TwitterApi $twitterApi, private PlayerRepository $playerRepository, private TweetRepository $tweetRepository, private GameRepository $gameRepository, private LotRepository $lotRepository, private TweetReplyRepository $tweetReplyRepository, private TwitterAccountToFollowRepository $twitterAccountToFollowRepository, private TwitterHashtagRepository $twitterHashtagRepository, private string $communicationWebsiteUrl)
     {
         parent::__construct();
     }
@@ -222,14 +224,23 @@ class TwitterApiRecentTweetsCommand extends Command
 
                     $this->tweetRepository->persistAndFlush($recentTweet, true);
 
+                    $reward = new Reward();
+                    $reward->setDistributed(false);
+                    $reward->setLot($this->lotRepository->getRandom()[0]);
+
                     $game = new Game();
                     $game->setTweet($recentTweet);
                     $game->setPlayer($player);
+                    $game->setReward($reward);
 
                     if ($this->gameRepository->persistAndFlush($game, true) && $input->getOption('reply-game-url')) {
                         $message = $this->tweetReplyRepository->findOneByName("on_new_game")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $this->communicationWebsiteUrl;
                         $this->newReply($tweet->id, $message);
+                    } else {
+                        $reward->getLot()->setQuantity($reward->getLot()->getQuantity() + 1);
+                        $this->lotRepository->persistAndFlush($reward->getLot(), true);
                     }
+
                 } else if ($input->getOption('reply-game-url')) {
                     $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $this->communicationWebsiteUrl;
                     $this->newReply($tweet->id, $message);

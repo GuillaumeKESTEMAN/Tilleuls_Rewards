@@ -11,9 +11,12 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
+#[UniqueEntity('reward')]
+#[UniqueEntity('tweet')]
 #[
     ApiResource(
         types: ["https://schema.org/VideoGame"],
@@ -36,12 +39,11 @@ class Game
     private Uuid $id;
 
     #[ORM\OneToOne(targetEntity: Tweet::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'tweet', nullable: false)]
+    #[ORM\JoinColumn(unique: true)]
     #[ApiProperty(types: ["https://schema.org/SocialMediaPosting"])]
     private ?Tweet $tweet = null;
 
-    #[ORM\ManyToOne(targetEntity: Player::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'player', nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Player::class)]
     private ?Player $player = null;
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
@@ -55,6 +57,10 @@ class Game
     #[ORM\Column(name: 'play_date', type: 'datetime', nullable: true)]
     #[ApiProperty(types: ["https://schema.org/DateTime"])]
     private ?\DateTime $playDate = null;
+
+    #[ORM\OneToOne(targetEntity: Reward::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(unique: true)]
+    private ?Reward $reward = null;
 
     public function getId(): ?Uuid
     {
@@ -71,17 +77,11 @@ class Game
         $this->tweet = $tweet;
     }
 
-    /**
-     * @return Player|null
-     */
     public function getPlayer(): ?Player
     {
         return $this->player;
     }
 
-    /**
-     * @param Player|null $player
-     */
     public function setPlayer(?Player $player): void
     {
         $this->player = $player;
@@ -115,5 +115,15 @@ class Game
     public function setPlayDate(?\DateTime $playDate): void
     {
         $this->playDate = $playDate;
+    }
+
+    public function getReward(): ?Reward
+    {
+        return $this->reward;
+    }
+
+    public function setReward(?Reward $reward): void
+    {
+        $this->reward = $reward;
     }
 }

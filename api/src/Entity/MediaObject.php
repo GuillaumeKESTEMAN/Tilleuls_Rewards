@@ -70,7 +70,7 @@ class MediaObject
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
     private ?Uuid $id = null;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
     #[ApiProperty(types: ['https://schema.org/name'])]
     #[Groups(['media_object:read'])]
@@ -99,7 +99,7 @@ class MediaObject
     ], groups: ['media_object_create'])]
     private ?File $file = null;
 
-    #[ORM\Column(name: 'file_path', nullable: true)]
+    #[ORM\Column(name: 'file_path', unique: true, nullable: true)]
     private ?string $filePath = null;
 
     public function getId(): Uuid

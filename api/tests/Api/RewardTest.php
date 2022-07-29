@@ -68,7 +68,7 @@ class RewardTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        $iri = $this->findIriBy(Reward::class, ['winDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Reward::class, ['distributed' => true]);
 
         $client->request('GET', $iri, ['auth_bearer' => $token]);
 
@@ -92,7 +92,7 @@ class RewardTest extends ApiTestCase
     public function testCreateReward(): void
     {
         $response = static::createClient()->request('POST', '/api/rewards', ['json' => [
-            'winDate' => new DateTime('2022-01-01 12:35:00.000000'),
+            'distributed' => true,
         ]]);
 
         self::assertResponseStatusCodeSame(405);
@@ -108,10 +108,10 @@ class RewardTest extends ApiTestCase
     {
         $client = static::createClient();
         // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
-        $iri = $this->findIriBy(Reward::class, ['winDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Reward::class, ['distributed' => true]);
 
         $client->request('PUT', $iri, ['json' => [
-            'winDate' => new DateTime('2022-01-01 12:35:00.000000'),
+            'distributed' => false,
         ]]);
 
         self::assertResponseStatusCodeSame(405);
@@ -123,7 +123,7 @@ class RewardTest extends ApiTestCase
     public function testDeleteReward(): void
     {
         $client = static::createClient();
-        $iri = $this->findIriBy(Reward::class, ['winDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Reward::class, ['distributed' => true]);
 
         $client->request('DELETE', $iri);
 

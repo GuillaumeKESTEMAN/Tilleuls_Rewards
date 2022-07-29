@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Lot;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<Lot>
@@ -16,13 +18,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class LotRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
         parent::__construct($registry, Lot::class);
     }
 
     /**
-     * @throws NonUniqueResultException
+     * @throws NonUniqueResultException|Exception
      */
     public function getRandom(int $numberOfLotReturn = 1): array
     {
@@ -56,7 +58,7 @@ class LotRepository extends CommonRepository
             $lot = reset($filteredLots);
 
             if (false === $lot) {
-                // TODO add logs
+                $this->logger->warning('No Lot found when random Lot search !');
                 return [];
             }
 

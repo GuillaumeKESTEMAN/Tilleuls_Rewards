@@ -1,5 +1,5 @@
 App\Entity\Lot:
     lot_{1..60}:
-        name: <name()>
+        name (unique): <word()>
         quantity: <numberBetween(1, 100)>
         message: <sentence()>

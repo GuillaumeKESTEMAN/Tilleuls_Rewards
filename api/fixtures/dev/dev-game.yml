@@ -1,5 +1,6 @@
 App\Entity\Game:
     game_{1..20}:
-        tweet (unique): '@tweet_<numberBetween(1, 20)>'
-        player: '@player_<numberBetween(1, 20)>'
+        tweet: '@tweet_<current()>'
+        player: '@player_<current()>'
+        reward: '@reward_<current()>'
         creationDate: <date_create()>

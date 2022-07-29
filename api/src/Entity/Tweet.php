@@ -9,9 +9,11 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TweetRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TweetRepository::class)]
+#[UniqueEntity('tweetId')]
 #[ApiResource(
     types: ["https://schema.org/SocialMediaPosting"],
     operations: [
@@ -29,11 +31,10 @@ class Tweet
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\ManyToOne(targetEntity: Player::class, cascade: ['persist'], inversedBy: 'tweets')]
-    #[ORM\JoinColumn(name: 'player', nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
     private ?Player $player = null;
 
-    #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true, nullable: false)]
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private ?string $tweetId = null;
 

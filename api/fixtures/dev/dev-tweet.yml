@@ -1,4 +1,4 @@
 App\Entity\Tweet:
     tweet_{1..20}:
-        tweetId: <uniqid()>
-        player: '@player_<numberBetween(1, 20)>'
+        player: '@player_<current()>'
+        tweetId (unique): <uniqid()>

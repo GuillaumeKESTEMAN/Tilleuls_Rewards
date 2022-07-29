@@ -1,6 +1,6 @@
 App\Entity\TwitterAccountToFollow:
     twitter_account_to_follow:
         twitterAccountName: <name()>
-        twitterAccountUsername: \@me
-        twitterAccountId: <uniqid()>
+        twitterAccountUsername (unique): \@me
+        twitterAccountId (unique): <uniqid()>
         active: <boolean()>

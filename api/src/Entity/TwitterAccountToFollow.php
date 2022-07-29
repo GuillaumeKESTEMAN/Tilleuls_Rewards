@@ -49,12 +49,12 @@ class TwitterAccountToFollow
     #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $twitterAccountName = null;
 
-    #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank]
     #[AcmeAssert\ExistsInTwitter]
     private ?string $twitterAccountUsername = null;
 
-    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true, nullable: false)]
     #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 

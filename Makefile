@@ -22,7 +22,7 @@ start-all:
 	docker-compose up -d
 	$(MAKE) jwt-keypair
 	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction # or `$(MAKE) new-db`
-	docker-compose exec php bin/console doctrine:fixtures:load --no-interaction
+	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
 	sleep 5
 	cd admin/ && yarn start
 
@@ -94,7 +94,9 @@ else
 endif
 
 fixtures:
-	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
+	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
+	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction --purge-with-truncate
 
 fixtures-test:
-	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	docker-compose exec php bin/console --env=test doctrine:migrations:migrate --no-interaction
+	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction --purge-with-truncate
