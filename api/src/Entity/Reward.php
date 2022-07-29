@@ -30,7 +30,7 @@ class Reward
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\ManyToOne(targetEntity: Lot::class)]
+    #[ORM\ManyToOne(targetEntity: Lot::class, inversedBy: "rewards")]
     private ?Lot $lot = null;
 
     #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]

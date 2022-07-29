@@ -39,12 +39,12 @@ class LotTest extends ApiTestCase
             '@context' => '/api/contexts/Lot',
             '@id' => '/api/lots',
             '@type' => 'hydra:Collection',
-            'hydra:totalItems' => 60,
+            'hydra:totalItems' => 61,
             'hydra:view' => [
                 '@id' => '/api/lots?page=1',
                 '@type' => 'hydra:PartialCollectionView',
                 'hydra:first' => '/api/lots?page=1',
-                'hydra:last' => '/api/lots?page=3',
+                'hydra:last' => '/api/lots?page=4',
                 'hydra:next' => '/api/lots?page=2',
             ],
         ]);
@@ -151,7 +151,7 @@ class LotTest extends ApiTestCase
      * @throws Exception
      * @throws DecodingExceptionInterface
      */
-    public function testDeleteLot(): void
+    public function testFailedDeleteLot(): void
     {
         $token = LoginTest::getLoginToken();
 
@@ -161,10 +161,28 @@ class LotTest extends ApiTestCase
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
 
+        self::assertResponseStatusCodeSame(422);
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     * @throws Exception
+     * @throws DecodingExceptionInterface
+     */
+    public function testDeleteLot(): void
+    {
+        $token = LoginTest::getLoginToken();
+
+        $client = static::createClient();
+        $iri = $this->findIriBy(Lot::class, ['name' => 'Supprime moi !']);
+
+
+        $client->request('DELETE', $iri, ['auth_bearer' => $token]);
+
         self::assertResponseStatusCodeSame(204);
         $this->assertNull(
         // Through the container, you can access all your services from the tests, including the ORM, the mailer, remote API clients...
-            static::getContainer()->get('doctrine')->getRepository(Lot::class)->findOneBy(['name' => 'Lot de test 2.0'])
+            static::getContainer()->get('doctrine')->getRepository(Lot::class)->findOneBy(['name' => 'Supprime moi !'])
         );
     }
 }

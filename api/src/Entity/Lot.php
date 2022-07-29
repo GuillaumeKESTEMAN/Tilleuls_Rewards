@@ -12,6 +12,9 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\LotRepository;
+use App\State\LotProcessor;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
@@ -25,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(),
         new Get(),
         new Put(),
-        new Delete()
+        new Delete(validationContext: ['groups' => ['deleteValidation']], processor: LotProcessor::class)
     ],
     order: ["name" => "ASC", "quantity" => "DESC"]
 )]
@@ -59,6 +62,15 @@ class Lot
     #[ORM\JoinColumn(nullable: true)]
     #[ApiProperty(types: ['https://schema.org/image'])]
     public ?MediaObject $image = null;
+
+    #[ORM\OneToMany(mappedBy: "lot", targetEntity: Reward::class)]
+    #[Assert\Count(exactly: 0, groups: ['deleteValidation'])]
+    private Collection $rewards;
+
+    public function __construct()
+    {
+        $this->rewards = new ArrayCollection();
+    }
 
     public function getId(): Uuid
     {
@@ -110,5 +122,31 @@ class Lot
     public function setImage(?MediaObject $image): void
     {
         $this->image = $image;
+    }
+
+    public function getRewards(): Collection
+    {
+        return $this->rewards;
+    }
+
+    public function setRewards(Collection $rewards): void
+    {
+        $this->rewards = $rewards;
+    }
+
+    public function addReward(Reward $reward): void
+    {
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards->add($reward);
+            $reward->setLot($this);
+        }
+    }
+
+    public function removeReward(Reward $reward): void
+    {
+        if ($this->rewards->contains($reward)) {
+            $this->rewards->removeElement($reward);
+            $reward->setLot(null);
+        }
     }
 }

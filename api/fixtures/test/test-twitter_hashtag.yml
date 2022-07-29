@@ -1,4 +1,8 @@
 App\Entity\TwitterHashtag:
-    twitter_hashtag:
+    twitter_hashtag_{1..59}:
+        hashtag (unique): <word()>
+        active: <boolean()>
+
+    twitter_hashtag_60:
         hashtag (unique): getTest
         active: <boolean()>

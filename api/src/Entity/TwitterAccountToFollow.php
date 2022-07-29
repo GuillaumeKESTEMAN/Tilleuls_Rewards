@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use App\Controller\AddTwitterAccountToFollowActionController;
 use App\Repository\TwitterAccountToFollowRepository;
 use App\State\TwitterAccountToFollowProcessor;
 use Doctrine\ORM\Mapping as ORM;
@@ -51,7 +50,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank]
-    #[AcmeAssert\ExistsInTwitter]
+    #[AcmeAssert\ForeignKeyDeleteLot]
     private ?string $twitterAccountUsername = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true, nullable: false)]

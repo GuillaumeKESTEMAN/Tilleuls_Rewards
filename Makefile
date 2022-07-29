@@ -84,12 +84,12 @@ tests-api:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
 	$(generateTestsDB)
-	docker-compose exec php bin/console --env=test doctrine:fixtures:load --no-interaction
+	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
 	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose down; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Api"
 	docker-compose down
 else
 	$(generateTestsDB)
-	docker-compose exec php bin/console --env=test doctrine:fixtures:load --no-interaction
+	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
 	docker-compose exec php bin/phpunit tests/Api
 endif
 

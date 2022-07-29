@@ -85,14 +85,14 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $file = new UploadedFile('fixtures/files/test_image.jpg', 'test_image.jpg');
+        $file = new UploadedFile('fixtures/test/files/test_image.jpg', 'test_image.jpg');
 
         $response = self::createClient()->request('POST', '/api/media_objects', [
             'auth_bearer' => $token,
             'headers' => ['Content-Type' => 'multipart/form-data'],
             'extra' => [
                 'parameters' => [
-                    'name' => 'My file uploaded',
+                    'name' => 'My uploaded file',
                 ],
                 'files' => [
                     'file' => $file,
@@ -102,7 +102,7 @@ class MediaObjectTest extends ApiTestCase
 
         self::assertResponseStatusCodeSame(201);
         self::assertJsonContains([
-            'name' => 'My file uploaded',
+            'name' => 'My uploaded file',
         ]);
         $this->assertMatchesRegularExpression('~^/api/media_objects/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(MediaObject::class);
@@ -119,7 +119,7 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $file = new UploadedFile('fixtures/files/invalid_file.txt', 'invalid_file.txt');
+        $file = new UploadedFile('fixtures/test/files/invalid_file.txt', 'invalid_file.txt');
 
         static::createClient()->request('POST', '/api/media_objects', [
             'auth_bearer' => $token,
@@ -154,7 +154,7 @@ class MediaObjectTest extends ApiTestCase
     public function testUpdateMediaObject(): void
     {
         // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
-        $iri = $this->findIriBy(MediaObject::class, ['name' => 'My file uploaded']);
+        $iri = $this->findIriBy(MediaObject::class, ['name' => 'My uploaded file']);
 
         static::createClient()->request('PUT', $iri, ['json' => [
             'name' => 'Change media object name',
@@ -173,14 +173,14 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $iri = $this->findIriBy(MediaObject::class, ['name' => 'My file uploaded']);
+        $iri = $this->findIriBy(MediaObject::class, ['name' => 'My uploaded file']);
 
         static::createClient()->request('DELETE', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $this->assertNull(
         // Through the container, you can access all your services from the tests, including the ORM, the mailer, remote API clients...
-            static::getContainer()->get('doctrine')->getRepository(MediaObject::class)->findOneBy(['name' => 'My file uploaded'])
+            static::getContainer()->get('doctrine')->getRepository(MediaObject::class)->findOneBy(['name' => 'My uploaded file'])
         );
     }
 }

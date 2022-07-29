@@ -128,7 +128,8 @@ class Player
 
     public function removeTweet(Tweet $tweet): void
     {
-        if ($this->tweets->removeElement($tweet) && $tweet->getPlayer() === $this) {
+        if (!$this->tweets->contains($tweet)) {
+            $this->tweets->removeElement($tweet);
             $tweet->setPlayer(null);
         }
     }

@@ -1,0 +1,4 @@
+App\Entity\MediaObject:
+    media_object:
+        name: <name()>
+        filePath: 'image.jpg'
