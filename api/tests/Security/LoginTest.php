@@ -24,7 +24,20 @@ class LoginTest extends ApiTestCase
         ]]);
 
         self::assertResponseIsSuccessful();
+        self::assertResponseHeaderSame('content-type', 'application/json');
+    }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function testLoginFail(): void
+    {
+        static::createClient()->request('POST', '/api/login', ['json' => [
+            'username' => 'invalid user',
+            'password' => 'invalid password'
+        ]]);
+
+        self::assertResponseStatusCodeSame(401);
         self::assertResponseHeaderSame('content-type', 'application/json');
     }
 

@@ -71,7 +71,6 @@ endif
 tests-security:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
-	$(MAKE) jwt-keypair
 	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose down; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Security"
 	docker-compose down
 else
