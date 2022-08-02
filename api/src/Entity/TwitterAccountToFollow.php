@@ -50,7 +50,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank]
-    #[AcmeAssert\ForeignKeyDeleteLot]
+    #[AcmeAssert\ExistsInTwitter]
     private ?string $twitterAccountUsername = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true, nullable: false)]
