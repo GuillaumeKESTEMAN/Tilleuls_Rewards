@@ -1,12 +1,12 @@
 # Tilleuls_Rewards
 
 ### Project Initialization :
-- Install all dependencies of the project with the `make install` command and then create JWT keypair by the command : `make jwt-keypair`
+- Install all dependencies of the project with the `make install` command
 
   or
 - Build docker with `docker-compose build --pull --no-cache`
 - Launch docker-compose with `docker-compose up -d`
-- Generate JWT keypair with `docker-compose exec php bin/console lexik:jwt:generate-keypair`
+- Generate JWT keypair with `docker-compose exec php bin/console lexik:jwt:generate-keypair` or `make jwt-keypair`
 - Stop docker-compose with `docker-compose down`
 - Go to the directory `admin/` and install the admin panel dependencies with `yarn install`
 

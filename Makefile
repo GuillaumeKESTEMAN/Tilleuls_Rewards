@@ -20,7 +20,6 @@ start:
 
 start-all:
 	docker-compose up -d
-	$(MAKE) jwt-keypair
 	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction # or `$(MAKE) new-db`
 	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
 	sleep 5
