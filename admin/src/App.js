@@ -18,7 +18,7 @@ import {
   TwitterAccountToFollowShow
 } from "./components/twitterAccountToFollow.ts";
 import {TweetReplyCreate, TweetReplyEdit} from "./components/tweetReply.ts";
-import {ENTRYPOINT} from "./config/entrypoint.ts";
+import {API_ENTRYPOINT, ENTRYPOINT} from "./config/entrypoint.ts";
 
 const getHeaders = () => localStorage.getItem("token") ? {
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -41,7 +41,7 @@ const NavigateToLogin = () => {
 
 const apiDocumentationParser = async () => {
   try {
-    return await parseHydraDocumentation(ENTRYPOINT, {headers: getHeaders});
+    return await parseHydraDocumentation(API_ENTRYPOINT, {headers: getHeaders});
   } catch (result) {
     const {api, response, status} = result;
     if (status !== 401 || !response) {
@@ -63,19 +63,19 @@ const apiDocumentationParser = async () => {
 };
 
 const dataProvider = baseHydraDataProvider({
-  entrypoint: ENTRYPOINT,
+  entrypoint: API_ENTRYPOINT,
   httpClient: fetchHydra,
   apiDocumentationParser,
   mercure: {
     jwt: process.env.REACT_APP_MERCURE_JWT,
-    hub: "https://localhost/.well-known/mercure"
+    hub: ENTRYPOINT + "/.well-known/mercure"
   }
 });
 
 const AdminLoader = () => {
   if (typeof window !== "undefined") {
     const {HydraAdmin} = require("@api-platform/admin");
-    return (<HydraAdmin dataProvider={dataProvider} authProvider={authProvider} entrypoint={ENTRYPOINT}>
+    return (<HydraAdmin dataProvider={dataProvider} authProvider={authProvider} entrypoint={API_ENTRYPOINT}>
       <ResourceGuesser name="lots" list={LotsList} show={LotShow} create={LotCreate} edit={LotEdit}/>
       <ResourceGuesser name="rewards" edit={RewardEdit}/>
       <ResourceGuesser name="players"/>

@@ -1,10 +1,10 @@
 import jwtDecode from 'jwt-decode';
 // @ts-ignore
-import { ENTRYPOINT } from '../config/entrypoint.ts';
+import { API_ENTRYPOINT } from '../config/entrypoint.ts';
 
 export default {
     login: ({ username, password }) => {
-        const request = new Request(`${ENTRYPOINT}/login`, {
+        const request = new Request(`${API_ENTRYPOINT}/login`, {
             method: 'POST',
             body: JSON.stringify({ username, password }),
             headers: new Headers({ 'Content-Type': 'application/ld+json' }),
