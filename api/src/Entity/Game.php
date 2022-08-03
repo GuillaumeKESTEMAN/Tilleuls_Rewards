@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
@@ -25,11 +26,13 @@ use Symfony\Component\Uid\Uuid;
             new Get(),
         ],
         mercure: ["private" => true],
-        order: ["creationDate" => "DESC"]
+        order: ["creationDate" => "DESC"],
+        paginationClientItemsPerPage: true
     )
 ]
 #[ApiFilter(SearchFilter::class, properties: ["url" => "partial"])]
 #[ApiFilter(DateFilter::class, properties: ["creationDate"])]
+#[ApiFilter(OrderFilter::class, properties: ['tweet', 'player.username', 'score', 'creationDate', 'playDate'])]
 class Game
 {
     #[ORM\Id]

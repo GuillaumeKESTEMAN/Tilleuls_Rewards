@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
@@ -32,10 +33,12 @@ use App\Validator as AcmeAssert;
         new Delete()
     ],
     mercure: ["private" => true],
-    order: ["active" => "DESC", "twitterAccountName" => "ASC"]
+    order: ["active" => "DESC", "twitterAccountName" => "ASC"],
+    paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ["twitterAccountName" => "ipartial", "twitterAccountUsername" => "ipartial"])]
 #[ApiFilter(BooleanFilter::class, properties: ["active" => "exact"])]
+#[ApiFilter(OrderFilter::class, properties: ['active', 'twitterAccountName', 'twitterAccountUsername'])]
 class TwitterAccountToFollow
 {
     #[ORM\Id]

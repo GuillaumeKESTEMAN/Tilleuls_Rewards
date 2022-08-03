@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
@@ -31,9 +32,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(validationContext: ['groups' => ['deleteValidation']], processor: LotProcessor::class)
     ],
     mercure: ["private" => true],
-    order: ["name" => "ASC", "quantity" => "DESC"]
+    order: ["name" => "ASC", "quantity" => "DESC"],
+    paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial"])]
+#[ApiFilter(OrderFilter::class, properties: ['name', 'quantity', 'message'])]
 class Lot
 {
     #[ORM\Id]

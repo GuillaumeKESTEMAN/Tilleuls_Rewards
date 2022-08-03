@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
@@ -29,10 +30,12 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete()
     ],
     mercure: ["private" => true],
-    order: ["active" => "DESC"]
+    order: ["active" => "DESC"],
+    paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ["hashtag" => "ipartial"])]
 #[ApiFilter(BooleanFilter::class, properties: ["active" => "exact"])]
+#[ApiFilter(OrderFilter::class, properties: ['hashtag', 'active'])]
 class TwitterHashtag
 {
     #[ORM\Id]

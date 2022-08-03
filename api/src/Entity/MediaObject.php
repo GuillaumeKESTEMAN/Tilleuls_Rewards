@@ -2,6 +2,7 @@
 // api/src/Entity/MediaObject.php
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
@@ -60,9 +61,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     ],
     normalizationContext: ['groups' => ['media_object:read']],
     mercure: ["private" => true],
-    order: ["id" => "DESC"]
+    order: ["id" => "DESC"],
+    paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial", "name" => "partial"])]
+#[ApiFilter(OrderFilter::class, properties: ['id', 'name', 'contentUrl'])]
 class MediaObject
 {
     #[ORM\Id]
@@ -73,7 +76,7 @@ class MediaObject
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
-    #[ApiProperty(types: ['https://schema.org/name'], writable: false)]
+    #[ApiProperty(writable: false, types: ['https://schema.org/name'])]
     #[Groups(['media_object:read'])]
     public ?string $name = null;
 
