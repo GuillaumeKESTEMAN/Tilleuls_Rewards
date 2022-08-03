@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Metadata\Put;
 use App\Repository\RewardRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -16,8 +17,10 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Get()
+        new Get(),
+        new Put()
     ],
+    mercure: ["private" => true],
     order: ["distributed" => "ASC"]
 )]
 #[ApiFilter(BooleanFilter::class, properties: ["distributed" => "exact"])]

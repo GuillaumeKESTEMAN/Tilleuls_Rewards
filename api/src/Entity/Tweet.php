@@ -19,6 +19,7 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new Get()
     ],
+    mercure: ["private" => true],
     order: ["id" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["tweetId" => "partial"])]

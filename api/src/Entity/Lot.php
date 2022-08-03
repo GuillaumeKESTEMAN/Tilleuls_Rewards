@@ -30,6 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(),
         new Delete(validationContext: ['groups' => ['deleteValidation']], processor: LotProcessor::class)
     ],
+    mercure: ["private" => true],
     order: ["name" => "ASC", "quantity" => "DESC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["name" => "ipartial"])]

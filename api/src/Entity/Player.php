@@ -23,6 +23,7 @@ use Symfony\Component\Uid\Uuid;
         new GetCollection(),
         new Get()
     ],
+    mercure: ["private" => true],
     order: ["name" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["username" => "ipartial", "name" => "ipartial"])]

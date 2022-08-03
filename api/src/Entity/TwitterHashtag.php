@@ -28,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(),
         new Delete()
     ],
+    mercure: ["private" => true],
     order: ["active" => "DESC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["hashtag" => "ipartial"])]

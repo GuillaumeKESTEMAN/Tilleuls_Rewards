@@ -26,7 +26,7 @@ start-all:
 	cd admin/ && yarn start
 
 stop-all:
-	docker-compose down
+	docker-compose stop
 
 install:
 	docker-compose build --pull --no-cache
@@ -43,7 +43,7 @@ new-db:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
 	$(generateDB)
-	docker-compose down
+	docker-compose stop
 else
 	$(generateDB)
 endif
@@ -52,7 +52,7 @@ jwt-keypair:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
 	$(generateJWT)
-	docker-compose down
+	docker-compose stop
 else
 	$(generateJWT)
 endif
@@ -60,9 +60,9 @@ endif
 tests:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose down; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-security"
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose down; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-api"
-	docker-compose down
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-security"
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-api"
+	docker-compose stop
 else
 	$(MAKE) tests-security
 	$(MAKE) tests-api
@@ -71,8 +71,8 @@ endif
 tests-security:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose down; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Security"
-	docker-compose down
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Security"
+	docker-compose stop
 else
 	$(MAKE) jwt-keypair
 	docker-compose exec php bin/phpunit tests/Security
@@ -83,8 +83,8 @@ ifeq ($(shell docker-compose ps | wc -l),2)
 	docker-compose up -d
 	$(generateTestsDB)
 	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose down; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Api"
-	docker-compose down
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Api"
+	docker-compose stop
 else
 	$(generateTestsDB)
 	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction

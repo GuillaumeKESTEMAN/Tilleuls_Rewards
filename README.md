@@ -46,6 +46,9 @@ or
 - To launch security tests use : `make tests-security`
 - To launch api tests use : `make tests-api`
 
+### Mercure :
+To use Mercure in the admin you must have a JWT stored in ./admin/.env like this : `REACT_APP_MERCURE_JWT=YOUR_JWT`
+
 ### Project Custom Commands :
 #### app:comment:getRecentTweets (`docker-compose exec php bin/console app:comment:getRecentTweets`)
 Command to get recent tweets with a query to update DB and a query to reply to play a game

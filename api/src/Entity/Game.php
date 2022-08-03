@@ -24,6 +24,7 @@ use Symfony\Component\Uid\Uuid;
             new GetCollection(),
             new Get(),
         ],
+        mercure: ["private" => true],
         order: ["creationDate" => "DESC"]
     )
 ]

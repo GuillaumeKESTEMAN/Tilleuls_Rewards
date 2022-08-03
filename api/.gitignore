@@ -42,3 +42,7 @@ yarn-error.log
 /src/Controller/TestController.php
 /templates/test
 ###< controller/testcontroller ###
+
+###> php/scripts ###
+/mercureJWTGenerator.php
+###< php/scripts ###

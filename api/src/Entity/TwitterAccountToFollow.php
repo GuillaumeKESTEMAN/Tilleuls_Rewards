@@ -31,6 +31,7 @@ use App\Validator as AcmeAssert;
         new Put(processor: TwitterAccountToFollowProcessor::class),
         new Delete()
     ],
+    mercure: ["private" => true],
     order: ["active" => "DESC", "twitterAccountName" => "ASC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["twitterAccountName" => "ipartial", "twitterAccountUsername" => "ipartial"])]

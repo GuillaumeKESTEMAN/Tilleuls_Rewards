@@ -59,6 +59,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         new Delete()
     ],
     normalizationContext: ['groups' => ['media_object:read']],
+    mercure: ["private" => true],
     order: ["id" => "DESC"]
 )]
 #[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial", "name" => "partial"])]
