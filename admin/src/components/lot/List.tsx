@@ -10,11 +10,11 @@ interface Props {
 // @ts-ignore
 export const List: FunctionComponent<Props> = ({lots}) => (
     <ListGuesser {...lots}>
-        <FieldGuesser source="name" />
-        <FieldGuesser source="quantity" />
-        <FieldGuesser source="message" />
+        <FieldGuesser source="name"/>
+        <FieldGuesser source="quantity"/>
+        <FieldGuesser source="message"/>
         <ReferenceField label="Image" source="image" reference="media_objects">
-            <FieldGuesser source="name" addLabel={true} />
+            <FieldGuesser source="name"/>
         </ReferenceField>
     </ListGuesser>
 );

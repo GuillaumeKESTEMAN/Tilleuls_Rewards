@@ -11,6 +11,6 @@ interface Props {
 export const Create: FunctionComponent<Props> = ({twitterHashtag}) => (
     <CreateGuesser {...twitterHashtag}>
         <InputGuesser source="hashtag" placeholder={HASHTAG_PLACE_HOLDER}/>
-        <InputGuesser source="active" />
+        <InputGuesser source="active"/>
     </CreateGuesser>
 );

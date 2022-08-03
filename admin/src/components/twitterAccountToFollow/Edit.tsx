@@ -9,8 +9,8 @@ interface Props {
 // @ts-ignore
 export const Edit: FunctionComponent<Props> = ({twitterAccountToFollow}) => (
     <EditGuesser {...twitterAccountToFollow}>
-        <InputGuesser source="twitterAccountUsername" disabled />
-        <InputGuesser source="twitterAccountName" disabled />
-        <InputGuesser source="active" />
+        <InputGuesser source="twitterAccountUsername" disabled/>
+        <InputGuesser source="twitterAccountName" disabled/>
+        <InputGuesser source="active"/>
     </EditGuesser>
 );

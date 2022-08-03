@@ -13,7 +13,7 @@ export const Edit: FunctionComponent<Props> = ({lot}) => (
     <EditGuesser {...lot}>
         <InputGuesser source="name"/>
         <InputGuesser source="quantity"/>
-        <InputGuesser source="message" multiline placeholder={MESSAGE_PLACE_HOLDER} />
+        <InputGuesser source="message" multiline placeholder={MESSAGE_PLACE_HOLDER}/>
 
         <ReferenceInput
             reference="media_objects"

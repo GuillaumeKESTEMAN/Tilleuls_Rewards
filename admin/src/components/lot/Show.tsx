@@ -8,13 +8,15 @@ interface Props {
 }
 
 // @ts-ignore
-export const Show: FunctionComponent<Props> = ({lot}) => (
-    <ShowGuesser {...lot}>
-        <FieldGuesser source="name" addLabel={true}/>
-        <FieldGuesser source="quantity" addLabel={true}/>
-        <FieldGuesser source="message" addLabel={true}/>
-        <ReferenceField label="Image" source="image" reference="media_objects">
-            <FieldGuesser source="name" addLabel={true}/>
-        </ReferenceField>
-    </ShowGuesser>
-);
+export const Show: FunctionComponent<Props> = ({lot}) => {
+    return (
+        <ShowGuesser {...lot}>
+            <FieldGuesser source="name"/>
+            <FieldGuesser source="quantity"/>
+            <FieldGuesser source="message"/>
+            <ReferenceField label="Image" source="image" reference="media_objects">
+                <FieldGuesser source="name"/>
+            </ReferenceField>
+        </ShowGuesser>
+    );
+}

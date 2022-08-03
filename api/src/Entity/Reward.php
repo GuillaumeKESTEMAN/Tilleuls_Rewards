@@ -34,6 +34,7 @@ class Reward
     private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Lot::class, inversedBy: "rewards")]
+    #[ApiProperty(writable: false)]
     private ?Lot $lot = null;
 
     #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]

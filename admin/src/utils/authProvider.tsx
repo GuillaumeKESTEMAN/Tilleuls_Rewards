@@ -1,13 +1,13 @@
 import jwtDecode from 'jwt-decode';
 // @ts-ignore
-import { API_ENTRYPOINT } from '../config/entrypoint.ts';
+import {API_ENTRYPOINT} from '../config/entrypoint.ts';
 
 export default {
-    login: ({ username, password }) => {
+    login: ({username, password}) => {
         const request = new Request(`${API_ENTRYPOINT}/login`, {
             method: 'POST',
-            body: JSON.stringify({ username, password }),
-            headers: new Headers({ 'Content-Type': 'application/ld+json' }),
+            body: JSON.stringify({username, password}),
+            headers: new Headers({'Content-Type': 'application/ld+json'}),
         });
         return fetch(request)
             .then((response) => {
@@ -16,7 +16,7 @@ export default {
                 }
                 return response.json();
             })
-            .then(({ token }) => {
+            .then(({token}) => {
                 localStorage.setItem('token', token);
             });
     },

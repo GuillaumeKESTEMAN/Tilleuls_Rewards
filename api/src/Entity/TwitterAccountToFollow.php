@@ -46,7 +46,7 @@ class TwitterAccountToFollow
     private Uuid $id;
 
     #[ORM\Column(name: 'twitter_account_name', type: 'string', length: 255, nullable: false)]
-    #[ApiProperty(types: ["https://schema.org/name"])]
+    #[ApiProperty(writable: false, types: ["https://schema.org/name"])]
     private ?string $twitterAccountName = null;
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true, nullable: false)]

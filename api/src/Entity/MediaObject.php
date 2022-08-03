@@ -73,7 +73,7 @@ class MediaObject
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true, nullable: false)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
-    #[ApiProperty(types: ['https://schema.org/name'])]
+    #[ApiProperty(types: ['https://schema.org/name'], writable: false)]
     #[Groups(['media_object:read'])]
     public ?string $name = null;
 

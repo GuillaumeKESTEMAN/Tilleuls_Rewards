@@ -8,7 +8,6 @@ import {
 import {parseHydraDocumentation} from "@api-platform/api-doc-parser";
 import authProvider from "./utils/authProvider.tsx";
 import {LotCreate, LotShow, LotEdit, LotsList} from "./components/lot.ts";
-import {RewardEdit} from "./components/reward.ts";
 import {MediaObjectCreate, MediaObjectEdit} from "./components/mediaObject.ts";
 import {TwitterHashtagCreate, TwitterHashtagEdit} from "./components/twitterHashtag.ts";
 import {
@@ -77,7 +76,7 @@ const AdminLoader = () => {
     const {HydraAdmin} = require("@api-platform/admin");
     return (<HydraAdmin dataProvider={dataProvider} authProvider={authProvider} entrypoint={API_ENTRYPOINT}>
       <ResourceGuesser name="lots" list={LotsList} show={LotShow} create={LotCreate} edit={LotEdit}/>
-      <ResourceGuesser name="rewards" edit={RewardEdit}/>
+      <ResourceGuesser name="rewards"/>
       <ResourceGuesser name="players"/>
       <ResourceGuesser name="twitter_account_to_follows" list={TwitterAccountToFollowList}
                        show={TwitterAccountToFollowShow} create={TwitterAccountToFollowCreate}

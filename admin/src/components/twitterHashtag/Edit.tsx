@@ -10,7 +10,7 @@ interface Props {
 // @ts-ignore
 export const Edit: FunctionComponent<Props> = ({twitterHashtag}) => (
     <EditGuesser {...twitterHashtag}>
-        <InputGuesser source="hashtag" disabled placeholder={HASHTAG_PLACE_HOLDER} />
-        <InputGuesser source="active" />
+        <InputGuesser source="hashtag" placeholder={HASHTAG_PLACE_HOLDER} disabled/>
+        <InputGuesser source="active"/>
     </EditGuesser>
 );

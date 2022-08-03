@@ -1,7 +1,6 @@
 import {FunctionComponent} from "react";
 import {TwitterAccountToFollow} from "../../types/TwitterAccountToFollow";
 import {FieldGuesser, ShowGuesser} from "@api-platform/admin";
-import {ReferenceField} from "react-admin";
 
 interface Props {
     twitterAccountToFollow: TwitterAccountToFollow;
@@ -10,8 +9,8 @@ interface Props {
 // @ts-ignore
 export const Show: FunctionComponent<Props> = ({twitterAccountToFollow}) => (
     <ShowGuesser {...twitterAccountToFollow}>
-        <FieldGuesser source="twitterAccountUsername" addLabel={true}/>
-        <FieldGuesser source="twitterAccountName" addLabel={true}/>
-        <FieldGuesser source="active" addLabel={true}/>
+        <FieldGuesser source="twitterAccountUsername"/>
+        <FieldGuesser source="twitterAccountName"/>
+        <FieldGuesser source="active"/>
     </ShowGuesser>
 );

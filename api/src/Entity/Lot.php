@@ -60,7 +60,7 @@ class Lot
     private ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ApiProperty(types: ['https://schema.org/image'])]
     public ?MediaObject $image = null;
 
