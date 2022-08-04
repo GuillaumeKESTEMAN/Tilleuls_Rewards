@@ -39,14 +39,14 @@ class Player
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255)]
     #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $name = null;
 
-    #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
     private ?string $username = null;
 
-    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
     #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 

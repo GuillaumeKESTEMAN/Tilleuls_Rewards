@@ -54,7 +54,7 @@ class Game
     #[ApiProperty(types: ["https://schema.org/Rating"])]
     private ?int $score = null;
 
-    #[ORM\Column(name: 'creation_date', type: 'datetime', nullable: false)]
+    #[ORM\Column(name: 'creation_date', type: 'datetime')]
     #[ApiProperty(types: ["https://schema.org/dateCreated"])]
     private ?\DateTime $creationDate = null;
 

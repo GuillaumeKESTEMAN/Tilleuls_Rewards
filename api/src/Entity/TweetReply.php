@@ -43,14 +43,14 @@ class TweetReply
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
     #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $name = null;
 
-    #[ORM\Column(name: 'message', type: 'string', nullable: false)]
+    #[ORM\Column(name: 'message', type: 'string')]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention (%@userhandle%) and same for communication website link (%website_url%)', types: ["https://schema.org/Message"])]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention : %@userhandle%, and same for communication website link : %website_url%', types: ["https://schema.org/Message"])]
     private ?string $message = null;
 
     public function getId(): Uuid

@@ -40,7 +40,7 @@ class Reward
     #[ApiProperty(writable: false)]
     private ?Lot $lot = null;
 
-    #[ORM\Column(name: 'distributed', type: 'boolean', nullable: false)]
+    #[ORM\Column(name: 'distributed', type: 'boolean')]
     private bool $distributed = false;
 
     public function getId(): Uuid

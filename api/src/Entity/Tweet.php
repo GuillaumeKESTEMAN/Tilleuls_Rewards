@@ -2,12 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TweetRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -21,11 +18,8 @@ use Symfony\Component\Uid\Uuid;
         new Get()
     ],
     mercure: ["private" => true],
-    order: ["id" => "ASC"],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(SearchFilter::class, properties: ["tweetId" => "partial"])]
-#[ApiFilter(OrderFilter::class, properties: ['id'])]
 class Tweet
 {
     #[ORM\Id]
@@ -38,7 +32,7 @@ class Tweet
     #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
     private ?Player $player = null;
 
-    #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true)]
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private ?string $tweetId = null;
 

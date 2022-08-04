@@ -1,5 +1,5 @@
 <?php
-// api/src/Entity/MediaObject.php
+
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
@@ -25,8 +25,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 #[ORM\Entity]
 #[ORM\Table(name: '`media_object`')]
-#[UniqueEntity('filePath')]
 #[UniqueEntity('name')]
+#[UniqueEntity('filePath')]
 #[ApiResource(
     types: ['https://schema.org/MediaObject'],
     operations: [
@@ -61,11 +61,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     ],
     normalizationContext: ['groups' => ['media_object:read']],
     mercure: ["private" => true],
-    order: ["id" => "DESC"],
+    order: ["name" => "ASC"],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(SearchFilter::class, properties: ["filePath" => "partial", "name" => "partial"])]
-#[ApiFilter(OrderFilter::class, properties: ['id', 'name', 'contentUrl'])]
+#[ApiFilter(SearchFilter::class, properties: ["name" => "partial", "filePath" => "partial"])]
+#[ApiFilter(OrderFilter::class, properties: ['name', 'filePath'])]
 class MediaObject
 {
     #[ORM\Id]
@@ -74,7 +74,7 @@ class MediaObject
     #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
     private ?Uuid $id = null;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
     #[ApiProperty(writable: false, types: ['https://schema.org/name'])]
     #[Groups(['media_object:read'])]

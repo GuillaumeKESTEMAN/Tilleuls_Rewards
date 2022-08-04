@@ -38,7 +38,7 @@ use App\Validator as AcmeAssert;
 )]
 #[ApiFilter(SearchFilter::class, properties: ["twitterAccountName" => "ipartial", "twitterAccountUsername" => "ipartial"])]
 #[ApiFilter(BooleanFilter::class, properties: ["active" => "exact"])]
-#[ApiFilter(OrderFilter::class, properties: ['active', 'twitterAccountName', 'twitterAccountUsername'])]
+#[ApiFilter(OrderFilter::class, properties: ['twitterAccountName', 'twitterAccountUsername', 'active'])]
 class TwitterAccountToFollow
 {
     #[ORM\Id]
@@ -48,20 +48,20 @@ class TwitterAccountToFollow
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'twitter_account_name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_name', type: 'string', length: 255)]
     #[ApiProperty(writable: false, types: ["https://schema.org/name"])]
     private ?string $twitterAccountName = null;
 
-    #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
     #[AcmeAssert\ExistsInTwitter]
     private ?string $twitterAccountUsername = null;
 
-    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
     #[ApiProperty(writable: false, types: ["https://schema.org/identifier"])]
     private ?string $twitterAccountId = null;
 
-    #[ORM\Column(name: 'active', type: 'boolean', nullable: false)]
+    #[ORM\Column(name: 'active', type: 'boolean')]
     private bool $active = false;
 
     public function getId(): Uuid

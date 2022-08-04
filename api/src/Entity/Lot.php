@@ -46,20 +46,20 @@ class Lot
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[ApiProperty(types: ["https://schema.org/name"])]
     private ?string $name = null;
 
-    #[ORM\Column(name: 'quantity', type: 'integer', nullable: false)]
+    #[ORM\Column(name: 'quantity', type: 'integer')]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
     #[ApiProperty(types: ["https://schema.org/Quantity"])]
     private ?int $quantity = null;
 
-    #[ORM\Column(name: 'message', type: 'string', nullable: false)]
+    #[ORM\Column(name: 'message', type: 'string')]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name% and same for the userhandle to mention it (%@userhandle%)', types: ["https://schema.org/Message"])]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name% and same for the userhandle to mention it : %@userhandle%', types: ["https://schema.org/Message"])]
     private ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]

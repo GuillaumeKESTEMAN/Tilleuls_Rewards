@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete()
     ],
     mercure: ["private" => true],
-    order: ["active" => "DESC"],
+    order: ["active" => "DESC", "hashtag" => "ASC"],
     paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ["hashtag" => "ipartial"])]
@@ -45,11 +45,11 @@ class TwitterHashtag
     #[ApiProperty(types: ["https://schema.org/identifier"])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'hashtag', type: 'string', length: 255, unique: true, nullable: false)]
+    #[ORM\Column(name: 'hashtag', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
     private ?string $hashtag = null;
 
-    #[ORM\Column(name: 'active', type: 'boolean', nullable: false)]
+    #[ORM\Column(name: 'active', type: 'boolean')]
     private bool $active = false;
 
     public function getId(): Uuid
