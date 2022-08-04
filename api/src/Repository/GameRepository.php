@@ -42,21 +42,6 @@ class GameRepository extends CommonRepository
         return true;
     }
 
-//    /**
-//     * @return Game[] Returns an array of Game objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('g.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
     /**
      * @throws NonUniqueResultException
      */
@@ -64,7 +49,6 @@ class GameRepository extends CommonRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.player = :val')
-            ->orderBy('p.creationDate')
             ->setParameter('val', $player)
             ->orderBy('p.creationDate', 'DESC')
             ->setMaxResults(1)

@@ -32,14 +32,4 @@ class TwitterHashtagRepository extends CommonRepository
             ->getResult()
         ;
     }
-
-//    public function findOneBySomeField($value): ?TwitterHashtag
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

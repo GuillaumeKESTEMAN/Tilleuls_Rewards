@@ -59,7 +59,7 @@ class LotRepository extends CommonRepository
 
             if (false === $lot) {
                 $this->logger->warning('No Lot found during random Lot search !');
-                return [];
+                return $dataReturn;
             }
 
             $lot->setQuantity($lot->getQuantity() - 1);
@@ -70,29 +70,4 @@ class LotRepository extends CommonRepository
 
         return $dataReturn;
     }
-
-//    /**
-//     * @return Lot[] Returns an array of Lot objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('l.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Lot
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
