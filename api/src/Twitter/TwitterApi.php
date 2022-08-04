@@ -13,10 +13,10 @@ class TwitterApi
     private array $memoize = [];
 
     public function __construct(
-        private string $twitterConsumerKey,
-        private string $twitterConsumerSecret,
-        private string $twitterAccessToken,
-        private string $twitterAccessTokenSecret
+        private readonly string $twitterConsumerKey,
+        private readonly string $twitterConsumerSecret,
+        private readonly string $twitterAccessToken,
+        private readonly string $twitterAccessTokenSecret
     )
     {
     }
