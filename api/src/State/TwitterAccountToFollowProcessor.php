@@ -6,17 +6,14 @@ namespace App\State;
 
 use Abraham\TwitterOAuth\TwitterOAuthException;
 use ApiPlatform\Doctrine\Common\State\PersistProcessor;
-use ApiPlatform\Metadata\HttpOperation;
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\TwitterAccountToFollow;
 use App\Twitter\TwitterApi;
-use Psr\Log\LoggerInterface;
 
 class TwitterAccountToFollowProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly PersistProcessor $persistProcessor, private readonly TwitterApi $twitterApi, private readonly LoggerInterface $logger)
+    public function __construct(private readonly PersistProcessor $persistProcessor, private readonly TwitterApi $twitterApi)
     {
     }
 
