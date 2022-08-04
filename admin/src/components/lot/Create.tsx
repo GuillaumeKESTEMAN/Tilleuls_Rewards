@@ -1,6 +1,7 @@
 import {FunctionComponent} from "react";
 import {Lot} from "../../types/Lot";
 import {CreateGuesser, InputGuesser} from "@api-platform/admin";
+// @ts-ignore
 import {MESSAGE_PLACE_HOLDER} from '../../config/lot.ts';
 import {AutocompleteInput, ReferenceInput} from "react-admin";
 

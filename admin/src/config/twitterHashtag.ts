@@ -1,1 +1,1 @@
-export const HASHTAG_PLACE_HOLDER = "cooptilleuls";
+export const HASHTAG_PLACE_HOLDER = "#cooptilleuls / cooptilleuls";

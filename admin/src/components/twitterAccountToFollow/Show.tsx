@@ -6,7 +6,6 @@ interface Props {
     twitterAccountToFollow: TwitterAccountToFollow;
 }
 
-// @ts-ignore
 export const Show: FunctionComponent<Props> = ({twitterAccountToFollow}) => (
     <ShowGuesser {...twitterAccountToFollow}>
         <FieldGuesser source="twitterAccountUsername"/>

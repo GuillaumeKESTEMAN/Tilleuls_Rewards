@@ -6,7 +6,6 @@ interface Props {
     mediaObject: MediaObject;
 }
 
-// @ts-ignore
 export const Edit: FunctionComponent<Props> = ({mediaObject}) => (
     <EditGuesser {...mediaObject}>
         <InputGuesser source="name" disabled/>

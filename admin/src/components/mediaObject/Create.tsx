@@ -1,13 +1,12 @@
 import {FunctionComponent} from "react";
 import {MediaObject} from "../../types/MediaObject";
 import {CreateGuesser, InputGuesser} from "@api-platform/admin";
-import {AutocompleteInput, FileField, FileInput, ReferenceInput} from "react-admin";
+import {FileField, FileInput} from "react-admin";
 
 interface Props {
     mediaObject: MediaObject;
 }
 
-// @ts-ignore
 export const Create: FunctionComponent<Props> = ({mediaObject}) => (
     <CreateGuesser {...mediaObject}>
         <InputGuesser source="name"/>

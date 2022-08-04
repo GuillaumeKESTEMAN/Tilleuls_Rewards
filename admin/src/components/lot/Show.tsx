@@ -7,7 +7,6 @@ interface Props {
     lot: Lot;
 }
 
-// @ts-ignore
 export const Show: FunctionComponent<Props> = ({lot}) => {
     return (
         <ShowGuesser {...lot}>
