@@ -53,4 +53,4 @@ To use Mercure in the admin you must have a JWT stored in ./admin/.env like this
 #### app:comment:getRecentTweets (`docker-compose exec php bin/console app:comment:getRecentTweets`)
 Command to get recent tweets with a query to update DB and a query to reply to play a game
 - update-db -> Boolean to update database (ex : `--update-db`)
-- reply-game-url -> Boolean to reply with game URL (ex : `--reply-game-url`)
+- reply -> Boolean to reply with game URL (ex : `--reply`)

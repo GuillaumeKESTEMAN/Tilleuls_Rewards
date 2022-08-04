@@ -43,8 +43,8 @@ class TwitterApiRecentTweetsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('update-db', null, InputOption::VALUE_OPTIONAL, 'Update database', false)
-            ->addOption('reply-game-url', null, InputOption::VALUE_OPTIONAL, 'Reply with game URL', false);
+            ->addOption('update-db', null, InputOption::VALUE_NONE, 'Update database')
+            ->addOption('reply', null, InputOption::VALUE_NONE, 'Reply with game URL');
     }
 
     /**
@@ -95,7 +95,7 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function followingMe(string $userId): bool
+    private function following(string $userId): bool
     {
         $twitterAccountsToFollow = $this->twitterAccountToFollowRepository->getAllActive();
 
@@ -114,31 +114,28 @@ class TwitterApiRecentTweetsCommand extends Command
     }
 
     /**
-     * @param bool $replyGameUrl
      * @param stdClass $user
      * @param stdClass $tweet
      * @return void
      * @throws NonUniqueResultException
      * @throws TwitterOAuthException
      */
-    private function notFollowAccounts(bool $replyGameUrl, stdClass $user, stdClass $tweet): void
+    private function notFollowAccounts(stdClass $user, stdClass $tweet): void
     {
-        if ($replyGameUrl) {
-            $twitterAccountsUsernamesToFollow = array_map(static function (TwitterAccountToFollow $twitterAccountToFollow) {
-                return $twitterAccountToFollow->getTwitterAccountUsername();
-            }, $this->twitterAccountToFollowRepository->getAllActive());
-            $twitterAccountsUsernamesToFollow = implode(', ', $twitterAccountsUsernamesToFollow);
-            $message = $this->tweetReplyRepository->findOneByName("need_to_follow_us")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow one of this accounts: ' . $twitterAccountsUsernamesToFollow;
+        $twitterAccountsUsernamesToFollow = array_map(static function (TwitterAccountToFollow $twitterAccountToFollow) {
+            return $twitterAccountToFollow->getTwitterAccountUsername();
+        }, $this->twitterAccountToFollowRepository->getAllActive());
+        $twitterAccountsUsernamesToFollow = implode(', ', $twitterAccountsUsernamesToFollow);
+        $message = $this->tweetReplyRepository->findOneByName("need_to_follow_us")?->getMessage($user->getName(), $user->getUsername()) ?? 'Thanks ' . $user->getName() . ' to talk about us.' . PHP_EOL . 'But you are not yet eligible for the game, to be eligible you have to follow one of this accounts: ' . $twitterAccountsUsernamesToFollow;
 
-            $params = [
-                'text' => $message,
-                'reply' => [
-                    'in_reply_to_tweet_id' => $tweet->id
-                ]
-            ];
+        $params = [
+            'text' => $message,
+            'reply' => [
+                'in_reply_to_tweet_id' => $tweet->id
+            ]
+        ];
 
-            $this->twitterApi->post('tweets', $params);
-        }
+        $this->twitterApi->post('tweets', $params);
     }
 
 
@@ -198,8 +195,10 @@ class TwitterApiRecentTweetsCommand extends Command
                     continue;
                 }
 
-                if (!$this->followingMe($user->id)) {
-                    $this->notFollowAccounts($input->getOption('reply-game-url'), $user, $tweet);
+                if (!$this->following($user->id)) {
+                    if ($input->getOption('reply')) {
+                        $this->notFollowAccounts($user, $tweet);
+                    }
                     continue;
                 }
 
@@ -226,22 +225,29 @@ class TwitterApiRecentTweetsCommand extends Command
 
                     $reward = new Reward();
                     $reward->setDistributed(false);
-                    $reward->setLot($this->lotRepository->getRandom()[0]);
+
+                    $randomLot = $this->lotRepository->getRandom();
+
+                    if (count($randomLot) > 0) {
+                        $reward->setLot($randomLot[0]);
+                    } else {
+                        $io->error('No lot available');
+                        $this->tweetRepository->removeAndFlush($recentTweet, true);
+                        $this->playerRepository->removeAndFlush($player, true);
+                        return Command::FAILURE;
+                    }
 
                     $game = new Game();
                     $game->setTweet($recentTweet);
                     $game->setPlayer($player);
                     $game->setReward($reward);
 
-                    if ($this->gameRepository->persistAndFlush($game, true) && $input->getOption('reply-game-url')) {
+                    if ($this->gameRepository->persistAndFlush($game, true) && $input->getOption('reply')) {
                         $message = $this->tweetReplyRepository->findOneByName("on_new_game")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'We want to give you a little gift but to get it you must play a little game 😁' . PHP_EOL . $this->communicationWebsiteUrl;
                         $this->newReply($tweet->id, $message);
-                    } else {
-                        $reward->getLot()->setQuantity($reward->getLot()->getQuantity() + 1);
-                        $this->lotRepository->persistAndFlush($reward->getLot(), true);
                     }
 
-                } else if ($input->getOption('reply-game-url')) {
+                } else if ($input->getOption('reply')) {
                     $message = $this->tweetReplyRepository->findOneByName("game_already_generated_less_than_a_day_ago")?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? 'Thanks ' . $player->getName() . ' to talk about us.' . PHP_EOL . 'But you already got a game link less than a day ago ! (talk again about us tomorrow to get a new game url)' . PHP_EOL . 'This is your previous game link : ' . $this->communicationWebsiteUrl;
                     $this->newReply($tweet->id, $message);
                 }

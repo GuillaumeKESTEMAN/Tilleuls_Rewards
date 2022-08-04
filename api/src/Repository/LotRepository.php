@@ -54,11 +54,11 @@ class LotRepository extends CommonRepository
 
             $randomNumber = random_int(0, $totalQuantity - 1);
 
-            $filteredLots = array_filter($lots, static fn (Lot $lot) => $lot->min <= $randomNumber && $lot->max > $randomNumber);
+            $filteredLots = array_filter($lots, static fn(Lot $lot) => $lot->min <= $randomNumber && $lot->max > $randomNumber);
             $lot = reset($filteredLots);
 
             if (false === $lot) {
-                $this->logger->warning('No Lot found when random Lot search !');
+                $this->logger->warning('No Lot found during random Lot search !');
                 return [];
             }
 

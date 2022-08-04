@@ -20,7 +20,7 @@ start:
 
 start-all:
 	docker-compose up -d
-	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction # or `$(MAKE) new-db`
+	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
 	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
 	sleep 5
 	cd admin/ && yarn start
@@ -74,7 +74,6 @@ ifeq ($(shell docker-compose ps | wc -l),2)
 	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Security"
 	docker-compose stop
 else
-	$(MAKE) jwt-keypair
 	docker-compose exec php bin/phpunit tests/Security
 endif
 
