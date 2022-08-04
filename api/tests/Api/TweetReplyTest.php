@@ -24,14 +24,12 @@ class TweetReplyTest extends ApiTestCase
     public function testGetCollection(): void
     {
         $token = LoginTest::getLoginToken();
-        // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
+
         $response = static::createClient()->request('GET', '/api/tweet_replies', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
-        // Asserts that the returned content type is JSON-LD (the default)
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        // Asserts that the returned JSON is a superset of this one
         self::assertJsonContains([
             '@context' => '/api/contexts/TweetReply',
             '@id' => '/api/tweet_replies',
@@ -39,11 +37,8 @@ class TweetReplyTest extends ApiTestCase
             'hydra:totalItems' => 1,
         ]);
 
-        // Because test fixtures are automatically loaded between each test, you can assert on them
         $this->assertCount(1, $response->toArray()['hydra:member']);
 
-        // Asserts that the returned JSON is validated by the JSON Schema generated for this resource by API Platform
-        // This generated JSON Schema is also used in the OpenAPI spec!
         self::assertMatchesResourceCollectionJsonSchema(TweetReply::class);
     }
 
@@ -64,7 +59,6 @@ class TweetReplyTest extends ApiTestCase
         $client->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
-
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
@@ -95,12 +89,14 @@ class TweetReplyTest extends ApiTestCase
 
         self::assertResponseStatusCodeSame(201);
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
         self::assertJsonContains([
             '@context' => '/api/contexts/TweetReply',
             '@type' => 'TweetReply',
             'name' => 'need_to_follow_us',
             'message' => 'you need to follow test !!!'
         ]);
+
         $this->assertMatchesRegularExpression('~^/api/tweet_replies/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(TweetReply::class);
     }
@@ -117,7 +113,7 @@ class TweetReplyTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
+
         $iri = $this->findIriBy(TweetReply::class, ['name' => 'need_to_follow_us']);
 
         $client->request('PUT', $iri, [
@@ -151,8 +147,8 @@ class TweetReplyTest extends ApiTestCase
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseStatusCodeSame(204);
+
         $this->assertNull(
-        // Through the container, you can access all your services from the tests, including the ORM, the mailer, remote API clients...
             static::getContainer()->get('doctrine')->getRepository(TweetReply::class)->findOneBy(['name' => 'need_to_follow_us'])
         );
     }

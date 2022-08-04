@@ -18,16 +18,13 @@ class TweetTest extends ApiTestCase
 {
     /**
      * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
-        // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
-        $response = static::createClient()->request('GET', '/api/tweets', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/api/tweets');
 
         self::assertResponseStatusCodeSame(404);
     }
@@ -49,7 +46,6 @@ class TweetTest extends ApiTestCase
         $client->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
-
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
@@ -86,7 +82,7 @@ class TweetTest extends ApiTestCase
     public function testUpdateTweet(): void
     {
         $client = static::createClient();
-        // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
+
         $iri = $this->findIriBy(Tweet::class, ['tweetId' => '123456']);
 
         $client->request('PUT', $iri, ['json' => [

@@ -26,14 +26,12 @@ class GameTest extends ApiTestCase
     public function testGetCollection(): void
     {
         $token = LoginTest::getLoginToken();
-        // The client implements Symfony HttpClient's `HttpClientInterface`, and the response `ResponseInterface`
+
         $response = static::createClient()->request('GET', '/api/games', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
-        // Asserts that the returned content type is JSON-LD (the default)
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        // Asserts that the returned JSON is a superset of this one
         self::assertJsonContains([
             '@context' => '/api/contexts/Game',
             '@id' => '/api/games',
@@ -48,11 +46,8 @@ class GameTest extends ApiTestCase
             ],
         ]);
 
-        // Because test fixtures are automatically loaded between each test, you can assert on them
         $this->assertCount(20, $response->toArray()['hydra:member']);
 
-        // Asserts that the returned JSON is validated by the JSON Schema generated for this resource by API Platform
-        // This generated JSON Schema is also used in the OpenAPI spec!
         self::assertMatchesResourceCollectionJsonSchema(Game::class);
     }
 
@@ -72,7 +67,6 @@ class GameTest extends ApiTestCase
         static::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
-
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
@@ -105,7 +99,6 @@ class GameTest extends ApiTestCase
      */
     public function testUpdateGame(): void
     {
-        // findIriBy allows to retrieve the IRI of an item by searching for some of its properties.
         $iri = $this->findIriBy(Game::class, ['creationDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 
         static::createClient()->request('PUT', $iri, ['json' => [
