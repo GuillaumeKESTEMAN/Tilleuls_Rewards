@@ -20,6 +20,7 @@ use App\State\TwitterAccountToFollowProcessor;
 use App\Validator as AcmeAssert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(),
         new Post(processor: TwitterAccountToFollowProcessor::class),
         new Get(),
-        new Put(processor: TwitterAccountToFollowProcessor::class),
+        new Put(normalizationContext: ['groups' => ['put']], processor: TwitterAccountToFollowProcessor::class),
         new Delete(),
     ],
     mercure: ['private' => true],
@@ -64,6 +65,7 @@ class TwitterAccountToFollow
     private ?string $twitterAccountId = null;
 
     #[ORM\Column(name: 'active', type: 'boolean')]
+    #[Groups('put')]
     private bool $active = false;
 
     public function getId(): Uuid

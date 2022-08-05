@@ -9,11 +9,11 @@ interface Props {
 
 // @ts-ignore
 export const List: FunctionComponent<Props> = ({lots}) => (
-    <ListGuesser {...lots}>
+    <ListGuesser rowClick="show" {...lots}>
         <FieldGuesser source="name"/>
         <FieldGuesser source="quantity"/>
         <FieldGuesser source="message"/>
-        <ReferenceField label="Image" source="image" reference="media_objects">
+        <ReferenceField label="Image" source="image" reference="media_objects" link="show">
             <FieldGuesser source="name"/>
         </ReferenceField>
     </ListGuesser>

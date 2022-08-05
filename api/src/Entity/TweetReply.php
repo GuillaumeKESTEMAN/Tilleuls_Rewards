@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\Put;
 use App\Repository\TweetReplyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(),
         new Post(),
         new Get(),
-        new Put(),
+        new Put(normalizationContext: ['groups' => ['put']]),
         new Delete(),
     ],
     mercure: ['private' => true],
@@ -51,6 +52,7 @@ class TweetReply
     private ?string $name = null;
 
     #[ORM\Column(name: 'message', type: 'string')]
+    #[Groups('put')]
     #[Assert\NotBlank]
     #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention : %@userhandle%, and same for communication website link : %website_url%', types: ['https://schema.org/Message'])]
     private ?string $message = null;

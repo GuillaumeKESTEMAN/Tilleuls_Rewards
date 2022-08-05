@@ -60,7 +60,7 @@ class Game
     #[ApiProperty(types: ['https://schema.org/DateTime'])]
     private ?\DateTime $playDate = null;
 
-    #[ORM\OneToOne(targetEntity: Reward::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'game', targetEntity: Reward::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(unique: true)]
     private ?Reward $reward = null;
 

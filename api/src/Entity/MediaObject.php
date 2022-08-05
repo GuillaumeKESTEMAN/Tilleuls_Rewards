@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Controller\CreateMediaObjectActionController;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -59,6 +60,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             deserialize: false,
         ),
         new Get(),
+        new Put(normalizationContext: ['groups' => ['put']]),
         new Delete(),
     ],
     normalizationContext: ['groups' => ['media_object:read']],
@@ -78,8 +80,8 @@ class MediaObject
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
-    #[ApiProperty(writable: false, types: ['https://schema.org/name'])]
-    #[Groups(['media_object:read'])]
+    #[ApiProperty(types: ['https://schema.org/name'])]
+    #[Groups(['media_object:read', 'put'])]
     public ?string $name = null;
 
     #[ApiProperty(writable: false, types: ['https://schema.org/contentUrl'])]

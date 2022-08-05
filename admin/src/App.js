@@ -8,16 +8,18 @@ import {
 import {parseHydraDocumentation} from "@api-platform/api-doc-parser";
 import authProvider from "./utils/authProvider.tsx";
 import {LotCreate, LotShow, LotEdit, LotsList} from "./components/lot.ts";
-import {MediaObjectCreate, MediaObjectEdit} from "./components/mediaObject.ts";
-import {TwitterHashtagCreate, TwitterHashtagEdit} from "./components/twitterHashtag.ts";
+import {MediaObjectList, MediaObjectCreate, MediaObjectEdit, MediaObjectShow} from "./components/mediaObject.ts";
+import {TwitterHashtagCreate, TwitterHashtagEdit, TwitterHashtagsList} from "./components/twitterHashtag.ts";
+import {RewardsList, RewardsShow, RewardsEdit} from "./components/reward.ts";
 import {
   TwitterAccountToFollowCreate,
   TwitterAccountToFollowEdit,
   TwitterAccountToFollowList,
   TwitterAccountToFollowShow
 } from "./components/twitterAccountToFollow.ts";
-import {TweetReplyCreate, TweetReplyEdit} from "./components/tweetReply.ts";
+import {TweetRepliesList, TweetReplyCreate, TweetReplyEdit, TweetReplyShow} from "./components/tweetReply.ts";
 import {API_ENTRYPOINT, ENTRYPOINT} from "./config/entrypoint.ts";
+import {PlayerShow, PlayersList} from "./components/player.ts";
 
 const getHeaders = () => localStorage.getItem("token") ? {
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -76,14 +78,14 @@ const AdminLoader = () => {
     const {HydraAdmin} = require("@api-platform/admin");
     return (<HydraAdmin dataProvider={dataProvider} authProvider={authProvider} entrypoint={API_ENTRYPOINT}>
       <ResourceGuesser name="lots" list={LotsList} show={LotShow} create={LotCreate} edit={LotEdit}/>
-      <ResourceGuesser name="rewards"/>
-      <ResourceGuesser name="players"/>
+      <ResourceGuesser name="rewards" list={RewardsList} show={RewardsShow} edit={RewardsEdit}/>
+      <ResourceGuesser name="players" list={PlayersList} show={PlayerShow}/>
       <ResourceGuesser name="twitter_account_to_follows" list={TwitterAccountToFollowList}
                        show={TwitterAccountToFollowShow} create={TwitterAccountToFollowCreate}
                        edit={TwitterAccountToFollowEdit}/>
-      <ResourceGuesser name="twitter_hashtags" create={TwitterHashtagCreate} edit={TwitterHashtagEdit}/>
-      <ResourceGuesser name="tweet_replies" create={TweetReplyCreate} edit={TweetReplyEdit}/>
-      <ResourceGuesser name="media_objects" create={MediaObjectCreate} edit={MediaObjectEdit}/>
+      <ResourceGuesser name="twitter_hashtags" list={TwitterHashtagsList} create={TwitterHashtagCreate} edit={TwitterHashtagEdit}/>
+      <ResourceGuesser name="tweet_replies" list={TweetRepliesList} create={TweetReplyCreate} show={TweetReplyShow} edit={TweetReplyEdit}/>
+      <ResourceGuesser name="media_objects" list={MediaObjectList} create={MediaObjectCreate} show={MediaObjectShow} edit={MediaObjectEdit}/>
     </HydraAdmin>);
   }
 

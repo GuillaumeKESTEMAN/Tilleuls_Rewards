@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
 use App\Repository\RewardRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: RewardRepository::class)]
@@ -21,7 +22,7 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new GetCollection(),
         new Get(),
-        new Put(),
+        new Put(normalizationContext: ['groups' => ['put']]),
     ],
     mercure: ['private' => true],
     order: ['distributed' => 'ASC'],
@@ -42,7 +43,12 @@ class Reward
     #[ApiProperty(writable: false)]
     private ?Lot $lot = null;
 
+    #[ORM\OneToOne(mappedBy: 'reward', targetEntity: Game::class)]
+    #[ApiProperty(writable: false)]
+    private ?Game $game = null;
+
     #[ORM\Column(name: 'distributed', type: 'boolean')]
+    #[Groups('put')]
     private bool $distributed = false;
 
     public function getId(): Uuid
@@ -58,6 +64,16 @@ class Reward
     public function setLot(?Lot $lot): void
     {
         $this->lot = $lot;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): void
+    {
+        $this->game = $game;
     }
 
     public function isDistributed(): ?bool

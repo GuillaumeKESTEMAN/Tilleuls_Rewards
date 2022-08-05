@@ -9,17 +9,13 @@ interface Props {
     tweetReply: TweetReply;
 }
 
-export const Create: FunctionComponent<Props> = ({tweetReply}) => {
-    const toChoices = items => items.map(item => ({id: item, name: item}));
-
-    // @ts-ignore
-    return (
-        <CreateGuesser {...tweetReply}>
-            <SelectInput source="name"
-                         choices={toChoices(NAME_CHOICES)}
-                         required
-            />
-            <InputGuesser source="message" multiline placeholder={MESSAGE_PLACE_HOLDER}/>
-        </CreateGuesser>
-    );
-}
+// @ts-ignore
+export const Create: FunctionComponent<Props> = ({tweetReply}) => (
+    <CreateGuesser {...tweetReply}>
+        <SelectInput source="name"
+                     choices={NAME_CHOICES}
+                     required
+        />
+        <InputGuesser source="message" multiline placeholder={MESSAGE_PLACE_HOLDER}/>
+    </CreateGuesser>
+);

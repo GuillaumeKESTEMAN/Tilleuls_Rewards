@@ -3,3 +3,4 @@ App\Entity\Player:
         name: <name()>
         username (unique): \@<username()>
         twitterAccountId (unique): <uniqid()>
+        lastPlayDate: <date_create()>

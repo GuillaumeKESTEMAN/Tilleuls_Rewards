@@ -3,8 +3,10 @@ App\Entity\Player:
         name: <name()>
         username (unique): \@<username()>
         twitterAccountId (unique): <uniqid()>
+        lastPlayDate: <date_create()>
 
     player_60:
         name: Test Account Name
         username (unique): \@TestAccountUsername
         twitterAccountId (unique): <uniqid()>
+        lastPlayDate: <date_create()>

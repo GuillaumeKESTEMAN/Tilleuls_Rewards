@@ -13,7 +13,7 @@ export const Show: FunctionComponent<Props> = ({lot}) => {
             <FieldGuesser source="name"/>
             <FieldGuesser source="quantity"/>
             <FieldGuesser source="message"/>
-            <ReferenceField label="Image" source="image" reference="media_objects">
+            <ReferenceField label="Image" source="image" reference="media_objects" link="show">
                 <FieldGuesser source="name"/>
             </ReferenceField>
         </ShowGuesser>

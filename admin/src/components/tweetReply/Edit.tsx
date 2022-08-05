@@ -9,17 +9,13 @@ interface Props {
     tweetReply: TweetReply;
 }
 
-export const Edit: FunctionComponent<Props> = ({tweetReply}) => {
-    const toChoices = items => items.map(item => ({id: item, name: item}));
-
-    // @ts-ignore
-    return (
-        <EditGuesser {...tweetReply}>
-            <SelectInput source="name"
-                         choices={toChoices(NAME_CHOICES)}
-                         required
-            />
-            <InputGuesser source="message" multiline placeholder={MESSAGE_PLACE_HOLDER}/>
-        </EditGuesser>
-    );
-}
+export const Edit: FunctionComponent<Props> = ({tweetReply}) => (
+    <EditGuesser {...tweetReply}>
+        <SelectInput source="name"
+                     choices={NAME_CHOICES}
+                     required
+                     disabled
+        />
+        <InputGuesser source="message" multiline placeholder={MESSAGE_PLACE_HOLDER}/>
+    </EditGuesser>
+);

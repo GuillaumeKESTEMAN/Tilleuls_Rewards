@@ -8,6 +8,6 @@ interface Props {
 
 export const Edit: FunctionComponent<Props> = ({mediaObject}) => (
     <EditGuesser {...mediaObject}>
-        <InputGuesser source="name" disabled/>
+        <InputGuesser source="name"/>
     </EditGuesser>
 );
