@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Lot;
@@ -36,7 +38,7 @@ class LotRepository extends CommonRepository
 
         $dataReturn = [];
 
-        for ($i = 0; $i < $numberOfLotReturn; $i++) {
+        for ($i = 0; $i < $numberOfLotReturn; ++$i) {
             $totalQuantity = 0;
             foreach ($lots as $lot) {
                 if ($lot->getQuantity() <= 0) {
@@ -54,11 +56,12 @@ class LotRepository extends CommonRepository
 
             $randomNumber = random_int(0, $totalQuantity - 1);
 
-            $filteredLots = array_filter($lots, static fn(Lot $lot) => $lot->min <= $randomNumber && $lot->max > $randomNumber);
+            $filteredLots = array_filter($lots, static fn (Lot $lot) => $lot->min <= $randomNumber && $lot->max > $randomNumber);
             $lot = reset($filteredLots);
 
             if (false === $lot) {
                 $this->logger->warning('No Lot found during random Lot search !');
+
                 return $dataReturn;
             }
 

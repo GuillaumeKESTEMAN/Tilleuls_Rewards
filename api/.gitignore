@@ -47,3 +47,5 @@ yarn-error.log
 ###> php/scripts ###
 /mercureJWTGenerator.php
 ###< php/scripts ###
+
+/.php-cs-fixer.cache

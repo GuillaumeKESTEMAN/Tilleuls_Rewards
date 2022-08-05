@@ -17,13 +17,9 @@ class TwitterApi
         private readonly string $twitterConsumerSecret,
         private readonly string $twitterAccessToken,
         private readonly string $twitterAccessTokenSecret
-    )
-    {
+    ) {
     }
 
-    /**
-     * @return TwitterOAuth
-     */
     private function getConnection(): TwitterOAuth
     {
         return new TwitterOAuth($this->twitterConsumerKey, $this->twitterConsumerSecret, $this->twitterAccessToken, $this->twitterAccessTokenSecret);
@@ -36,7 +32,7 @@ class TwitterApi
     {
         $request = serialize([$url, $params]);
 
-        if($response = $this->memoize[$request] ?? null) {
+        if ($response = $this->memoize[$request] ?? null) {
             return $response;
         }
 
@@ -44,8 +40,9 @@ class TwitterApi
         $connection->setApiVersion($apiVersion);
         $response = $connection->get($url, $params);
 
-        if ($connection->getLastHttpCode() === 200) {
+        if (200 === $connection->getLastHttpCode()) {
             $this->memoize[$request] = $response;
+
             return $response;
         }
 
@@ -61,7 +58,7 @@ class TwitterApi
         $connection->setApiVersion($apiVersion);
         $response = $connection->post($url, $params, $json);
 
-        if ($connection->getLastHttpCode() === 201) {
+        if (201 === $connection->getLastHttpCode()) {
             return $response;
         }
 

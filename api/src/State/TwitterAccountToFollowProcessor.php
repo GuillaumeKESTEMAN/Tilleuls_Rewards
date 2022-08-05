@@ -19,16 +19,13 @@ class TwitterAccountToFollowProcessor implements ProcessorInterface
 
     /**
      * @param $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return object
+     *
      * @throws TwitterOAuthException
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
-        if ($data instanceof TwitterAccountToFollow && ($context['operation']->getMethod() === 'POST' || $context['operation']->getMethod() === 'PUT')) {
-            $user = $this->twitterApi->get('users/by/username/' . substr($data->getTwitterAccountUsername(), 1));
+        if ($data instanceof TwitterAccountToFollow && ('POST' === $context['operation']->getMethod() || 'PUT' === $context['operation']->getMethod())) {
+            $user = $this->twitterApi->get('users/by/username/'.substr($data->getTwitterAccountUsername(), 1));
 
             $data->setTwitterAccountId($user->data->id);
             $data->setTwitterAccountName($user->data->name);

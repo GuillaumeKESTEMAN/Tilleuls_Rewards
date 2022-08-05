@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Game;
@@ -28,11 +30,11 @@ class GameRepository extends CommonRepository
     {
         $lastGame = $this->findOneByPlayer($entity->getPlayer());
 
-        if (null !== $lastGame && date_diff($lastGame->getCreationDate(), new \DateTime)->d < 1) {
+        if (null !== $lastGame && date_diff($lastGame->getCreationDate(), new \DateTime())->d < 1) {
             return false;
         }
 
-        $entity->setCreationDate(new \DateTime);
+        $entity->setCreationDate(new \DateTime());
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {

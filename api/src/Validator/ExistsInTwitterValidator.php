@@ -20,7 +20,7 @@ class ExistsInTwitterValidator extends ConstraintValidator
     /**
      * @throws TwitterOAuthException
      */
-    public function validate($username, Constraint $constraint)
+    public function validate($username, Constraint $constraint): void
     {
         if (!$constraint instanceof ExistsInTwitter) {
             throw new UnexpectedTypeException($constraint, ExistsInTwitter::class);
@@ -32,17 +32,16 @@ class ExistsInTwitterValidator extends ConstraintValidator
             return;
         }
 
-        if (!is_string($username)) {
+        if (!\is_string($username)) {
             // throw this exception if your validator cannot handle the passed type so that it can be marked as invalid
             throw new UnexpectedValueException($username, 'string');
-
             // separate multiple types using pipes
             // throw new UnexpectedValueException($username, 'string|int');
         }
 
-        $user = $this->twitterApi->get('users/by/username/' . substr($username, 1));
+        $user = $this->twitterApi->get('users/by/username/'.substr($username, 1));
 
-        if (property_exists($user, "errors")) {
+        if (property_exists($user, 'errors')) {
             // the argument must be a string or an object implementing __toString()
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ username }}', $username)

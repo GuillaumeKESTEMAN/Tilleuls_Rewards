@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 final class MediaObjectProcessor implements ProcessorInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function preProcess(string $fixtureId, $object): void
     {
@@ -19,26 +19,26 @@ final class MediaObjectProcessor implements ProcessorInterface
             return;
         }
 
-        if ($_ENV['APP_ENV'] !== 'test') {
+        if ('test' !== $_ENV['APP_ENV']) {
             return;
         }
 
         $fs = new Filesystem();
 
-        $root = explode("/", __DIR__);
-        $root = array_slice($root, 0, -3);
-        $root = implode("/", $root);
+        $root = explode('/', __DIR__);
+        $root = \array_slice($root, 0, -3);
+        $root = implode('/', $root);
 
-        $originPath = $root . '/fixtures/test/files/image.jpg';
-        $targetPath = $root . '/fixtures/test/files/test_image.jpg';
+        $originPath = $root.'/fixtures/test/files/image.jpg';
+        $targetPath = $root.'/fixtures/test/files/test_image.jpg';
         $fs->copy($originPath, $targetPath, true);
 
-        $fs->touch($root . '/fixtures/test/files/invalid_file.txt');
-        $fs->appendToFile($root . '/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
+        $fs->touch($root.'/fixtures/test/files/invalid_file.txt');
+        $fs->appendToFile($root.'/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function postProcess(string $fixtureId, $object): void
     {

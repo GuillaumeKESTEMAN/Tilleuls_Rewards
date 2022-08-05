@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TwitterHashtagRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -27,22 +29,22 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(),
         new Get(),
         new Put(),
-        new Delete()
+        new Delete(),
     ],
-    mercure: ["private" => true],
-    order: ["active" => "DESC", "hashtag" => "ASC"],
+    mercure: ['private' => true],
+    order: ['active' => 'DESC', 'hashtag' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(SearchFilter::class, properties: ["hashtag" => "ipartial"])]
-#[ApiFilter(BooleanFilter::class, properties: ["active" => "exact"])]
+#[ApiFilter(SearchFilter::class, properties: ['hashtag' => 'ipartial'])]
+#[ApiFilter(BooleanFilter::class, properties: ['active' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['hashtag', 'active'])]
 class TwitterHashtag
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(types: ["https://schema.org/identifier"])]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
     #[ORM\Column(name: 'hashtag', type: 'string', length: 255, unique: true)]
@@ -57,38 +59,26 @@ class TwitterHashtag
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getHashtag(): ?string
     {
         return $this->hashtag;
     }
 
-    /**
-     * @param string|null $hashtag
-     */
     public function setHashtag(?string $hashtag): void
     {
         $hashtag = str_replace(' ', '', $hashtag);
-        if($hashtag[0] !== '#') {
-            $hashtag = '#' . $hashtag;
+        if ('#' !== $hashtag[0]) {
+            $hashtag = '#'.$hashtag;
         }
 
         $this->hashtag = $hashtag;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     */
     public function setActive(bool $active): void
     {
         $this->active = $active;

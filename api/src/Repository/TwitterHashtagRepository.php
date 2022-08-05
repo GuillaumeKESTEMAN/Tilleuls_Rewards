@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\TwitterHashtag;
@@ -29,7 +31,6 @@ class TwitterHashtagRepository extends CommonRepository
             ->andWhere('t.active = :active')
             ->setParameter('active', true)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

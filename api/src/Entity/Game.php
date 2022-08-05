@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -20,46 +22,46 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity('tweet')]
 #[
     ApiResource(
-        types: ["https://schema.org/VideoGame"],
+        types: ['https://schema.org/VideoGame'],
         operations: [
             new GetCollection(),
             new Get(),
         ],
-        mercure: ["private" => true],
-        order: ["creationDate" => "DESC"],
+        mercure: ['private' => true],
+        order: ['creationDate' => 'DESC'],
         paginationClientItemsPerPage: true
     )
 ]
-#[ApiFilter(SearchFilter::class, properties: ["url" => "partial"])]
-#[ApiFilter(DateFilter::class, properties: ["creationDate"])]
+#[ApiFilter(SearchFilter::class, properties: ['url' => 'partial'])]
+#[ApiFilter(DateFilter::class, properties: ['creationDate'])]
 #[ApiFilter(OrderFilter::class, properties: ['tweet', 'player.username', 'score', 'creationDate', 'playDate'])]
 class Game
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(types: ["https://schema.org/identifier"])]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
     #[ORM\OneToOne(targetEntity: Tweet::class, cascade: ['persist'])]
     #[ORM\JoinColumn(unique: true)]
-    #[ApiProperty(types: ["https://schema.org/SocialMediaPosting"])]
+    #[ApiProperty(types: ['https://schema.org/SocialMediaPosting'])]
     private ?Tweet $tweet = null;
 
     #[ORM\ManyToOne(targetEntity: Player::class)]
     private ?Player $player = null;
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
-    #[ApiProperty(types: ["https://schema.org/Rating"])]
+    #[ApiProperty(types: ['https://schema.org/Rating'])]
     private ?int $score = null;
 
     #[ORM\Column(name: 'creation_date', type: 'datetime')]
-    #[ApiProperty(types: ["https://schema.org/dateCreated"])]
+    #[ApiProperty(types: ['https://schema.org/dateCreated'])]
     private ?\DateTime $creationDate = null;
 
     #[ORM\Column(name: 'play_date', type: 'datetime', nullable: true)]
-    #[ApiProperty(types: ["https://schema.org/DateTime"])]
+    #[ApiProperty(types: ['https://schema.org/DateTime'])]
     private ?\DateTime $playDate = null;
 
     #[ORM\OneToOne(targetEntity: Reward::class, cascade: ['persist', 'remove'])]

@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\CreateMediaObjectActionController;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -57,21 +59,21 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             deserialize: false,
         ),
         new Get(),
-        new Delete()
+        new Delete(),
     ],
     normalizationContext: ['groups' => ['media_object:read']],
-    mercure: ["private" => true],
-    order: ["name" => "ASC"],
+    mercure: ['private' => true],
+    order: ['name' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(SearchFilter::class, properties: ["name" => "partial", "filePath" => "partial"])]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'filePath' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['name', 'filePath'])]
 class MediaObject
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
@@ -90,15 +92,15 @@ class MediaObject
     #[Assert\NotNull(groups: ['media_object_create'])]
     #[Assert\NotBlank(groups: ['media_object_create'])]
     #[Assert\Image([
-        'maxSize' => "5M",
+        'maxSize' => '5M',
         'minWidth' => 100,
         'maxWidth' => 2000,
         'minHeight' => 100,
         'maxHeight' => 2000,
         'mimeTypes' => [
-            "image/jpeg",
-            "image/jpg",
-            "image/png",
+            'image/jpeg',
+            'image/jpg',
+            'image/png',
         ],
     ], groups: ['media_object_create'])]
     private ?File $file = null;
@@ -121,36 +123,23 @@ class MediaObject
         $this->name = $name;
     }
 
-    /**
-     * @return File|null
-     */
     public function getFile(): ?File
     {
         return $this->file;
     }
 
-    /**
-     * @param File|null $file
-     */
     public function setFile(?File $file): void
     {
         $this->file = $file;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilePath(): ?string
     {
         return $this->filePath;
     }
 
-    /**
-     * @param string|null $filePath
-     */
     public function setFilePath(?string $filePath): void
     {
         $this->filePath = $filePath;
     }
-
 }

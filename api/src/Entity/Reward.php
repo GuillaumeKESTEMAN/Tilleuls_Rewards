@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
 use App\Repository\RewardRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,24 +21,24 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new GetCollection(),
         new Get(),
-        new Put()
+        new Put(),
     ],
-    mercure: ["private" => true],
-    order: ["distributed" => "ASC"],
+    mercure: ['private' => true],
+    order: ['distributed' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(BooleanFilter::class, properties: ["distributed" => "exact"])]
+#[ApiFilter(BooleanFilter::class, properties: ['distributed' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['distributed'])]
 class Reward
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(types: ["https://schema.org/identifier"])]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
-    #[ORM\ManyToOne(targetEntity: Lot::class, inversedBy: "rewards")]
+    #[ORM\ManyToOne(targetEntity: Lot::class, inversedBy: 'rewards')]
     #[ApiProperty(writable: false)]
     private ?Lot $lot = null;
 

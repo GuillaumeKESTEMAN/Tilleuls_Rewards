@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
@@ -13,27 +15,27 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: TweetRepository::class)]
 #[UniqueEntity('tweetId')]
 #[ApiResource(
-    types: ["https://schema.org/SocialMediaPosting"],
+    types: ['https://schema.org/SocialMediaPosting'],
     operations: [
-        new Get()
+        new Get(),
     ],
-    mercure: ["private" => true],
+    mercure: ['private' => true],
     paginationClientItemsPerPage: true
 )]
 class Tweet
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\CustomIdGenerator(class: "doctrine.uuid_generator")]
-    #[ApiProperty(types: ["https://schema.org/identifier"])]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
     private ?Player $player = null;
 
     #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true)]
-    #[ApiProperty(types: ["https://schema.org/identifier"])]
+    #[ApiProperty(types: ['https://schema.org/identifier'])]
     private ?string $tweetId = null;
 
     public function getId(): Uuid
