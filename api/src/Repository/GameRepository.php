@@ -30,11 +30,11 @@ class GameRepository extends CommonRepository
     {
         $lastGame = $this->findOneByPlayer($entity->getPlayer());
 
-        if (null !== $lastGame && date_diff($lastGame->getCreationDate(), new \DateTime())->d < 1) {
+        if (null !== $lastGame && date_diff($lastGame->getPlayDate(), new \DateTime())->d < 1) {
             return false;
         }
 
-        $entity->setCreationDate(new \DateTime());
+        $entity->setPlayDate(new \DateTime());
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {
@@ -52,7 +52,7 @@ class GameRepository extends CommonRepository
         return $this->createQueryBuilder('p')
             ->andWhere('p.player = :val')
             ->setParameter('val', $player)
-            ->orderBy('p.creationDate', 'DESC')
+            ->orderBy('p.playDate', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

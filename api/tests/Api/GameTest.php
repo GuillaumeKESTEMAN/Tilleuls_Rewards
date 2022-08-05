@@ -62,7 +62,7 @@ class GameTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $iri = $this->findIriBy(Game::class, ['creationDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 
         static::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
@@ -85,7 +85,7 @@ class GameTest extends ApiTestCase
     public function testCreateGame(): void
     {
         static::createClient()->request('POST', '/api/games', ['json' => [
-            'creationDate' => new DateTime('2022-01-01 12:35:00.000000'),
+            'playDate' => new DateTime('2022-01-01 12:35:00.000000'),
         ]]);
 
         self::assertResponseStatusCodeSame(405);
@@ -99,10 +99,10 @@ class GameTest extends ApiTestCase
      */
     public function testUpdateGame(): void
     {
-        $iri = $this->findIriBy(Game::class, ['creationDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 
         static::createClient()->request('PUT', $iri, ['json' => [
-            'creationDate' => new DateTime('2022-01-01 12:35:00.000000'),
+            'playDate' => new DateTime('2022-01-01 12:35:00.000000'),
         ]]);
 
         self::assertResponseStatusCodeSame(405);
@@ -113,7 +113,7 @@ class GameTest extends ApiTestCase
      */
     public function testDeleteGame(): void
     {
-        $iri = $this->findIriBy(Game::class, ['creationDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 
         static::createClient()->request('DELETE', $iri);
 

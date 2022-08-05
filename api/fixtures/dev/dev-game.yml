@@ -3,4 +3,4 @@ App\Entity\Game:
         tweet: '@tweet_<current()>'
         player: '@player_<current()>'
         reward: '@reward_<current()>'
-        creationDate: <date_create()>
+        playDate: <date_create()>

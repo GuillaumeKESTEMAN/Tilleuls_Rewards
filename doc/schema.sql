@@ -23,8 +23,7 @@ CREATE TABLE "game" (
   "tweet" int NOT NULL,
   "player" int NOT NULL,
   "score" int,
-  "creation_date" datetime NOT NULL DEFAULT (now()),
-  "play_date" datetime,
+  "play_date" datetime NOT NULL DEFAULT (now()),
   "reward" int NOT NULL
 );
 
@@ -38,8 +37,8 @@ CREATE TABLE "player" (
   "id" uuid PRIMARY KEY,
   "name" string NOT NULL,
   "username" string NOT NULL,
-  "twitterAccountId" int NOT NULL,
-  "win_date" datetime
+  "twitter_account_id" int NOT NULL,
+  "last_play_date" datetime
 );
 
 CREATE TABLE "twitter_account_to_follow" (

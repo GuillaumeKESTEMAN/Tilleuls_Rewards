@@ -28,13 +28,13 @@ use Symfony\Component\Uid\Uuid;
             new Get(),
         ],
         mercure: ['private' => true],
-        order: ['creationDate' => 'DESC'],
+        order: ['playDate' => 'DESC'],
         paginationClientItemsPerPage: true
     )
 ]
 #[ApiFilter(SearchFilter::class, properties: ['url' => 'partial'])]
-#[ApiFilter(DateFilter::class, properties: ['creationDate'])]
-#[ApiFilter(OrderFilter::class, properties: ['tweet', 'player.username', 'score', 'creationDate', 'playDate'])]
+#[ApiFilter(DateFilter::class, properties: ['playDate'])]
+#[ApiFilter(OrderFilter::class, properties: ['tweet', 'player.username', 'score', 'playDate'])]
 class Game
 {
     #[ORM\Id]
@@ -56,11 +56,7 @@ class Game
     #[ApiProperty(types: ['https://schema.org/Rating'])]
     private ?int $score = null;
 
-    #[ORM\Column(name: 'creation_date', type: 'datetime')]
-    #[ApiProperty(types: ['https://schema.org/dateCreated'])]
-    private ?\DateTime $creationDate = null;
-
-    #[ORM\Column(name: 'play_date', type: 'datetime', nullable: true)]
+    #[ORM\Column(name: 'play_date', type: 'datetime')]
     #[ApiProperty(types: ['https://schema.org/DateTime'])]
     private ?\DateTime $playDate = null;
 
@@ -101,16 +97,6 @@ class Game
     public function setScore(?int $score): void
     {
         $this->score = $score;
-    }
-
-    public function getCreationDate(): ?\DateTime
-    {
-        return $this->creationDate;
-    }
-
-    public function setCreationDate(?\DateTime $creationDate): void
-    {
-        $this->creationDate = $creationDate;
     }
 
     public function getPlayDate(): ?\DateTime
