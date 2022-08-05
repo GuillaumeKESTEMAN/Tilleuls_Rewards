@@ -17,7 +17,7 @@ export const Show: FunctionComponent<Props> = ({tweetReply}) => {
     return (
         <ShowGuesser {...tweetReply}>
             <FunctionField
-                label="Utilité"
+                label="A quoi ça sert ?"
                 render={record => {return getTweetReplyNameMessage(record).name;}}
             />;
             <FieldGuesser source="message"/>

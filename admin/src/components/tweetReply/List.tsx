@@ -18,7 +18,7 @@ export const List: FunctionComponent<Props> = ({tweetReplies}) => {
     return (
         <ListGuesser rowClick="show" {...tweetReplies}>
             <FunctionField
-                label="Utilité"
+                label="A quoi ça sert ?"
                 render={record => {return getTweetReplyNameMessage(record).name;}}
             />;
             <FieldGuesser source="message"/>

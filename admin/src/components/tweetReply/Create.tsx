@@ -12,7 +12,8 @@ interface Props {
 // @ts-ignore
 export const Create: FunctionComponent<Props> = ({tweetReply}) => (
     <CreateGuesser {...tweetReply}>
-        <SelectInput source="name"
+        <SelectInput label="A quoi ça sert ?"
+                     source="name"
                      choices={NAME_CHOICES}
                      required
         />

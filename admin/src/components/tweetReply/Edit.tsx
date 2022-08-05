@@ -11,7 +11,8 @@ interface Props {
 
 export const Edit: FunctionComponent<Props> = ({tweetReply}) => (
     <EditGuesser {...tweetReply}>
-        <SelectInput source="name"
+        <SelectInput label="A quoi ça sert ?"
+                     source="name"
                      choices={NAME_CHOICES}
                      required
                      disabled

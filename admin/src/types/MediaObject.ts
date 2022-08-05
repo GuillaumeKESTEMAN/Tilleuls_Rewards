@@ -1,3 +1,5 @@
+import {RaRecord} from "react-admin";
+
 export class MediaObject {
     constructor(
         _id?: string,
@@ -11,4 +13,11 @@ export class MediaObject {
     }
 
     public '@id'?: string;
+}
+
+export interface MediaObjectRecord extends RaRecord {
+    name: string;
+    contentUrl?: string;
+    file?: any;
+    filePath?: string;
 }
