@@ -68,8 +68,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     order: ['name' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'filePath' => 'partial'])]
-#[ApiFilter(OrderFilter::class, properties: ['name', 'filePath'])]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
+#[ApiFilter(OrderFilter::class, properties: ['name'])]
 class MediaObject
 {
     #[ORM\Id]
@@ -108,6 +108,7 @@ class MediaObject
     private ?File $file = null;
 
     #[ORM\Column(name: 'file_path', unique: true, nullable: true)]
+    #[Groups(['media_object:read'])]
     private ?string $filePath = null;
 
     public function getId(): Uuid

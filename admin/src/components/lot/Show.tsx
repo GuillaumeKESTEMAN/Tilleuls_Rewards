@@ -1,7 +1,9 @@
 import {FunctionComponent} from "react";
 import {Lot} from "../../types/Lot";
 import {FieldGuesser, ShowGuesser} from "@api-platform/admin";
-import {ReferenceField} from "react-admin";
+import {FunctionField, ReferenceField} from "react-admin";
+// @ts-ignore
+import {ENTRYPOINT} from "../../config/entrypoint.ts";
 
 interface Props {
     lot: Lot;
@@ -14,7 +16,11 @@ export const Show: FunctionComponent<Props> = ({lot}) => {
             <FieldGuesser source="quantity"/>
             <FieldGuesser source="message"/>
             <ReferenceField label="Image" source="image" reference="media_objects" link="show">
-                <FieldGuesser source="name"/>
+                <FieldGuesser source="name"/><br/>
+                <FunctionField
+                    label="Image"
+                    render={record => {return <img style={{ width:"100%", maxWidth: "500px", maxHeight: "500px"}} src={ENTRYPOINT + "/image/" + record.filePath} alt={record.name} />;}}
+                />
             </ReferenceField>
         </ShowGuesser>
     );
