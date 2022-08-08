@@ -3,8 +3,7 @@ import * as React from 'react';
 import {
     EditButton,
     List,
-    RaRecord,
-    RecordContextProvider, ShowButton,
+    RecordContextProvider,
     useListContext
 } from 'react-admin';
 import inflection from 'inflection';
