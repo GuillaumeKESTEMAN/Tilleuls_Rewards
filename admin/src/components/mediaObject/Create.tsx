@@ -20,7 +20,7 @@ export const Create: FunctionComponent<Props> = ({mediaObject}) => (
     <CreateGuesser {...mediaObject}>
         <InputGuesser source="name"/>
         <ImageInput source="file" name="file" accept={'image/*'}>
-            <PreviewImage source="src"/>
+            <PreviewImage/>
         </ImageInput>
     </CreateGuesser>
 );

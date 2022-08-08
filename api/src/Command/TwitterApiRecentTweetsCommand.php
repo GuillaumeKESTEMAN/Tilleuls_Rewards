@@ -21,7 +21,6 @@ use App\Repository\TwitterHashtagRepository;
 use App\Twitter\TwitterApi;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
-use stdClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,7 +52,7 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function getRecentTweets(string $hashtag): ?stdClass
+    private function getRecentTweets(string $hashtag): ?Object
     {
         $params = [
             'query' => $hashtag,
@@ -69,7 +68,7 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function setUser(stdClass $tweets, stdClass $tweet, int $index): ?stdClass
+    private function setUser(Object $tweets, Object $tweet, int $index): ?Object
     {
         $user = null;
         try {
@@ -116,7 +115,7 @@ class TwitterApiRecentTweetsCommand extends Command
      * @throws NonUniqueResultException
      * @throws TwitterOAuthException
      */
-    private function notFollowAccounts(stdClass $user, stdClass $tweet): void
+    private function notFollowAccounts(Object $user, Object $tweet): void
     {
         $twitterAccountsUsernamesToFollow = array_map(static function (TwitterAccountToFollow $twitterAccountToFollow) {
             return $twitterAccountToFollow->getTwitterAccountUsername();
