@@ -3,7 +3,7 @@ import {TweetReply} from "../../types/TweetReply";
 import {CreateGuesser, InputGuesser} from "@api-platform/admin";
 import {SelectInput} from "react-admin";
 // @ts-ignore
-import {NAME_CHOICES} from '../../config/tweetReply.ts';
+import {MESSAGE_HELPER, NAME_CHOICES} from '../../config/tweetReply.ts';
 
 interface Props {
     tweetReply: TweetReply;
@@ -28,7 +28,7 @@ export const Create: FunctionComponent<Props> = ({tweetReply}) => {
                          }}
                          required
             />
-            <InputGuesser source="message" multiline placeholder={placeholderMessage}/>
+            <InputGuesser source="message" multiline placeholder={placeholderMessage} helperText={MESSAGE_HELPER}/>
         </CreateGuesser>
     );
 }

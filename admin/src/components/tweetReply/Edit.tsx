@@ -2,7 +2,7 @@ import {FunctionComponent} from "react";
 import {TweetReply} from "../../types/TweetReply";
 import {EditGuesser, InputGuesser} from "@api-platform/admin";
 // @ts-ignore
-import {NAME_CHOICES} from "../../config/tweetReply.ts";
+import {MESSAGE_HELPER, NAME_CHOICES} from "../../config/tweetReply.ts";
 import {SelectInput, useRecordContext} from "react-admin";
 
 interface Props {
@@ -17,7 +17,7 @@ const MessageInput = () => {
         }
     )?.placeholder ?? '';
 
-    return <InputGuesser source="message" multiline placeholder={placeholder}/>;
+    return <InputGuesser source="message" multiline placeholder={placeholder} helperText={MESSAGE_HELPER}/>;
 };
 
 export const Edit: FunctionComponent<Props> = ({tweetReply}) => (

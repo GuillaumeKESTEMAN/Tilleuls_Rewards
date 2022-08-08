@@ -54,7 +54,7 @@ class TweetReply
     #[ORM\Column(name: 'message', type: 'string')]
     #[Groups('put')]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %player_name%, same for the userhandle mention : %@userhandle%, and same for communication website link : %website_url%', types: ['https://schema.org/Message'])]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle mention : %@joueur%, and same for communication website link : %site_web%', types: ['https://schema.org/Message'])]
     private ?string $message = null;
 
     public function getId(): Uuid
@@ -77,15 +77,15 @@ class TweetReply
         $returnMessage = $this->message;
 
         if (null !== $name) {
-            $returnMessage = str_replace('%player_name%', $name, $returnMessage);
+            $returnMessage = str_replace('%nom%', $name, $returnMessage);
         }
 
         if (null !== $userhandle) {
-            $returnMessage = str_replace('%@userhandle%', '@'.$userhandle, $returnMessage);
+            $returnMessage = str_replace('%@joueur%', '@'.$userhandle, $returnMessage);
         }
 
         if (null !== $gameLink) {
-            $returnMessage = str_replace('%website_url%', $gameLink ?? 'no_link', $returnMessage);
+            $returnMessage = str_replace('%site_web%', $gameLink ?? 'no_link', $returnMessage);
         }
 
         return $returnMessage;

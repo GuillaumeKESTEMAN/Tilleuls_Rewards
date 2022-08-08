@@ -9,7 +9,6 @@ use App\Entity\Game;
 use App\Entity\Player;
 use App\Entity\Reward;
 use App\Entity\Tweet;
-use App\Entity\TwitterAccountToFollow;
 use App\Repository\GameRepository;
 use App\Repository\LotRepository;
 use App\Repository\PlayerRepository;
@@ -50,9 +49,9 @@ class TwitterApiRecentTweetsCommand extends Command
     }
 
     private const DEFAULTS_TWEETS_REPLIES = [
-        ['id'=>'on_new_game', 'reply'=>'Hey %player_name% (%@userhandle%), merci de participer à notre jeu ! '.PHP_EOL.'Pour avoir plus d\'informations sur le jeu voici notre site web : %website_url%'],
-        ['id'=>'game_already_generated_less_than_a_day_ago', 'reply'=>'Merci %player_name% (%@userhandle%) de parler de nous.'.PHP_EOL.'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %website_url%'],
-        ['id'=>'need_to_follow_us','reply'=>'Merci %player_name% (%@userhandle%) de parler de nous. '.PHP_EOL.'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %website_url%']
+        ['id'=>'on_new_game', 'reply'=>'Hey %nom% (%@joueur%), merci de participer à notre jeu ! '.PHP_EOL.'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
+        ['id'=>'game_already_generated_less_than_a_day_ago', 'reply'=>'Merci %nom% (%@joueur%) de parler de nous.'.PHP_EOL.'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id'=>'need_to_follow_us','reply'=>'Merci %nom% (%@joueur%) de parler de nous. '.PHP_EOL.'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%']
     ];
 
     private function selectDefaultTweetReplieById(string $id): ?array
@@ -80,7 +79,7 @@ class TwitterApiRecentTweetsCommand extends Command
             return '';
         }
 
-        return str_replace(array('%player_name%', '%@userhandle%', '%website_url%'), array($name, '@' . $userhandle, $this->communicationWebsiteUrl), $message['reply']);
+        return str_replace(array('%nom%', '%@joueur%', '%site_web%'), array($name, '@' . $userhandle, $this->communicationWebsiteUrl), $message['reply']);
     }
 
     /**
