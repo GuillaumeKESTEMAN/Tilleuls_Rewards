@@ -105,15 +105,16 @@ class Lot
 
     public function getMessage(?string $name = null, ?string $userhandle = null): ?string
     {
+        $returnMessage = $this->message;
         if (null !== $name) {
-            return str_replace('%player_name%', $name, $this->message);
+            $returnMessage = str_replace('%player_name%', $name, $returnMessage);
         }
 
         if (null !== $userhandle) {
-            return str_replace('%@userhandle%', '@'.$userhandle, $this->message);
+            $returnMessage = str_replace('%@userhandle%', '@'.$userhandle, $returnMessage);
         }
 
-        return $this->message;
+        return $returnMessage;
     }
 
     public function setMessage(string $message): void

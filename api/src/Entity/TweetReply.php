@@ -74,19 +74,21 @@ class TweetReply
 
     public function getMessage(?string $name = null, ?string $userhandle = null, ?string $gameLink = null): ?string
     {
+        $returnMessage = $this->message;
+
         if (null !== $name) {
-            return str_replace('%player_name%', $name, $this->message);
+            $returnMessage = str_replace('%player_name%', $name, $returnMessage);
         }
 
         if (null !== $userhandle) {
-            return str_replace('%@userhandle%', '@'.$userhandle, $this->message);
+            $returnMessage = str_replace('%@userhandle%', '@'.$userhandle, $returnMessage);
         }
 
         if (null !== $gameLink) {
-            return str_replace('%website_url%', $gameLink ?? 'no_link', $this->message);
+            $returnMessage = str_replace('%website_url%', $gameLink ?? 'no_link', $returnMessage);
         }
 
-        return $this->message;
+        return $returnMessage;
     }
 
     public function setMessage(?string $message): void
