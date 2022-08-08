@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Tweet;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<Tweet>
@@ -18,9 +19,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TweetRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, Tweet::class);
+        parent::__construct($registry, Tweet::class, $logger);
     }
 
     /**

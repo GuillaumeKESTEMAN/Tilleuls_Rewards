@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\TwitterAccountToFollow;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<TwitterAccountToFollow>
@@ -17,9 +18,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TwitterAccountToFollowRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, TwitterAccountToFollow::class);
+        parent::__construct($registry, TwitterAccountToFollow::class, $logger);
     }
 
     /**

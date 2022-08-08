@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\TwitterHashtag;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<TwitterHashtag>
@@ -17,9 +18,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TwitterHashtagRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, TwitterHashtag::class);
+        parent::__construct($registry, TwitterHashtag::class, $logger);
     }
 
     /**

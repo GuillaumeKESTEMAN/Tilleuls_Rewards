@@ -20,6 +20,7 @@ use App\Repository\TwitterHashtagRepository;
 use App\Twitter\TwitterApi;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,6 +30,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use function PHPUnit\Framework\isEmpty;
 
 #[AsCommand(
     name: 'app:comment:getRecentTweets',
@@ -36,7 +38,17 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 )]
 class TwitterApiRecentTweetsCommand extends Command
 {
-    public function __construct(private readonly TwitterApi $twitterApi, private readonly PlayerRepository $playerRepository, private readonly TweetRepository $tweetRepository, private readonly GameRepository $gameRepository, private readonly LotRepository $lotRepository, private readonly RewardRepository $rewardRepository, private readonly TweetReplyRepository $tweetReplyRepository, private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository, private readonly TwitterHashtagRepository $twitterHashtagRepository, private readonly string $communicationWebsiteUrl)
+    public function __construct(private readonly TwitterApi                       $twitterApi,
+                                private readonly PlayerRepository                 $playerRepository,
+                                private readonly TweetRepository                  $tweetRepository,
+                                private readonly GameRepository                   $gameRepository,
+                                private readonly LotRepository                    $lotRepository,
+                                private readonly RewardRepository                 $rewardRepository,
+                                private readonly TweetReplyRepository             $tweetReplyRepository,
+                                private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository,
+                                private readonly TwitterHashtagRepository         $twitterHashtagRepository,
+                                private readonly string                           $communicationWebsiteUrl,
+                                private readonly LoggerInterface                  $logger)
     {
         parent::__construct();
     }
@@ -49,19 +61,20 @@ class TwitterApiRecentTweetsCommand extends Command
     }
 
     private const DEFAULTS_TWEETS_REPLIES = [
-        ['id'=>'on_new_game', 'reply'=>'Hey %nom% (%@joueur%), merci de participer à notre jeu ! '.PHP_EOL.'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
-        ['id'=>'game_already_generated_less_than_a_day_ago', 'reply'=>'Merci %nom% (%@joueur%) de parler de nous.'.PHP_EOL.'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id'=>'need_to_follow_us','reply'=>'Merci %nom% (%@joueur%) de parler de nous. '.PHP_EOL.'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id'=>'no_more_available_lots','reply'=>'Nous n\'avons malheureusement plus aucun lot de disponible... '.PHP_EOL.'Retente ta chance un autre jour !']
+        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@joueur%), merci de participer à notre jeu ! ' . PHP_EOL . 'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
+        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous.' . PHP_EOL . 'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous. ' . PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... ' . PHP_EOL . 'Retente ta chance un autre jour !']
     ];
 
     private function selectDefaultTweetReplieById(string $id): ?array
     {
-        foreach(self::DEFAULTS_TWEETS_REPLIES as $row) {
-            if($row['id'] === $id) {
+        foreach (self::DEFAULTS_TWEETS_REPLIES as $row) {
+            if ($row['id'] === $id) {
                 return $row;
             }
         }
+        $this->logger->error("'$id' was not found in DEFAULTS_TWEETS_REPLIES");
         return null;
     }
 
@@ -71,12 +84,13 @@ class TwitterApiRecentTweetsCommand extends Command
     private function getTweetReplyMessage(string $id, string $name, string $userhandle): string
     {
         $message = $this->tweetReplyRepository->findOneByName($id)?->getMessage($name, $userhandle);
-        if(null !== $message) {
+        if (null !== $message) {
             return $message;
         }
 
         $message = $this->selectDefaultTweetReplieById($id);
-        if(null === $message) {
+        if (null === $message) {
+            $this->logger->error("no tweet reply message found for name: $id");
             return '';
         }
 
@@ -86,7 +100,7 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function getRecentTweets(string $hashtag): ?Object
+    private function getRecentTweets(string $hashtag): ?object
     {
         $params = [
             'query' => $hashtag,
@@ -102,7 +116,7 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function setUser(Object $tweets, Object $tweet, int $index): ?Object
+    private function setUser(object $tweets, object $tweet, int $index): ?object
     {
         $user = null;
         try {
@@ -116,8 +130,12 @@ class TwitterApiRecentTweetsCommand extends Command
             }
 
             if (null === $user) {
-                $user = $this->twitterApi->get('users/'.$tweet->author_id);
+                $user = $this->twitterApi->get('users/' . $tweet->author_id);
                 $user = $user->data ?? null;
+
+                if (null === $user) {
+                    $this->logger->error("Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id");
+                }
             }
         }
 
@@ -149,7 +167,7 @@ class TwitterApiRecentTweetsCommand extends Command
      * @throws NonUniqueResultException
      * @throws TwitterOAuthException
      */
-    private function notFollowAccounts(Object $user, Object $tweet): void
+    private function notFollowAccounts(object $user, object $tweet): void
     {
         $message = $this->getTweetReplyMessage('need_to_follow_us', $user->name, $user->username);
         $this->newReply($tweet->id, $message);
@@ -182,15 +200,21 @@ class TwitterApiRecentTweetsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $hashtags = $this->twitterHashtagRepository->getAllActive();
 
+        $this->logger->notice('Command state: ' . PHP_EOL . '- update-db: ' . $input->getOption('update-db') . PHP_EOL . '- reply: ' . $input->getOption('reply'));
+        $this->logger->notice('Active hashtags for command: ' . !empty($hashtagsLogger = implode(", ", array_map(static function ($hashtag) {return $hashtag->getHashtag();}, $hashtags))) ? $hashtagsLogger : 'no active hashtags');
+        $this->logger->notice('Active hashtags for command: ' . !empty($twitterAccountsToFollowLogger = implode(", ", array_map(static function ($accountToFollow) {return $accountToFollow->getTwitterAccountUsername();}, $this->twitterAccountToFollowRepository->getAllActive()))) ? $twitterAccountsToFollowLogger : 'no active Twitter accounts to follow');
+
         foreach ($hashtags as $hashtag) {
             $tweets = $this->getRecentTweets($hashtag->getHashtag());
 
             if (!$tweets) {
-                $io->success('Aucun tweet trouvé pour : '.$hashtag->getHashtag());
+                $io->success('Aucun tweet trouvé pour : ' . $hashtag->getHashtag());
+                $this->logger->notice('Aucun tweet trouvé pour : ' . $hashtag->getHashtag());
                 continue;
             }
 
-            $io->success('Tweets trouvés pour : '.$hashtag->getHashtag());
+            $io->success('Tweets trouvés pour : ' . $hashtag->getHashtag());
+            $this->logger->notice('Tweets trouvés pour : ' . $hashtag->getHashtag());
 
             if (!$input->getOption('update-db')) {
                 continue;
@@ -204,18 +228,20 @@ class TwitterApiRecentTweetsCommand extends Command
                 }
 
                 if (null === ($user = $this->setUser($tweets, $tweet, $index))) {
-                    $io->error('User not found for the tweet n°'.$tweet->id);
+                    $io->error("Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id");
                     continue;
                 }
 
                 $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
                 $lastGame = null;
 
-                if (null === $player) {
-                    $player = new Player();
+                if (null === $player || ($player->getUsername() !== '@'.$user->username || $player->getName() !== $user->name)) {
+                    if(null === $player) {
+                        $player = new Player();
+                        $player->setTwitterAccountId($user->id);
+                    }
                     $player->setName($user->name);
                     $player->setUsername($user->username);
-                    $player->setTwitterAccountId($user->id);
 
                     $this->playerRepository->persistAndFlush($player, true);
                 } else {

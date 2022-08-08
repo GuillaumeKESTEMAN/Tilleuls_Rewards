@@ -7,6 +7,8 @@ namespace App\Repository;
 use App\Entity\Game;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<Game>
@@ -18,9 +20,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class GameRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, Game::class);
+        parent::__construct($registry, Game::class, $logger);
     }
 
     /**
@@ -35,10 +37,18 @@ class GameRepository extends CommonRepository
         }
 
         $entity->setPlayDate(new \DateTime());
-        $this->getEntityManager()->persist($entity);
+        try {
+            $this->getEntityManager()->persist($entity);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage(), $e->getTrace());
+        }
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            try{
+                $this->getEntityManager()->flush();
+            } catch (Exception $e) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
         }
 
         return true;

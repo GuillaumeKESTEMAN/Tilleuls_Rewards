@@ -6,6 +6,7 @@ namespace App\Twitter;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TwitterApi
@@ -16,7 +17,8 @@ class TwitterApi
         private readonly string $twitterConsumerKey,
         private readonly string $twitterConsumerSecret,
         private readonly string $twitterAccessToken,
-        private readonly string $twitterAccessTokenSecret
+        private readonly string $twitterAccessTokenSecret,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -46,6 +48,7 @@ class TwitterApi
             return $response;
         }
 
+        $this->logger->error($response->errors[0]->message);
         throw new BadRequestHttpException($response->errors[0]->message);
     }
 
@@ -62,6 +65,7 @@ class TwitterApi
             return $response;
         }
 
+        $this->logger->error($response->errors[0]->message);
         throw new BadRequestHttpException($response->errors[0]->message);
     }
 }

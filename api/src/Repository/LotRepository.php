@@ -22,7 +22,7 @@ class LotRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, Lot::class);
+        parent::__construct($registry, Lot::class, $logger);
     }
 
     /**
@@ -60,7 +60,7 @@ class LotRepository extends CommonRepository
             $lot = reset($filteredLots);
 
             if (false === $lot) {
-                $this->logger->warning('No Lot found during random Lot search !');
+                $this->logger->alert('No Lot was found during random Lot research !');
 
                 return $dataReturn;
             }

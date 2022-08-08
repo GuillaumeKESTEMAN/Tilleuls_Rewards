@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Player;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<Player>
@@ -18,9 +19,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PlayerRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, Player::class);
+        parent::__construct($registry, Player::class, $logger);
     }
 
     /**

@@ -5,15 +5,31 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 abstract class CommonRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry, string $entityClass, private readonly LoggerInterface $logger)
+    {
+        parent::__construct($registry, $entityClass);
+    }
+
     public function persistAndFlush(object $entity, bool $flush = false): ?bool
     {
-        $this->getEntityManager()->persist($entity);
+        try {
+            $this->getEntityManager()->persist($entity);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage(), $e->getTrace());
+        }
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            try{
+                $this->getEntityManager()->flush();
+            } catch (Exception $e) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
         }
 
         return null;
@@ -21,10 +37,18 @@ abstract class CommonRepository extends ServiceEntityRepository
 
     public function removeAndFlush(object $entity, bool $flush = false): void
     {
-        $this->getEntityManager()->remove($entity);
+        try {
+            $this->getEntityManager()->remove($entity);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage(), $e->getTrace());
+        }
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            try{
+                $this->getEntityManager()->flush();
+            } catch (Exception $e) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
         }
     }
 }
