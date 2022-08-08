@@ -55,7 +55,7 @@ class TwitterApiRecentTweetsCommand extends Command
         ['id'=>'need_to_follow_us','reply'=>'Merci %player_name% (%@userhandle%) de parler de nous. '.PHP_EOL.'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. '.PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %website_url%']
     ];
 
-    private function selectByIdInDefaultsTweetsReplies(string $id): ?array
+    private function selectDefaultTweetReplieById(string $id): ?array
     {
         foreach(self::DEFAULTS_TWEETS_REPLIES as $row) {
             if($row['id'] === $id) {
@@ -65,18 +65,22 @@ class TwitterApiRecentTweetsCommand extends Command
         return null;
     }
 
-    private function replaceValuesInDefaultsTweetsReplies(string $id, string $name, string $userhandle): string
+    /**
+     * @throws NonUniqueResultException
+     */
+    private function getTweetReplyMessage(string $id, string $name, string $userhandle): string
     {
-        $data = $this->selectByIdInDefaultsTweetsReplies($id);
-        if(null === $data) {
+        $message = $this->tweetReplyRepository->findOneByName($id)?->getMessage($name, $userhandle);
+        if(null !== $message) {
+            return $message;
+        }
+
+        $message = $this->selectDefaultTweetReplieById($id);
+        if(null === $message) {
             return '';
         }
 
-        $data['reply'] = str_replace('%player_name%', $name, $data['reply']);
-        $data['reply'] = str_replace('%@userhandle%', '@'.$userhandle, $data['reply']);
-        $data['reply'] = str_replace('%website_url%', $this->communicationWebsiteUrl, $data['reply']);
-
-        return $data['reply'];
+        return str_replace(array('%player_name%', '%@userhandle%', '%website_url%'), array($name, '@' . $userhandle, $this->communicationWebsiteUrl), $message['reply']);
     }
 
     /**
@@ -147,7 +151,7 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function notFollowAccounts(Object $user, Object $tweet): void
     {
-        $message = $this->tweetReplyRepository->findOneByName('need_to_follow_us')?->getMessage($user->name, $user->username) ?? $this->replaceValuesInDefaultsTweetsReplies('need_to_follow_us', $user->name, $user->username);
+        $message = $this->getTweetReplyMessage('need_to_follow_us', $user->name, $user->username);
         $this->newReply($tweet->id, $message);
     }
 
@@ -233,7 +237,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
                 if (null !== $lastGame && null !== $lastGame->getPlayDate() && date_diff($lastGame->getPlayDate(), new \DateTime())->d < 1) {
                     if ($input->getOption('reply')) {
-                        $message = $this->tweetReplyRepository->findOneByName('game_already_generated_less_than_a_day_ago')?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? $this->replaceValuesInDefaultsTweetsReplies('game_already_generated_less_than_a_day_ago', $player->getName(), $player->getUsername());
+                        $message = $this->getTweetReplyMessage('game_already_generated_less_than_a_day_ago', $player->getName(), $player->getUsername());
                         $this->newReply($tweet->id, $message);
                     }
                     continue;
@@ -261,7 +265,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
                 if ($this->gameRepository->persistAndFlush($game, true)) {
                     if ($input->getOption('reply')) {
-                        $message = $this->tweetReplyRepository->findOneByName('on_new_game')?->getMessage($player->getName(), $player->getUsername(), $this->communicationWebsiteUrl) ?? $this->replaceValuesInDefaultsTweetsReplies('on_new_game', $player->getName(), $player->getUsername());
+                        $message = $this->getTweetReplyMessage('on_new_game', $player->getName(), $player->getUsername());
                         $this->newReply($tweet->id, $message);
                     }
                 } else {
