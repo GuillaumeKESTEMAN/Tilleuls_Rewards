@@ -48,6 +48,7 @@ class TweetReply
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
+    #[Assert\Choice(['on_new_game', 'game_already_generated_less_than_a_day_ago', 'need_to_follow_us', 'no_more_available_lots'])]
     #[ApiProperty(types: ['https://schema.org/name'])]
     private ?string $name = null;
 
