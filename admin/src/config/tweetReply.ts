@@ -12,7 +12,7 @@ export const NAME_CHOICES = [
     {
         id:'need_to_follow_us',
         name:'Tweet de réponse pour demander au joueur de suivre l\'un des comptes afin de pouvoir participer',
-        placeholder: 'Merci %nom% (%@joueur%) de parler de nous. \nMalheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. \nPour plus d\'informations tu peux consulter notre site web : %site_web%'
+        placeholder: 'Merci %nom% (%@joueur%) de parler de nous. \nMalheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. \nPour plus d\'informations tu peux consulter notre site web : %site_web%'
     },
     {
         id:'no_more_available_lots',

@@ -11,11 +11,13 @@ use App\Entity\Game;
 use App\Entity\Player;
 use App\Entity\Reward;
 use App\Entity\Tweet;
+use App\Exception\NoActiveHashtagException;
+use App\Exception\NoActiveTwitterAccountToFollowException;
+use App\Exception\NoLotAvailableException;
 use App\Exception\TweetReplyNotFoundException;
 use App\Repository\GameRepository;
 use App\Repository\LotRepository;
 use App\Repository\PlayerRepository;
-use App\Repository\RewardRepository;
 use App\Repository\TweetReplyRepository;
 use App\Repository\TweetRepository;
 use App\Repository\TwitterAccountToFollowRepository;
@@ -66,7 +68,7 @@ class TwitterApiRecentTweetsCommand extends Command
     private const DEFAULTS_TWEETS_REPLIES = [
         ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@joueur%), merci de participer à notre jeu ! ' . PHP_EOL . 'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
         ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous.' . PHP_EOL . 'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous. ' . PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre au moins un des comptes nécessaires. ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous. ' . PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
         ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... ' . PHP_EOL . 'Retente ta chance un autre jour !']
     ];
 
@@ -161,8 +163,6 @@ class TwitterApiRecentTweetsCommand extends Command
             $this->logger->critical(
                 'Twitter API get request (users/) error ' . $e->getMessage(),
                 [
-                    'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                    'function' => 'setUser',
                     'tweet' => $tweet,
                     'error' => $e
                 ]
@@ -175,33 +175,29 @@ class TwitterApiRecentTweetsCommand extends Command
     /**
      * @throws TwitterOAuthException
      */
-    private function following(string $userId): bool
+    private function following(string $userId, array $accountsToFollow): bool
     {
-        $twitterAccountsToFollow = $this->twitterAccountToFollowRepository->getAllActive();
-
-        foreach ($twitterAccountsToFollow as $twitterAccountToFollow) {
+        foreach ($accountsToFollow as $accountToFollow) {
             try {
                 $friendships = $this->twitterApi->get('friendships/show', [
                     'source_id' => $userId,
-                    'target_id' => $twitterAccountToFollow->getTwitterAccountId(),
+                    'target_id' => $accountToFollow->getTwitterAccountId(),
                 ], '1.1');
 
-                if ($friendships->relationship->source->following) {
-                    return true;
+                if (!$friendships->relationship->source->following) {
+                    return false;
                 }
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
                     'Twitter API get request (friendships/show) error' . $e->getMessage(),
                     [
-                        'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                        'function' => 'following',
                         'error' => $e
                     ]
                 );
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -225,8 +221,6 @@ class TwitterApiRecentTweetsCommand extends Command
             $this->logger->critical(
                 'Twitter API post request (tweets) error' . $e->getMessage(),
                 [
-                    'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                    'function' => 'newReply',
                     'error' => $e
                 ]
             );
@@ -244,15 +238,26 @@ class TwitterApiRecentTweetsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $hashtags = $this->twitterHashtagRepository->getAllActive();
+        $accountsToFollow = $this->twitterAccountToFollowRepository->getAllActive();
         $databaseUpdated = false;
 
         $this->logger->notice(
             'Command state: update-db: ' . $input->getOption('update-db') . ', reply: ' . $input->getOption('reply'),
             [
                 'Active hashtags for command' => $hashtags,
-                'Active Twitter accounts to follow for command' => $this->twitterAccountToFollowRepository->getAllActive()
+                'Active Twitter accounts to follow for command' => $accountsToFollow
             ]
         );
+
+        if(count($hashtags) <= 0) {
+            $io->error('No active hashtag for the TwitterApiRecentTweetsCommand');
+            throw new NoActiveHashtagException();
+        }
+
+        if(count($accountsToFollow) <= 0) {
+            $io->error('No active twitter account to follow for the TwitterApiRecentTweetsCommand');
+            throw new NoActiveTwitterAccountToFollowException();
+        }
 
         $stringHashtags = array_map(static function ($hashtag) {
             return $hashtag->getHashtag();
@@ -265,8 +270,6 @@ class TwitterApiRecentTweetsCommand extends Command
             $this->logger->critical(
                 'Twitter API get request (tweets/search/recent) error' . $e->getMessage(),
                 [
-                    'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                    'function' => 'getRecentTweets',
                     'error' => $e
                 ]
             );
@@ -323,7 +326,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
             $databaseUpdated = true;
 
-            if (!$this->following($user->id)) {
+            if (!$this->following($user->id, $accountsToFollow)) {
                 if ($input->getOption('reply')) {
                     try {
                         $this->notFollowAccounts($user, $tweet);
@@ -331,8 +334,6 @@ class TwitterApiRecentTweetsCommand extends Command
                         $this->logger->error(
                             "No tweet reply message found for 'need_to_follow_us' in TwitterApiRecentTweetsCommand",
                             [
-                                'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                                'function' => 'notFollowAccounts',
                                 'lot_id' => 'need_to_follow_us',
                                 'error' => $e
                             ]
@@ -352,8 +353,6 @@ class TwitterApiRecentTweetsCommand extends Command
                         $this->logger->error(
                             "No tweet reply message found for 'game_already_generated_less_than_a_day_ago' in TwitterApiRecentTweetsCommand",
                             [
-                                'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                                'function' => 'getTweetReplyMessage',
                                 'lot_id' => 'game_already_generated_less_than_a_day_ago',
                                 'error' => $e
                             ]
@@ -369,7 +368,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
             $randomLot = $this->lotRepository->getRandom();
 
-            if (\count($randomLot) > 0) {
+            if (count($randomLot) > 0) {
                 $reward->setLot($randomLot[0]);
             } else {
                 $io->error('No lot available');
@@ -381,8 +380,6 @@ class TwitterApiRecentTweetsCommand extends Command
                         $this->logger->error(
                             "No tweet reply message found for 'no_more_available_lots' in TwitterApiRecentTweetsCommand",
                             [
-                                'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                                'function' => 'getTweetReplyMessage',
                                 'lot_id' => 'no_more_available_lots',
                                 'error' => $e
                             ]
@@ -391,7 +388,7 @@ class TwitterApiRecentTweetsCommand extends Command
                     }
                 }
 
-                return Command::FAILURE;
+                throw new NoLotAvailableException();
             }
 
 
@@ -420,8 +417,6 @@ class TwitterApiRecentTweetsCommand extends Command
                     $this->logger->error(
                         "No tweet reply message found for 'on_new_game' in TwitterApiRecentTweetsCommand",
                         [
-                            'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
-                            'function' => 'getTweetReplyMessage',
                             'lot_id' => 'on_new_game',
                             'error' => $e
                         ]

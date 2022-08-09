@@ -51,8 +51,6 @@ class TwitterApi
         $this->logger->critical(
             'Twitter API get request error : ' . $response->detail,
             [
-                'file' => 'srv/api/src/Twitter/TwitterApi.php',
-                'function' => 'get',
                 'response' => $response
             ]
         );
@@ -75,8 +73,6 @@ class TwitterApi
         $this->logger->critical(
             'Twitter API post request error : ' . $response->detail,
             [
-                'file' => 'srv/api/src/Twitter/TwitterApi.php',
-                'function' => 'post',
                 'response' => $response
             ]
         );
