@@ -18,4 +18,8 @@ use Psr\Log\LoggerInterface;
  */
 class MediaObjectRepository extends CommonRepository
 {
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
+    {
+        parent::__construct($registry, MediaObject::class, $logger);
+    }
 }

@@ -51,6 +51,14 @@ class LotRepository extends CommonRepository
             }
 
             if ($totalQuantity <= 0) {
+                $this->logger->alert(
+                    'No lot was found during random lot research !',
+                    [
+                        'file' => 'srv/api/src/Repository/LotRepository.php',
+                        'function' => 'getRandom'
+                    ]
+                );
+
                 return $dataReturn;
             }
 
@@ -60,7 +68,13 @@ class LotRepository extends CommonRepository
             $lot = reset($filteredLots);
 
             if (false === $lot) {
-                $this->logger->alert('No Lot was found during random Lot research !');
+                $this->logger->alert(
+                    'No lot was found during random lot research !',
+                    [
+                        'file' => 'srv/api/src/Repository/LotRepository.php',
+                        'function' => 'getRandom'
+                    ]
+                );
 
                 return $dataReturn;
             }

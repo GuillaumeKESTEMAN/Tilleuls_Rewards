@@ -48,7 +48,14 @@ class TwitterApi
             return $response;
         }
 
-        $this->logger->error($response->errors[0]->message);
+        $this->logger->critical(
+            'Twitter API get request error : ' . $response->detail,
+            [
+                'file' => 'srv/api/src/Twitter/TwitterApi.php',
+                'function' => 'get',
+                'response' => $response
+            ]
+        );
         throw new BadRequestHttpException($response->errors[0]->message);
     }
 
@@ -65,7 +72,30 @@ class TwitterApi
             return $response;
         }
 
-        $this->logger->error($response->errors[0]->message);
+        $this->logger->critical(
+            'Twitter API post request error : ' . $response->detail,
+            [
+                'file' => 'srv/api/src/Twitter/TwitterApi.php',
+                'function' => 'post',
+                'response' => $response
+            ]
+        );
+
         throw new BadRequestHttpException($response->errors[0]->message);
+    }
+
+    /**
+     * @throws TwitterOAuthException
+     */
+    public function reply(string $message, string $tweetId): array|object
+    {
+        $params = [
+            'text' => $message,
+            'reply' => [
+                'in_reply_to_tweet_id' => $tweetId,
+            ],
+        ];
+
+        return $this->post('tweets', $params);
     }
 }

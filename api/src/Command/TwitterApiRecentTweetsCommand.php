@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Command;
 
 use Abraham\TwitterOAuth\TwitterOAuthException;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Validator\ValidatorInterface;
 use App\Entity\Game;
 use App\Entity\Player;
 use App\Entity\Reward;
 use App\Entity\Tweet;
+use App\Exception\TweetReplyNotFoundException;
 use App\Repository\GameRepository;
 use App\Repository\LotRepository;
 use App\Repository\PlayerRepository;
@@ -27,10 +30,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use function PHPUnit\Framework\isEmpty;
 
 #[AsCommand(
     name: 'app:comment:getRecentTweets',
@@ -43,12 +46,12 @@ class TwitterApiRecentTweetsCommand extends Command
                                 private readonly TweetRepository                  $tweetRepository,
                                 private readonly GameRepository                   $gameRepository,
                                 private readonly LotRepository                    $lotRepository,
-                                private readonly RewardRepository                 $rewardRepository,
                                 private readonly TweetReplyRepository             $tweetReplyRepository,
                                 private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository,
                                 private readonly TwitterHashtagRepository         $twitterHashtagRepository,
                                 private readonly string                           $communicationWebsiteUrl,
-                                private readonly LoggerInterface                  $logger)
+                                private readonly LoggerInterface                  $logger,
+                                private readonly ValidatorInterface               $validator)
     {
         parent::__construct();
     }
@@ -90,8 +93,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
         $message = $this->selectDefaultTweetReplieById($id);
         if (null === $message) {
-            $this->logger->error("no tweet reply message found for name: $id");
-            return '';
+            throw new TweetReplyNotFoundException();
         }
 
         return str_replace(array('%nom%', '%@joueur%', '%site_web%'), array($name, '@' . $userhandle, $this->communicationWebsiteUrl), $message['reply']);
@@ -124,28 +126,50 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function setUser(object $tweets, object $tweet, int $index): ?object
     {
-        $user = null;
-        try {
-            $user = $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : throw new Exception();
-        } catch (Exception) {
-            foreach ($tweets->includes->users as $tweetUser) {
-                if ($tweetUser->id === $tweet->author_id) {
-                    $user = $tweetUser;
-                    break;
-                }
-            }
+        $user = $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : null;
 
-            if (null === $user) {
-                $user = $this->twitterApi->get('users/' . $tweet->author_id);
-                $user = $user->data ?? null;
+        if (null !== $user) {
+            return $user;
+        }
 
-                if (null === $user) {
-                    $this->logger->error("Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id");
-                }
+        foreach ($tweets->includes->users as $tweetUser) {
+            if ($tweetUser->id === $tweet->author_id) {
+                $user = $tweetUser;
+                break;
             }
         }
 
-        return $user;
+        if (null !== $user) {
+            return $user;
+        }
+
+        try {
+            $user = $this->twitterApi->get('users/' . $tweet->author_id);
+            $user = $user->data ?? null;
+
+            if (null === $user) {
+                $this->logger->warning(
+                    "Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id",
+                    [
+                        'tweet' => $tweet
+                    ]
+                );
+            }
+
+            return $user;
+        } catch (BadRequestHttpException $e) {
+            $this->logger->critical(
+                'Twitter API get request (users/) error ' . $e->getMessage(),
+                [
+                    'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                    'function' => 'setUser',
+                    'tweet' => $tweet,
+                    'error' => $e
+                ]
+            );
+        }
+
+        return null;
     }
 
     /**
@@ -156,13 +180,24 @@ class TwitterApiRecentTweetsCommand extends Command
         $twitterAccountsToFollow = $this->twitterAccountToFollowRepository->getAllActive();
 
         foreach ($twitterAccountsToFollow as $twitterAccountToFollow) {
-            $friendships = $this->twitterApi->get('friendships/show', [
-                'source_id' => $userId,
-                'target_id' => $twitterAccountToFollow->getTwitterAccountId(),
-            ], '1.1');
+            try {
+                $friendships = $this->twitterApi->get('friendships/show', [
+                    'source_id' => $userId,
+                    'target_id' => $twitterAccountToFollow->getTwitterAccountId(),
+                ], '1.1');
 
-            if ($friendships->relationship->source->following) {
-                return true;
+                if ($friendships->relationship->source->following) {
+                    return true;
+                }
+            } catch (BadRequestHttpException $e) {
+                $this->logger->critical(
+                    'Twitter API get request (friendships/show) error' . $e->getMessage(),
+                    [
+                        'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                        'function' => 'following',
+                        'error' => $e
+                    ]
+                );
             }
         }
 
@@ -176,22 +211,26 @@ class TwitterApiRecentTweetsCommand extends Command
     private function notFollowAccounts(object $user, object $tweet): void
     {
         $message = $this->getTweetReplyMessage('need_to_follow_us', $user->name, $user->username);
-        $this->newReply($tweet->id, $message);
+        $this->newReply($message, $tweet->id);
     }
 
     /**
      * @throws TwitterOAuthException
      */
-    private function newReply(string $tweetId, string $message): void
+    private function newReply(string $message, string $tweetId): void
     {
-        $params = [
-            'text' => $message,
-            'reply' => [
-                'in_reply_to_tweet_id' => $tweetId,
-            ],
-        ];
-
-        $this->twitterApi->post('tweets', $params);
+        try {
+            $this->twitterApi->reply($message, $tweetId);
+        } catch (BadRequestHttpException $e) {
+            $this->logger->critical(
+                'Twitter API post request (tweets) error' . $e->getMessage(),
+                [
+                    'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                    'function' => 'newReply',
+                    'error' => $e
+                ]
+            );
+        }
     }
 
     /**
@@ -205,54 +244,75 @@ class TwitterApiRecentTweetsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $hashtags = $this->twitterHashtagRepository->getAllActive();
+        $databaseUpdated = false;
 
-        $this->logger->notice('Command state: ' . PHP_EOL . '- update-db: ' . $input->getOption('update-db') . PHP_EOL . '- reply: ' . $input->getOption('reply'));
-        $this->logger->notice('Active hashtags for command: ' . !empty($hashtagsLogger = implode(", ", array_map(static function ($hashtag) {return $hashtag->getHashtag();}, $hashtags))) ? $hashtagsLogger : 'no active hashtags');
-        $this->logger->notice('Active hashtags for command: ' . !empty($twitterAccountsToFollowLogger = implode(", ", array_map(static function ($accountToFollow) {return $accountToFollow->getTwitterAccountUsername();}, $this->twitterAccountToFollowRepository->getAllActive()))) ? $twitterAccountsToFollowLogger : 'no active Twitter accounts to follow');
+        $this->logger->notice(
+            'Command state: update-db: ' . $input->getOption('update-db') . ', reply: ' . $input->getOption('reply'),
+            [
+                'Active hashtags for command' => $hashtags,
+                'Active Twitter accounts to follow for command' => $this->twitterAccountToFollowRepository->getAllActive()
+            ]
+        );
 
-        foreach ($hashtags as $hashtag) {
-            $tweets = $this->getRecentTweets($hashtag->getHashtag());
+        $stringHashtags = array_map(static function ($hashtag) {
+            return $hashtag->getHashtag();
+        }, $hashtags);
+        $stringHashtags = implode(' ', $stringHashtags);
 
-            if (!$tweets) {
-                $io->success('Aucun tweet trouvé pour : ' . $hashtag->getHashtag());
-                $this->logger->notice('Aucun tweet trouvé pour : ' . $hashtag->getHashtag());
+        try {
+            $tweets = $this->getRecentTweets($stringHashtags);
+        } catch (BadRequestHttpException $e) {
+            $this->logger->critical(
+                'Twitter API get request (tweets/search/recent) error' . $e->getMessage(),
+                [
+                    'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                    'function' => 'getRecentTweets',
+                    'error' => $e
+                ]
+            );
+            return Command::FAILURE;
+        }
+
+        if (!$tweets) {
+            $io->success('Aucun tweet trouvé pour : ' . $stringHashtags);
+            $this->logger->notice('Aucun tweet trouvé pour : ' . $stringHashtags);
+            return Command::SUCCESS;
+        }
+
+        $io->success('Tweets trouvés pour : ' . $stringHashtags);
+        $this->logger->notice('Tweets trouvés pour : ' . $stringHashtags);
+
+        if (!$input->getOption('update-db')) {
+            return Command::SUCCESS;
+        }
+
+        foreach ($tweets->data as $index => $tweet) {
+            $tweetAlreadyExists = $this->tweetRepository->findOneByTweetId($tweet->id);
+
+            if (null !== $tweetAlreadyExists) {
                 continue;
             }
 
-            $io->success('Tweets trouvés pour : ' . $hashtag->getHashtag());
-            $this->logger->notice('Tweets trouvés pour : ' . $hashtag->getHashtag());
-
-            if (!$input->getOption('update-db')) {
+            if (null === ($user = $this->setUser($tweets, $tweet, $index))) {
+                $io->error("Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id");
                 continue;
             }
 
-            foreach ($tweets->data as $index => $tweet) {
-                $tweetAlreadyExists = $this->tweetRepository->findOneByTweetId($tweet->id);
+            $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
+            $lastGameDate = null;
 
-                if (null !== $tweetAlreadyExists) {
-                    continue;
+            if (null === $player || ($player->getUsername() !== '@' . $user->username || $player->getName() !== $user->name)) {
+                if (null === $player) {
+                    $player = new Player();
+                    $player->setTwitterAccountId($user->id);
                 }
+                $player->setName($user->name);
+                $player->setUsername($user->username);
 
-                if (null === ($user = $this->setUser($tweets, $tweet, $index))) {
-                    $io->error("Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id");
-                    continue;
-                }
-
-                $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
-                $lastGame = null;
-
-                if (null === $player || ($player->getUsername() !== '@'.$user->username || $player->getName() !== $user->name)) {
-                    if(null === $player) {
-                        $player = new Player();
-                        $player->setTwitterAccountId($user->id);
-                    }
-                    $player->setName($user->name);
-                    $player->setUsername($user->username);
-
-                    $this->playerRepository->persistAndFlush($player, true);
-                } else {
-                    $lastGame = $this->gameRepository->findOneByPlayer($player);
-                }
+                $this->playerRepository->persistAndFlush($player, true);
+            } else {
+                $lastGameDate = $player->getLastPlayDate();
+            }
 
             $recentTweet = new Tweet();
             $recentTweet->setPlayer($player);
@@ -261,58 +321,119 @@ class TwitterApiRecentTweetsCommand extends Command
 
             $this->tweetRepository->persistAndFlush($recentTweet, true);
 
-                if (!$this->following($user->id)) {
-                    if ($input->getOption('reply')) {
+            $databaseUpdated = true;
+
+            if (!$this->following($user->id)) {
+                if ($input->getOption('reply')) {
+                    try {
                         $this->notFollowAccounts($user, $tweet);
+                    } catch (TweetReplyNotFoundException $e) {
+                        $this->logger->error(
+                            "No tweet reply message found for 'need_to_follow_us' in TwitterApiRecentTweetsCommand",
+                            [
+                                'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                                'function' => 'notFollowAccounts',
+                                'lot_id' => 'need_to_follow_us',
+                                'error' => $e
+                            ]
+                        );
+                        return Command::FAILURE;
                     }
-                    continue;
                 }
+                continue;
+            }
 
-                if (null !== $lastGame && null !== $lastGame->getPlayDate() && date_diff($lastGame->getPlayDate(), new \DateTime())->d < 1) {
-                    if ($input->getOption('reply')) {
+            if (null !== $lastGameDate && date_diff($lastGameDate, new \DateTime())->d < 1) {
+                if ($input->getOption('reply')) {
+                    try {
                         $message = $this->getTweetReplyMessage('game_already_generated_less_than_a_day_ago', $player->getName(), $player->getUsername());
-                        $this->newReply($tweet->id, $message);
+                        $this->newReply($message, $tweet->id);
+                    } catch (TweetReplyNotFoundException $e) {
+                        $this->logger->error(
+                            "No tweet reply message found for 'game_already_generated_less_than_a_day_ago' in TwitterApiRecentTweetsCommand",
+                            [
+                                'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                                'function' => 'getTweetReplyMessage',
+                                'lot_id' => 'game_already_generated_less_than_a_day_ago',
+                                'error' => $e
+                            ]
+                        );
+                        return Command::FAILURE;
                     }
-                    continue;
                 }
+                continue;
+            }
 
-                $reward = new Reward();
-                $reward->setDistributed(false);
+            $reward = new Reward();
+            $reward->setDistributed(false);
 
-                $randomLot = $this->lotRepository->getRandom();
+            $randomLot = $this->lotRepository->getRandom();
 
-                if (\count($randomLot) > 0) {
-                    $reward->setLot($randomLot[0]);
-                } else {
-                    $io->error('No lot available');
-                    if ($input->getOption('reply')) {
+            if (\count($randomLot) > 0) {
+                $reward->setLot($randomLot[0]);
+            } else {
+                $io->error('No lot available');
+                if ($input->getOption('reply')) {
+                    try {
                         $message = $this->getTweetReplyMessage('no_more_available_lots', $player->getName(), $player->getUsername());
-                        $this->newReply($tweet->id, $message);
-                    }
+                        $this->newReply($message, $tweet->id);
+                    } catch (TweetReplyNotFoundException $e) {
+                        $this->logger->error(
+                            "No tweet reply message found for 'no_more_available_lots' in TwitterApiRecentTweetsCommand",
+                            [
+                                'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                                'function' => 'getTweetReplyMessage',
+                                'lot_id' => 'no_more_available_lots',
+                                'error' => $e
+                            ]
 
-                    return Command::FAILURE;
+                        );
+                    }
                 }
 
-                $game = new Game();
-                $game->setTweet($recentTweet);
-                $game->setPlayer($player);
-                $game->setReward($reward);
+                return Command::FAILURE;
+            }
 
-                if ($this->gameRepository->persistAndFlush($game, true)) {
-                    if ($input->getOption('reply')) {
-                        $message = $this->getTweetReplyMessage('on_new_game', $player->getName(), $player->getUsername());
-                        $this->newReply($tweet->id, $message);
-                    }
-                } else {
-                    $reward->getLot()->setQuantity($reward->getLot()->getQuantity() + 1);
-                    $this->lotRepository->persistAndFlush($reward->getLot(), true);
-                    $this->rewardRepository->removeAndFlush($reward, true);
-                    $this->tweetRepository->removeAndFlush($recentTweet, true);
+
+            $game = new Game();
+            $game->setTweet($recentTweet);
+            $game->setPlayer($player);
+            $game->setReward($reward);
+
+            try {
+                $this->validator->validate($game);
+                $this->gameRepository->persistAndFlush($game, true);
+            } catch (ValidationException $e) {
+                $io->error($e->getMessage());
+                $this->logger->error($e->getMessage(), (array)$e);
+                continue;
+            }
+
+            $player->setLastPlayDate(new \DateTime());
+            $this->playerRepository->persistAndFlush($player, true);
+
+            if ($input->getOption('reply')) {
+                try {
+                    $message = $this->getTweetReplyMessage('on_new_game', $player->getName(), $player->getUsername());
+                    $this->newReply($message, $tweet->id);
+                } catch (TweetReplyNotFoundException $e) {
+                    $this->logger->error(
+                        "No tweet reply message found for 'on_new_game' in TwitterApiRecentTweetsCommand",
+                        [
+                            'file' => 'srv/api/src/Command/TwitterApiRecentTweetsCommand.php',
+                            'function' => 'getTweetReplyMessage',
+                            'lot_id' => 'on_new_game',
+                            'error' => $e
+                        ]
+                    );
+                    return Command::FAILURE;
                 }
             }
         }
 
-        $io->success('Database updated successfully');
+        if ($databaseUpdated) {
+            $io->success('Database updated successfully');
+        }
 
         return Command::SUCCESS;
     }
