@@ -38,6 +38,10 @@ class Tweet
     #[ApiProperty(types: ['https://schema.org/identifier'])]
     private ?string $tweetId = null;
 
+    #[ORM\Column(name: 'creation_date', type: 'datetime')]
+    #[ApiProperty(types: ['https://schema.org/DateTime'])]
+    private ?\DateTime $creationDate = null;
+
     public function getId(): Uuid
     {
         return $this->id;
@@ -61,5 +65,15 @@ class Tweet
     public function setTweetId(string $tweetId): void
     {
         $this->tweetId = $tweetId;
+    }
+
+    public function getCreationDate(): ?\DateTime
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(?\DateTime $creationDate): void
+    {
+        $this->creationDate = $creationDate;
     }
 }

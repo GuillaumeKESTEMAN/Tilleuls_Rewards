@@ -29,9 +29,21 @@ class TweetRepository extends CommonRepository
      */
     public function findOneByTweetId(string $value): ?Tweet
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.tweetId = :val')
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.tweetId = :val')
             ->setParameter('val', $value)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findLastTweet(): ?Tweet
+    {
+        return $this->createQueryBuilder('t')
+            ->orderBy('t.creationDate', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

@@ -17,7 +17,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\TwitterAccountToFollowRepository;
 use App\State\TwitterAccountToFollowProcessor;
-use App\Validator as AcmeAssert;
+use App\Validator\ExistsInTwitter;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -57,7 +57,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
-    #[AcmeAssert\ExistsInTwitter]
+    #[ExistsInTwitter]
     private ?string $twitterAccountUsername = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]

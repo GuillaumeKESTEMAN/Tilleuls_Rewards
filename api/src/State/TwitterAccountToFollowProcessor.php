@@ -29,6 +29,7 @@ class TwitterAccountToFollowProcessor implements ProcessorInterface
 
             $data->setTwitterAccountId($user->data->id);
             $data->setTwitterAccountName($user->data->name);
+            $data->setTwitterAccountUsername($user->data->username);
         }
 
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);

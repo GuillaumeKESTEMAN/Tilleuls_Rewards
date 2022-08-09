@@ -99,6 +99,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
     /**
      * @throws TwitterOAuthException
+     * @throws NonUniqueResultException
      */
     private function getRecentTweets(string $hashtag): ?object
     {
@@ -107,6 +108,11 @@ class TwitterApiRecentTweetsCommand extends Command
             'expansions' => 'author_id',
             'tweet.fields' => 'created_at',
         ];
+
+        $tweet = $this->tweetRepository->findLastTweet();
+        if (null !== $tweet) {
+            $params['since_id'] = $tweet->getTweetId();
+        }
 
         $tweets = $this->twitterApi->get('tweets/search/recent', $params);
 
@@ -248,11 +254,12 @@ class TwitterApiRecentTweetsCommand extends Command
                     $lastGame = $this->gameRepository->findOneByPlayer($player);
                 }
 
-                $recentTweet = new Tweet();
-                $recentTweet->setPlayer($player);
-                $recentTweet->setTweetId($tweet->id);
+            $recentTweet = new Tweet();
+            $recentTweet->setPlayer($player);
+            $recentTweet->setTweetId($tweet->id);
+            $recentTweet->setCreationDate(new \DateTime($tweet->created_at));
 
-                $this->tweetRepository->persistAndFlush($recentTweet, true);
+            $this->tweetRepository->persistAndFlush($recentTweet, true);
 
                 if (!$this->following($user->id)) {
                     if ($input->getOption('reply')) {
