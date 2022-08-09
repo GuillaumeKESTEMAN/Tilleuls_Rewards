@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class ExistsInTwitterValidator extends ConstraintValidator
 {
-    public function __construct(private TwitterApi $twitterApi)
+    public function __construct(private readonly TwitterApi $twitterApi)
     {
     }
 

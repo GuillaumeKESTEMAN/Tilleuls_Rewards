@@ -28,35 +28,6 @@ class GameRepository extends CommonRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function persistAndFlush(object $entity, bool $flush = false): bool
-    {
-        $lastGame = $this->findOneByPlayer($entity->getPlayer());
-
-        if (null !== $lastGame && date_diff($lastGame->getPlayDate(), new \DateTime())->d < 1) {
-            return false;
-        }
-
-        $entity->setPlayDate(new \DateTime());
-        try {
-            $this->getEntityManager()->persist($entity);
-        } catch (Exception $e) {
-            $this->logger->error($e->getMessage(), $e->getTrace());
-        }
-
-        if ($flush) {
-            try{
-                $this->getEntityManager()->flush();
-            } catch (Exception $e) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     */
     public function findOneByPlayer($player): ?Game
     {
         return $this->createQueryBuilder('p')

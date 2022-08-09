@@ -16,7 +16,7 @@ abstract class CommonRepository extends ServiceEntityRepository
         parent::__construct($registry, $entityClass);
     }
 
-    public function persistAndFlush(object $entity, bool $flush = false): ?bool
+    public function persistAndFlush(object $entity, bool $flush = false): void
     {
         try {
             $this->getEntityManager()->persist($entity);
@@ -31,8 +31,6 @@ abstract class CommonRepository extends ServiceEntityRepository
                 $this->logger->error($e->getMessage(), $e->getTrace());
             }
         }
-
-        return null;
     }
 
     public function removeAndFlush(object $entity, bool $flush = false): void

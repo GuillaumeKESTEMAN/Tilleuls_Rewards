@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\GameRepository;
+use App\Validator\HasNotPlayedForADay;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
@@ -50,6 +51,7 @@ class Game
     private ?Tweet $tweet = null;
 
     #[ORM\ManyToOne(targetEntity: Player::class)]
+    #[HasNotPlayedForADay]
     private ?Player $player = null;
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
@@ -63,6 +65,11 @@ class Game
     #[ORM\OneToOne(inversedBy: 'game', targetEntity: Reward::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(unique: true)]
     private ?Reward $reward = null;
+
+    public function __construct()
+    {
+        $this->setPlayDate(new \DateTime());
+    }
 
     public function getId(): ?Uuid
     {
