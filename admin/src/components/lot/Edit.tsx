@@ -3,7 +3,7 @@ import {Lot} from "../../types/Lot";
 import {EditGuesser, InputGuesser} from "@api-platform/admin";
 import {AutocompleteInput, ReferenceInput} from "react-admin";
 // @ts-ignore
-import {MESSAGE_HELPER, MESSAGE_PLACE_HOLDER} from "../../config/lot.ts";
+import {MESSAGE_HELPER, MESSAGE_PLACE_HOLDER} from "../../config/components/lot.ts";
 
 interface Props {
     lot: Lot;
@@ -20,7 +20,7 @@ export const Edit: FunctionComponent<Props> = ({lot}) => (
             reference="media_objects"
             source="image"
         >
-            <AutocompleteInput label="Image" optionText="name" filterToQuery={searchText => ({title: searchText})}/>
+            <AutocompleteInput optionText="name" filterToQuery={searchText => ({title: searchText})}/>
         </ReferenceInput>
     </EditGuesser>
 );

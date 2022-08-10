@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import {MediaObjectRecord as MediaObject} from "../../types/MediaObject";
 // @ts-ignore
-import {ENTRYPOINT} from "../../config/entrypoint.ts";
+import {ENTRYPOINT} from "../../config/components/entrypoint.ts";
 
 
 // @ts-ignore

@@ -10,10 +10,10 @@ interface Props {
 // @ts-ignore
 export const List: FunctionComponent<Props> = ({reward}) => (
     <ListGuesser rowClick="show" {...reward} >
-        <ReferenceField label="Lot" source="lot" reference="lots" link="show">
+        <ReferenceField source="lot" reference="lots" link="show">
             <FieldGuesser source="name"/>
         </ReferenceField>
-        <ReferenceField label="Player" source="game" reference="games" link="show">
+        <ReferenceField source="game" reference="games" link="show">
             <ReferenceField source="player" reference="players" link="show">
                 <FieldGuesser source="username"/>
             </ReferenceField>

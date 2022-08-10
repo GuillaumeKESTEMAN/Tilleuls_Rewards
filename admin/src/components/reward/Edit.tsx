@@ -11,11 +11,11 @@ interface Props {
 export const Edit: FunctionComponent<Props> = ({reward}) => (
     <EditGuesser {...reward}>
         <ReferenceInput source="lot" reference="lots">
-            <AutocompleteInput label="Lot" optionText="name" disabled/>
+            <AutocompleteInput optionText="name" disabled/>
         </ReferenceInput>
         <ReferenceField source="game" reference="games">
             <ReferenceInput source="player" reference="players">
-                <AutocompleteInput label="Player" optionText="username" disabled/>
+                <AutocompleteInput optionText="username" disabled/>
             </ReferenceInput>
         </ReferenceField>
         <InputGuesser source="distributed"/>

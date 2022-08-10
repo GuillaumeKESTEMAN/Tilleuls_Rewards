@@ -3,7 +3,7 @@ import {MediaObject} from "../../types/MediaObject";
 import {EditGuesser, InputGuesser} from "@api-platform/admin";
 import {FunctionField} from "react-admin";
 // @ts-ignore
-import {ENTRYPOINT} from "../../config/entrypoint.ts";
+import {ENTRYPOINT} from "../../config/components/entrypoint.ts";
 
 interface Props {
     mediaObject: MediaObject;
@@ -13,7 +13,7 @@ export const Edit: FunctionComponent<Props> = ({mediaObject}) => (
     <EditGuesser {...mediaObject}>
         <InputGuesser source="name"/>
         <FunctionField
-            label="Image"
+            source="file"
             render={record => {return <img style={{ width:"100%", maxWidth: "500px", maxHeight: "500px"}} src={ENTRYPOINT + "/image/" + record.filePath} alt={record.name} />;}}
         />
     </EditGuesser>

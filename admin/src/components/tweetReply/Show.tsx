@@ -3,7 +3,7 @@ import {TweetReply} from "../../types/TweetReply";
 import {FieldGuesser, ShowGuesser} from "@api-platform/admin";
 import {FunctionField} from "react-admin";
 // @ts-ignore
-import {NAME_CHOICES} from "../../config/tweetReply.ts";
+import {NAME_CHOICES} from "../../config/components/tweetReply.ts";
 
 interface Props {
     tweetReply: TweetReply;
@@ -17,7 +17,7 @@ export const Show: FunctionComponent<Props> = ({tweetReply}) => {
     return (
         <ShowGuesser {...tweetReply}>
             <FunctionField
-                label="A quoi ça sert ?"
+                source="name"
                 render={record => {return getTweetReplyNameMessage(record).name;}}
             />;
             <FieldGuesser source="message"/>

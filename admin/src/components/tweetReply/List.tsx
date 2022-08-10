@@ -3,7 +3,7 @@ import {TweetReply} from "../../types/TweetReply";
 import {FieldGuesser, ListGuesser} from "@api-platform/admin";
 import {FunctionField} from "react-admin";
 // @ts-ignore
-import {NAME_CHOICES} from "../../config/tweetReply.ts";
+import {NAME_CHOICES} from "../../config/components/tweetReply.ts";
 
 interface Props {
     tweetReplies: TweetReply[];
@@ -18,7 +18,7 @@ export const List: FunctionComponent<Props> = ({tweetReplies}) => {
     return (
         <ListGuesser rowClick="show" {...tweetReplies}>
             <FunctionField
-                label="A quoi ça sert ?"
+                source="name"
                 render={record => {return getTweetReplyNameMessage(record).name;}}
             />;
             <FieldGuesser source="message"/>

@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 // @ts-ignore
-import {API_ENTRYPOINT} from '../config/entrypoint.ts';
+import {API_ENTRYPOINT} from '../config/components/entrypoint.ts';
 
 const authProvider = {
     login: ({username, password}) => {

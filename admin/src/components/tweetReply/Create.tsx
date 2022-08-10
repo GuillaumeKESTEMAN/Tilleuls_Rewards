@@ -3,7 +3,7 @@ import {TweetReply} from "../../types/TweetReply";
 import {CreateGuesser, InputGuesser} from "@api-platform/admin";
 import {SelectInput} from "react-admin";
 // @ts-ignore
-import {MESSAGE_HELPER, NAME_CHOICES} from '../../config/tweetReply.ts';
+import {MESSAGE_HELPER, NAME_CHOICES} from '../../config/components/tweetReply.ts';
 
 interface Props {
     tweetReply: TweetReply;
@@ -15,8 +15,7 @@ export const Create: FunctionComponent<Props> = ({tweetReply}) => {
 
     return (
         <CreateGuesser {...tweetReply}>
-            <SelectInput label="A quoi ça sert ?"
-                         source="name"
+            <SelectInput source="name"
                          choices={NAME_CHOICES}
                          onChange={value => {
                              let placeholder = NAME_CHOICES.find(

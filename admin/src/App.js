@@ -18,7 +18,7 @@ import {
   TwitterAccountToFollowShow
 } from "./components/twitterAccountToFollow.ts";
 import {TweetRepliesList, TweetReplyCreate, TweetReplyEdit, TweetReplyShow} from "./components/tweetReply.ts";
-import {API_ENTRYPOINT, ENTRYPOINT} from "./config/entrypoint.ts";
+import {API_ENTRYPOINT, ENTRYPOINT} from "./config/components/entrypoint.ts";
 import {PlayerShow, PlayersList} from "./components/player.ts";
 import RedeemIcon from '@mui/icons-material/Redeem';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
@@ -29,6 +29,7 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import PanoramaIcon from '@mui/icons-material/Panorama';
 import Dashboard from "./utils/dashboard.tsx";
 import layout from "./utils/layout.tsx";
+import i18nProvider from "./utils/i18nProvider.tsx";
 
 const getHeaders = () => localStorage.getItem("token") ? {
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -85,7 +86,12 @@ const dataProvider = baseHydraDataProvider({
 const AdminLoader = () => {
   if (typeof window !== "undefined") {
     const {HydraAdmin} = require("@api-platform/admin");
-    return (<HydraAdmin dataProvider={dataProvider} layout={layout} dashboard={Dashboard} authProvider={authProvider} entrypoint={API_ENTRYPOINT}>
+    return (<HydraAdmin dataProvider={dataProvider}
+                        i18nProvider={i18nProvider}
+                        layout={layout}
+                        dashboard={Dashboard}
+                        authProvider={authProvider}
+                        entrypoint={API_ENTRYPOINT}>
       <ResourceGuesser name="lots"
                        icon={RedeemIcon}
                        list={LotsList}
@@ -94,38 +100,32 @@ const AdminLoader = () => {
                        edit={LotEdit}/>
       <ResourceGuesser name="rewards"
                        icon={EmojiEventsIcon}
-                       options={{ label: 'Récompenses' }}
                        list={RewardsList}
                        show={RewardsShow}
                        edit={RewardsEdit}/>
       <ResourceGuesser name="players"
                        icon={AccountCircleIcon}
-                       options={{ label: 'Joueurs' }}
                        list={PlayersList}
                        show={PlayerShow}/>
       <ResourceGuesser name="twitter_account_to_follows"
                        icon={PersonPinIcon}
-                       options={{ label: 'Comptes Twitter à suivre' }}
                        list={TwitterAccountToFollowList}
                        show={TwitterAccountToFollowShow}
                        create={TwitterAccountToFollowCreate}
                        edit={TwitterAccountToFollowEdit}/>
       <ResourceGuesser name="twitter_hashtags"
                        icon={TagIcon}
-                       options={{ label: 'Hashtags' }}
                        list={TwitterHashtagsList}
                        create={TwitterHashtagCreate}
                        edit={TwitterHashtagEdit}/>
       <ResourceGuesser name="tweet_replies"
                        icon={ReplyIcon}
-                       options={{ label: 'Réponses de tweets' }}
                        list={TweetRepliesList}
                        create={TweetReplyCreate}
                        show={TweetReplyShow}
                        edit={TweetReplyEdit}/>
       <ResourceGuesser name="media_objects"
                        icon={PanoramaIcon}
-                       options={{ label: 'Images' }}
                        list={MediaObjectList}
                        create={MediaObjectCreate}
                        show={MediaObjectShow}

@@ -1626,16 +1626,9 @@
     prop-types "^15.8.1"
     react-is "^17.0.2"
 
-"@mui/icons-material@^5.0.1":
+"@mui/icons-material@^5.0.1", "@mui/icons-material@^5.8.4":
   version "5.8.4"
   resolved "https://registry.npmjs.org/@mui/icons-material/-/icons-material-5.8.4.tgz"
-  integrity sha512-9Z/vyj2szvEhGWDvb+gG875bOGm8b8rlHBKOD1+nA3PcgC3fV6W1AU6pfOorPeBfH2X4mb9Boe97vHvaSndQvA==
-  dependencies:
-    "@babel/runtime" "^7.17.2"
-
-"@mui/icons-material@^5.8.4":
-  version "5.8.4"
-  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.8.4.tgz#3f2907c9f8f5ce4d754cb8fb4b68b5a1abf4d095"
   integrity sha512-9Z/vyj2szvEhGWDvb+gG875bOGm8b8rlHBKOD1+nA3PcgC3fV6W1AU6pfOorPeBfH2X4mb9Boe97vHvaSndQvA==
   dependencies:
     "@babel/runtime" "^7.17.2"
@@ -7764,6 +7757,22 @@ ra-core@^4.2.0:
     react-is "^17.0.2"
     react-query "^3.32.1"
 
+ra-core@^4.2.6:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/ra-core/-/ra-core-4.2.6.tgz#8c138b0d1cded261da0c7aae8e693afea02ced3a"
+  integrity sha512-N4ooTRohfp4pPbWQUhUC6WrkW304YvwMCAfW4x8m2DelJigEJo9WoY1ktCZ9gTspyrOUDGrMVZeG+a+xLMER5Q==
+  dependencies:
+    clsx "^1.1.1"
+    date-fns "^2.19.0"
+    eventemitter3 "^4.0.7"
+    inflection "~1.12.0"
+    jsonexport "^3.2.0"
+    lodash "~4.17.5"
+    prop-types "^15.6.1"
+    query-string "^7.1.1"
+    react-is "^17.0.2"
+    react-query "^3.32.1"
+
 ra-i18n-polyglot@^4.2.0:
   version "4.2.0"
   resolved "https://registry.npmjs.org/ra-i18n-polyglot/-/ra-i18n-polyglot-4.2.0.tgz"
@@ -7778,6 +7787,13 @@ ra-language-english@^4.2.0:
   integrity sha512-Xq66OdGyt/MPunZK/40lPct5ZU9oLCxXeRIu7yMu8+OmgksXuZglicaHU9wBP816vlsYm9uyOjV/TXPyuFZLWA==
   dependencies:
     ra-core "^4.2.0"
+
+ra-language-french@^4.2.6:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/ra-language-french/-/ra-language-french-4.2.6.tgz#01481fa0ea86d0fb4b13db2956aac214303b1d53"
+  integrity sha512-U5V0EjY2ESEylabrXvSxn2SDbdWxHNou2aQbIpVn80zDL/R8qgkwUM2Zor2nrfM+xthQo2B5C2B0/f5N/mFN1g==
+  dependencies:
+    ra-core "^4.2.6"
 
 ra-ui-materialui@^4.2.0:
   version "4.2.0"
