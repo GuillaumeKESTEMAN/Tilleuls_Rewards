@@ -8,8 +8,8 @@ interface Props {
 
 export const Show: FunctionComponent<Props> = ({twitterAccountToFollow}) => (
     <ShowGuesser {...twitterAccountToFollow}>
-        <FieldGuesser source="twitterAccountUsername"/>
-        <FieldGuesser source="twitterAccountName"/>
+        <FieldGuesser source="username"/>
+        <FieldGuesser source="name"/>
         <FieldGuesser source="active"/>
     </ShowGuesser>
 );

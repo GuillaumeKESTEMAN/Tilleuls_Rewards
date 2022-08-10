@@ -56,7 +56,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['twitterAccountUsername' => '@me']);
+        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@me']);
 
         $client->request('GET', $iri, ['auth_bearer' => $token]);
 
@@ -84,7 +84,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         $response = static::createClient()->request('POST', '/api/twitter_account_to_follows', [
             'auth_bearer' => $token,
             'json' => [
-                "twitterAccountUsername" => "@coopTilleuls",
+                "username" => "@coopTilleuls",
                 "active" => true
             ]
         ]);
@@ -95,7 +95,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertJsonContains([
             '@context' => '/api/contexts/TwitterAccountToFollow',
             '@type' => 'TwitterAccountToFollow',
-            'twitterAccountUsername' => '@coopTilleuls',
+            'username' => '@coopTilleuls',
             'active' => true
         ]);
 
@@ -119,7 +119,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         static::createClient()->request('POST', '/api/twitter_account_to_follows', [
             'auth_bearer' => $token,
             'json' => [
-                "twitterAccountUsername" => "@" . $invalidTwitterUsernameAccount,   # not exists for the moment
+                "username" => "@" . $invalidTwitterUsernameAccount,   # not exists for the moment
                 "active" => false
             ]
         ]);
@@ -148,12 +148,12 @@ class TwitterAccountToFollowTest extends ApiTestCase
 
         $client = static::createClient();
 
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['twitterAccountUsername' => '@coopTilleuls']);
+        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@coopTilleuls']);
 
         $client->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
-                'twitterAccountUsername' => '@symfony',
+                'username' => '@symfony',
                 'active' => false
             ]
         ]);
@@ -161,7 +161,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
-            'twitterAccountUsername' => '@symfony',
+            'username' => '@coopTilleuls',
             'active' => false
         ]);
     }
@@ -176,7 +176,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['twitterAccountUsername' => '@symfony']);
+        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@coopTilleuls']);
 
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
@@ -184,7 +184,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertResponseStatusCodeSame(204);
 
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(TwitterAccountToFollow::class)->findOneBy(['twitterAccountUsername' => '@symfony'])
+            static::getContainer()->get('doctrine')->getRepository(TwitterAccountToFollow::class)->findOneBy(['username' => '@coopTilleuls'])
         );
     }
 }

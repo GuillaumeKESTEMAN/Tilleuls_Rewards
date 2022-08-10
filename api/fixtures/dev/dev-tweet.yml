@@ -2,3 +2,4 @@ App\Entity\Tweet:
     tweet_{1..20}:
         player: '@player_<current()>'
         tweetId (unique): <uniqid()>
+        creationDate: <date_create()>

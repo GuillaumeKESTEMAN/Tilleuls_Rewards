@@ -10,7 +10,7 @@ interface Props {
 
 export const Create: FunctionComponent<Props> = ({twitterAccountToFollow}) => (
     <CreateGuesser {...twitterAccountToFollow}>
-        <InputGuesser source="twitterAccountUsername" placeholder={NAME_PLACE_HOLDER}/>
+        <InputGuesser source="username" placeholder={NAME_PLACE_HOLDER}/>
         <InputGuesser source="active"/>
     </CreateGuesser>
 );

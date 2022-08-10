@@ -25,11 +25,11 @@ class TwitterAccountToFollowProcessor implements ProcessorInterface
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
         if ($data instanceof TwitterAccountToFollow && ('POST' === $context['operation']->getMethod() || 'PUT' === $context['operation']->getMethod())) {
-            $user = $this->twitterApi->get('users/by/username/'.substr($data->getTwitterAccountUsername(), 1));
+            $user = $this->twitterApi->get('users/by/username/'.substr($data->getUsername(), 1));
 
             $data->setTwitterAccountId($user->data->id);
-            $data->setTwitterAccountName($user->data->name);
-            $data->setTwitterAccountUsername($user->data->username);
+            $data->setName($user->data->name);
+            $data->setUsername($user->data->username);
         }
 
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);

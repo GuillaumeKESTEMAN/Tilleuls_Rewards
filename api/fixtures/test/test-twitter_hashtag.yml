@@ -5,4 +5,4 @@ App\Entity\TwitterHashtag:
 
     twitter_hashtag_60:
         hashtag (unique): getTest
-        active: <boolean()>
+        active: false

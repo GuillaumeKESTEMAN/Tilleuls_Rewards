@@ -68,6 +68,7 @@ class TweetTest extends ApiTestCase
         $response = static::createClient()->request('POST', '/api/tweets', ['json' => [
             'player' => $iri,
             'tweetId' => '123456789',
+            'creationDate' => new \DateTime(),
         ]]);
 
         self::assertResponseStatusCodeSame(404);

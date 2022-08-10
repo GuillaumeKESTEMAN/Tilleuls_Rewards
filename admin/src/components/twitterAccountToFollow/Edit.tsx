@@ -8,8 +8,8 @@ interface Props {
 
 export const Edit: FunctionComponent<Props> = ({twitterAccountToFollow}) => (
     <EditGuesser {...twitterAccountToFollow}>
-        <InputGuesser source="twitterAccountUsername" disabled/>
-        <InputGuesser source="twitterAccountName" disabled/>
+        <InputGuesser source="username" disabled/>
+        <InputGuesser source="name" disabled/>
         <InputGuesser source="active"/>
     </EditGuesser>
 );

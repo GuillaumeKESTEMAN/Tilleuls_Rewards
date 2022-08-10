@@ -9,8 +9,8 @@ interface Props {
 // @ts-ignore
 export const List: FunctionComponent<Props> = ({twitterAccountToFollows}) => (
     <ListGuesser rowClick="show" {...twitterAccountToFollows}>
-        <FieldGuesser source="twitterAccountUsername"/>
-        <FieldGuesser source="twitterAccountName"/>
+        <FieldGuesser source="username"/>
+        <FieldGuesser source="name"/>
         <FieldGuesser source="active"/>
     </ListGuesser>
 );
