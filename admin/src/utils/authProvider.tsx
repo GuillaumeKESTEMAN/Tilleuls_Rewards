@@ -2,7 +2,7 @@ import jwtDecode from 'jwt-decode';
 // @ts-ignore
 import {API_ENTRYPOINT} from '../config/entrypoint.ts';
 
-export default {
+const authProvider = {
     login: ({username, password}) => {
         const request = new Request(`${API_ENTRYPOINT}/login`, {
             method: 'POST',
@@ -49,3 +49,5 @@ export default {
     },
     getPermissions: () => Promise.resolve(),
 };
+
+export default authProvider;
