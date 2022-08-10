@@ -38,4 +38,17 @@ class GameRepository extends CommonRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneById(int $id): ?Game
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id = :val')
+            ->setParameter('val', $id)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -12,10 +12,13 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
 use App\Repository\GameRepository;
+use App\State\GamePutProcessor;
 use App\Validator\HasNotPlayedForADay;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
@@ -27,6 +30,12 @@ use Symfony\Component\Uid\Uuid;
         operations: [
             new GetCollection(),
             new Get(),
+            new Put(
+                denormalizationContext: ['groups' => ['put']],
+                security: 'object.getScore() == null',
+                validationContext: ['groups' => ['putValidation']],
+                processor: GamePutProcessor::class
+            )
         ],
         mercure: ['private' => true],
         order: ['playDate' => 'DESC'],
@@ -56,6 +65,7 @@ class Game
 
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
     #[ApiProperty(types: ['https://schema.org/Rating'])]
+    #[Groups('put')]
     private ?int $score = null;
 
     #[ORM\Column(name: 'play_date', type: 'datetime')]

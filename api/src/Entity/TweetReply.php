@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(),
         new Post(),
         new Get(),
-        new Put(normalizationContext: ['groups' => ['put']]),
+        new Put(denormalizationContext: ['groups' => ['put']]),
         new Delete(),
     ],
     mercure: ['private' => true],

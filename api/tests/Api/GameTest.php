@@ -96,16 +96,25 @@ class GameTest extends ApiTestCase
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      */
     public function testUpdateGame(): void
     {
+        $token = LoginTest::getLoginToken();
+
         $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 
-        static::createClient()->request('PUT', $iri, ['json' => [
-            'playDate' => new DateTime('2022-01-01 12:35:00.000000'),
-        ]]);
+        static::createClient()->request('PUT', $iri, [
+            'auth_bearer' => $token,
+            'json' => [
+                'score' => 10,
+            ]]);
 
-        self::assertResponseStatusCodeSame(405);
+        self::assertResponseIsSuccessful();
+        self::assertJsonContains([
+            '@id' => $iri,
+            'score' => 10
+        ]);
     }
 
     /**

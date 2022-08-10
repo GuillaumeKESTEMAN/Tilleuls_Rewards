@@ -61,7 +61,7 @@ class Lot
 
     #[ORM\Column(name: 'message', type: 'string')]
     #[Assert\NotBlank]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom% and same for the userhandle to mention it : %@joueur%', types: ['https://schema.org/Message'])]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle to mention it : %@joueur% and same for the score : %score%', types: ['https://schema.org/Message'])]
     private ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
@@ -103,7 +103,7 @@ class Lot
         $this->quantity = $quantity;
     }
 
-    public function getMessage(?string $name = null, ?string $userhandle = null): ?string
+    public function getMessage(?string $name = null, ?string $userhandle = null, ?int $score = null): ?string
     {
         $returnMessage = $this->message;
         if (null !== $name) {
@@ -112,6 +112,10 @@ class Lot
 
         if (null !== $userhandle) {
             $returnMessage = str_replace('%@joueur%', '@'.$userhandle, $returnMessage);
+        }
+
+        if (null !== $score) {
+            $returnMessage = str_replace('%score%', (string)$score, $returnMessage);
         }
 
         return $returnMessage;

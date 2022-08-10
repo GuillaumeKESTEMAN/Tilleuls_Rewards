@@ -145,16 +145,25 @@ class MediaObjectTest extends ApiTestCase
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      */
     public function testUpdateMediaObject(): void
     {
+        $token = LoginTest::getLoginToken();
+
         $iri = $this->findIriBy(MediaObject::class, ['name' => 'My uploaded file']);
 
-        static::createClient()->request('PUT', $iri, ['json' => [
-            'name' => 'Change media object name',
-        ]]);
+        static::createClient()->request('PUT', $iri, [
+            'auth_bearer' => $token,
+            'json' => [
+                'name' => 'Change media object name',
+            ]]);
 
-        self::assertResponseStatusCodeSame(405);
+        self::assertResponseIsSuccessful();
+        self::assertJsonContains([
+            '@id' => $iri,
+            'name' => 'Change media object name'
+        ]);
     }
 
     /**
@@ -167,13 +176,13 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $iri = $this->findIriBy(MediaObject::class, ['name' => 'My uploaded file']);
+        $iri = $this->findIriBy(MediaObject::class, ['name' => 'Change media object name']);
 
         static::createClient()->request('DELETE', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(MediaObject::class)->findOneBy(['name' => 'My uploaded file'])
+            static::getContainer()->get('doctrine')->getRepository(MediaObject::class)->findOneBy(['name' => 'Change media object name'])
         );
     }
 }

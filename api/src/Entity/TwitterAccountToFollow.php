@@ -26,22 +26,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TwitterAccountToFollowRepository::class)]
 #[UniqueEntity('twitterAccountId')]
-#[UniqueEntity('twitterAccountUsername')]
+#[UniqueEntity('username')]
 #[ApiResource(
     operations: [
         new GetCollection(),
         new Post(processor: TwitterAccountToFollowProcessor::class),
         new Get(),
-        new Put(normalizationContext: ['groups' => ['put']], processor: TwitterAccountToFollowProcessor::class),
+        new Put(denormalizationContext: ['groups' => ['put']], processor: TwitterAccountToFollowProcessor::class),
         new Delete(),
     ],
     mercure: ['private' => true],
-    order: ['active' => 'DESC', 'twitterAccountName' => 'ASC'],
+    order: ['active' => 'DESC', 'name' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
-#[ApiFilter(SearchFilter::class, properties: ['twitterAccountName' => 'ipartial', 'twitterAccountUsername' => 'ipartial'])]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'ipartial', 'username' => 'ipartial'])]
 #[ApiFilter(BooleanFilter::class, properties: ['active' => 'exact'])]
-#[ApiFilter(OrderFilter::class, properties: ['twitterAccountName', 'twitterAccountUsername', 'active'])]
+#[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'active'])]
 class TwitterAccountToFollow
 {
     #[ORM\Id]
@@ -51,14 +51,14 @@ class TwitterAccountToFollow
     #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'twitter_account_name', type: 'string', length: 255)]
+    #[ORM\Column(name: 'name', type: 'string', length: 255)]
     #[ApiProperty(writable: false, types: ['https://schema.org/name'])]
-    private ?string $twitterAccountName = null;
+    private ?string $name = null;
 
-    #[ORM\Column(name: 'twitter_account_username', type: 'string', length: 255, unique: true)]
+    #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
     #[ExistsInTwitter]
-    private ?string $twitterAccountUsername = null;
+    private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
     #[ApiProperty(writable: false, types: ['https://schema.org/identifier'])]
@@ -73,29 +73,29 @@ class TwitterAccountToFollow
         return $this->id;
     }
 
-    public function getTwitterAccountName(): ?string
+    public function getName(): ?string
     {
-        return $this->twitterAccountName;
+        return $this->name;
     }
 
-    public function setTwitterAccountName(?string $twitterAccountName): void
+    public function setName(?string $name): void
     {
-        $this->twitterAccountName = $twitterAccountName;
+        $this->name = $name;
     }
 
-    public function getTwitterAccountUsername(): ?string
+    public function getUsername(): ?string
     {
-        return $this->twitterAccountUsername;
+        return $this->username;
     }
 
-    public function setTwitterAccountUsername(?string $twitterAccountUsername): void
+    public function setUsername(?string $username): void
     {
-        $twitterAccountUsername = str_replace(' ', '', $twitterAccountUsername);
-        if ('@' !== $twitterAccountUsername[0]) {
-            $twitterAccountUsername = '@'.$twitterAccountUsername;
+        $username = str_replace(' ', '', $username);
+        if ('@' !== $username[0]) {
+            $username = '@'.$username;
         }
 
-        $this->twitterAccountUsername = $twitterAccountUsername;
+        $this->username = $username;
     }
 
     public function getTwitterAccountId(): ?string

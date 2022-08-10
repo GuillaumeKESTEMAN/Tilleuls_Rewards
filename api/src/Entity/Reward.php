@@ -22,7 +22,7 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new GetCollection(),
         new Get(),
-        new Put(normalizationContext: ['groups' => ['put']]),
+        new Put(denormalizationContext: ['groups' => ['put']]),
     ],
     mercure: ['private' => true],
     order: ['distributed' => 'ASC'],

@@ -60,7 +60,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             deserialize: false,
         ),
         new Get(),
-        new Put(normalizationContext: ['groups' => ['put']]),
+        new Put(denormalizationContext: ['groups' => ['put']]),
         new Delete(),
     ],
     normalizationContext: ['groups' => ['media_object:read']],

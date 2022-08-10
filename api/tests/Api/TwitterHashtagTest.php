@@ -129,13 +129,15 @@ class TwitterHashtagTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'hashtag' => '#getTest2.0',
+                'active' => true
             ]
         ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
-            'hashtag' => '#getTest2.0'
+            'hashtag' => '#getTest',
+            'active' => true
         ]);
     }
 
@@ -149,14 +151,14 @@ class TwitterHashtagTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest2.0']);
+        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest']);
 
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(TwitterHashtag::class)->findOneBy(['hashtag' => '#getTest2.0'])
+            static::getContainer()->get('doctrine')->getRepository(TwitterHashtag::class)->findOneBy(['hashtag' => '#getTest'])
         );
     }
 }
