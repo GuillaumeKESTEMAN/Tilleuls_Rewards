@@ -128,7 +128,7 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function setUser(object $tweets, object $tweet, int $index): ?object
     {
-        $user = $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : null;
+        $user = array_key_exists($index, $tweets->includes->users) && $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : null;
 
         if (null !== $user) {
             return $user;
