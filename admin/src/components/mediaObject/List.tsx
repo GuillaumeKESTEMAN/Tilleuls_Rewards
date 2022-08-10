@@ -14,7 +14,7 @@ import {
     CardContent,
     Typography,
 } from '@mui/material';
-import {MediaObjectRecord as MediaObject} from "../../types/MediaObject";
+import {MediaObjectRaRecord as MediaObject} from "../../types/MediaObject";
 // @ts-ignore
 import {ENTRYPOINT} from "../../config/components/entrypoint.ts";
 

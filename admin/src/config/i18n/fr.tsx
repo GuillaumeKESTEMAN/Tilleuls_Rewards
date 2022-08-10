@@ -2,6 +2,23 @@ import frenchMessages from 'ra-language-french';
 
 export const fr = {
     ...frenchMessages,
+    pos: {
+        dashboard: {
+            all_lots: 'Voir tous les lots',
+            lots: {
+                pending: 'Stocks des lots :',
+                total: 'Nombre total de lots : ',
+            },
+            games: {
+                month_history: 'Nombre de parties créées sur 30 jours :',
+                no_games: 'Pas de parties existantes',
+                total: 'Nombre total de parties : '
+            },
+            players: {
+                total: 'Nombre total de joueurs : ',
+            },
+        },
+    },
     resources: {
         lots: {
             name: 'Lot |||| Lots',

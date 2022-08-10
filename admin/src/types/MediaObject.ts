@@ -15,7 +15,7 @@ export class MediaObject {
     public '@id'?: string;
 }
 
-export interface MediaObjectRecord extends RaRecord {
+export interface MediaObjectRaRecord extends RaRecord {
     name: string;
     contentUrl?: string;
     file?: any;

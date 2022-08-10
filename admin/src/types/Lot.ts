@@ -1,3 +1,5 @@
+import {RaRecord} from "react-admin";
+
 export class Lot {
     public '@id'?: string;
 
@@ -11,4 +13,12 @@ export class Lot {
     ) {
         this['@id'] = _id;
     }
+}
+
+export interface LotRaRecord extends RaRecord {
+    originId?: string;
+    name?: string;
+    quantity?: number;
+    message?: string;
+    image?: any;
 }

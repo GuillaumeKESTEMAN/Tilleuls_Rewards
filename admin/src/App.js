@@ -27,7 +27,7 @@ import PersonPinIcon from '@mui/icons-material/PersonPin';
 import TagIcon from '@mui/icons-material/Tag';
 import ReplyIcon from '@mui/icons-material/Reply';
 import PanoramaIcon from '@mui/icons-material/Panorama';
-import Dashboard from "./utils/dashboard.tsx";
+import Dashboard from "./dashboard/dashboard.tsx";
 import layout from "./utils/layout.tsx";
 import i18nProvider from "./utils/i18nProvider.tsx";
 
