@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Common\Filter\DateFilterInterface;
+use ApiPlatform\Doctrine\Common\Filter\OrderFilterInterface;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
@@ -29,12 +31,12 @@ use Symfony\Component\Uid\Uuid;
         new Get(),
     ],
     mercure: ['private' => true],
-    order: ['name' => 'ASC'],
+    order: ['lastPlayDate' => 'DESC', 'name' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ['username' => 'ipartial', 'name' => 'ipartial'])]
-#[ApiFilter(DateFilter::class, properties: ['lastPlayDate' => DateFilterInterface::EXCLUDE_NULL])]
-#[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'lastPlayDate'])]
+#[ApiFilter(ExistsFilter::class, properties: ['lastPlayDate'])]
+#[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'lastPlayDate' => ['nulls_comparison' => OrderFilterInterface::NULLS_SMALLEST, 'default_direction' => 'ASC']])]
 class Player
 {
     #[ORM\Id]
@@ -90,6 +92,10 @@ class Player
 
     public function setUsername(string $username): void
     {
+        if ('@' !== $username[0]) {
+            $username = '@'.$username;
+        }
+
         $this->username = $username;
     }
 

@@ -302,7 +302,6 @@ class TwitterApiRecentTweetsCommand extends Command
             }
 
             $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
-            $lastGameDate = null;
 
             if (null === $player || ($player->getUsername() !== '@' . $user->username || $player->getName() !== $user->name)) {
                 if (null === $player) {
@@ -313,9 +312,9 @@ class TwitterApiRecentTweetsCommand extends Command
                 $player->setUsername($user->username);
 
                 $this->playerRepository->persistAndFlush($player, true);
-            } else {
-                $lastGameDate = $player->getLastPlayDate();
             }
+
+            $lastGameDate = $player->getLastPlayDate();
 
             $recentTweet = new Tweet();
             $recentTweet->setPlayer($player);
