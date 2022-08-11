@@ -45,7 +45,7 @@ const Dashboard = () => {
     const nbrMaxLotsToShow = isXSmall || isSmall ? 5 : 10;
     const nbrMaxGamesDatesToShow = isXSmall ? 7 : isSmall ? 15 : 30;
 
-    const aSubDaysAgoForGames = useMemo(() => subDays(startOfDay(new Date()), nbrMaxGamesDatesToShow), []);
+    const aSubDaysAgoForGames = useMemo(() => subDays(startOfDay(new Date()), nbrMaxGamesDatesToShow), [nbrMaxGamesDatesToShow]);
 
     const {data: lots = [], total: totalLots = 0} = useGetList<LotRaRecord>('lots', {
         sort: {field: 'quantity', order: 'ASC'},
@@ -72,11 +72,11 @@ const Dashboard = () => {
             recentGames: games,
             nbGames: totalGames,
         };
-    }, [games]);
+    }, [games, totalGames]);
 
 
     const {total: totalPlayers = 0} = useGetList<PlayerRaRecord>('players', {
-        filter: {"lastPlayDate[before]": (useMemo(() => new Date(), [])).toISOString()},
+        filter: {"exists[lastPlayDate]": true},
         pagination: {page: 1, perPage: 1},
     });
 

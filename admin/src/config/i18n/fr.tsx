@@ -47,6 +47,9 @@ export const fr = {
                 lastPlayDate: 'Dernière date de jeu',
                 tweets: 'Tweets'
             },
+            list: {
+                active_last_play_date: 'Joueurs actifs'
+            }
         },
         twitter_account_to_follows: {
             name: 'Compte Twitter à suivre |||| Comptes Twitter à suivre',
