@@ -10,7 +10,7 @@ export const fr = {
                 total: 'Nombre total de lots : ',
             },
             games: {
-                month_history: 'Nombre de parties créées sur 30 jours :',
+                month_history: 'Nombre de parties créées sur %nbr_jours% jours :',
                 no_games: 'Pas de parties existantes',
                 total: 'Nombre total de parties : '
             },

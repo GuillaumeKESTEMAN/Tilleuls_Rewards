@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Common\Filter\DateFilterInterface;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
@@ -31,6 +33,7 @@ use Symfony\Component\Uid\Uuid;
     paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ['username' => 'ipartial', 'name' => 'ipartial'])]
+#[ApiFilter(DateFilter::class, properties: ['lastPlayDate' => DateFilterInterface::EXCLUDE_NULL])]
 #[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'lastPlayDate'])]
 class Player
 {

@@ -3,4 +3,4 @@ App\Entity\Game:
         tweet: '@tweet_<current()>'
         player: '@player_<current()>'
         reward: '@reward_<current()>'
-        playDate: <date_create()>
+        playDate: '<dateTimeBetween("-30 days", "now")>'

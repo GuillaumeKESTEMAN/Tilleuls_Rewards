@@ -12,24 +12,14 @@ import PendingLots from "./pendingLots.tsx";
 import {Game} from '../types/Game';
 import {PlayerRaRecord} from '../types/Player';
 import {LotRaRecord} from '../types/Lot';
+import {useMediaQuery, Theme} from '@mui/material';
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import RedeemIcon from '@mui/icons-material/Redeem';
 
-interface LotStats {
-    nbLots: number;
-}
-
-interface GameStats {
-    nbGames: number;
-}
-
-interface PlayerStats {
-    nbPlayers: number;
-}
-
 interface State {
     nbLots: number;
+    pendingLots?: LotRaRecord[];
     nbGames: number;
     recentGames?: Game[];
     nbPlayers: number;
@@ -45,76 +35,117 @@ const styles = {
 
 const Dashboard = () => {
     const translate = useTranslate();
-    const aMonthAgo = useMemo(() => subDays(startOfDay(new Date()), 30), []);
+    const isXSmall = useMediaQuery((theme: Theme) =>
+        theme.breakpoints.down('sm')
+    );
 
-    const {total: totalLots} = useGetList<LotRaRecord>('lots', {
-        pagination: {page: 1, perPage: 1},
+    const isSmall = useMediaQuery((theme: Theme) =>
+        theme.breakpoints.down('lg')
+    );
+    const nbrMaxLotsToShow = isXSmall || isSmall ? 5 : 10;
+    const nbrMaxGamesDatesToShow = isXSmall ? 7 : isSmall ? 15 : 30;
+
+    const aSubDaysAgoForGames = useMemo(() => subDays(startOfDay(new Date()), nbrMaxGamesDatesToShow), []);
+
+    const {data: lots = [], total: totalLots = 0} = useGetList<LotRaRecord>('lots', {
+        sort: {field: 'quantity', order: 'ASC'},
+        pagination: {page: 1, perPage: nbrMaxLotsToShow},
     });
 
     // @ts-ignore
     const lotsAggregation = useMemo<State>(() => {
-        if (!totalLots) return {
-            nbLots: 0
-        };
         return {
+            pendingLots: lots,
             nbLots: totalLots
         };
-    }, [totalLots]);
+    }, [lots, totalLots]);
 
-    const {data: games} = useGetList<Game>('games', {
-        filter: {playDate: aMonthAgo.toISOString()},
+    const {data: games = [], total: totalGames = 0} = useGetList<Game>('games', {
+        filter: {playDate: aSubDaysAgoForGames.toISOString()},
         sort: {field: 'playDate', order: 'DESC'},
-        pagination: {page: 1, perPage: 20},
+        pagination: {page: 1, perPage: 100},
     });
 
     // @ts-ignore
     const gamesAggregation = useMemo<State>(() => {
-        if (!games) return {};
-        const aggregations = games
-            .reduce(
-                (stats: GameStats, game) => {
-                    stats.nbGames++;
-                    return stats;
-                },
-                {
-                    nbGames: 0,
-                }
-            );
         return {
             recentGames: games,
-            nbGames: aggregations.nbGames.toString(),
+            nbGames: totalGames,
         };
     }, [games]);
 
 
-    const {data: players} = useGetList<PlayerRaRecord>('players', {
-        pagination: {page: 1, perPage: 20},
+    const {total: totalPlayers = 0} = useGetList<PlayerRaRecord>('players', {
+        filter: {"lastPlayDate[before]": (useMemo(() => new Date(), [])).toISOString()},
+        pagination: {page: 1, perPage: 1},
     });
 
     // @ts-ignore
     const playersAggregation = useMemo<State>(() => {
-        if (!players) return {};
-        const aggregations = players
-            .filter(player => player.lastPlayDate !== null)
-            .reduce(
-                (stats: PlayerStats, player) => {
-                    stats.nbPlayers++;
-                    return stats;
-                },
-                {
-                    nbPlayers: 0,
-                }
-            );
         return {
-            nbPlayers: aggregations.nbPlayers.toString(),
+            nbPlayers: totalPlayers,
         };
-    }, [players]);
+    }, [totalPlayers]);
 
     const {recentGames, nbGames} = gamesAggregation;
     const {nbPlayers} = playersAggregation;
-    const {nbLots} = lotsAggregation;
+    const {nbLots, pendingLots} = lotsAggregation;
 
-    return (
+    return isXSmall ? (
+        <Card>
+            <NbResource
+                value={nbLots}
+                icon={RedeemIcon}
+                title={translate('pos.dashboard.lots.total')}
+            />
+            <PendingLots nbLots={nbLots} lots={pendingLots}/>
+            <br/>
+            <NbResource
+                value={nbPlayers}
+                icon={AccountCircleIcon}
+                title={translate('pos.dashboard.players.total')}
+            />
+            <br/>
+            <NbResource
+                value={nbGames}
+                icon={VideogameAssetIcon}
+                title={translate('pos.dashboard.games.total')}
+            />
+            <GameChart games={recentGames} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
+        </Card>
+    ) : isSmall ? (
+        <Card>
+            <div style={styles.flex}>
+                <div style={styles.leftCol}>
+                    <div style={styles.singleCol}>
+                        <NbResource
+                            value={nbLots}
+                            icon={RedeemIcon}
+                            title={translate('pos.dashboard.lots.total')}
+                        />
+                        <br/>
+                        <NbResource
+                            value={nbPlayers}
+                            icon={AccountCircleIcon}
+                            title={translate('pos.dashboard.players.total')}
+                        />
+                        <br/>
+                        <NbResource
+                            value={nbGames}
+                            icon={VideogameAssetIcon}
+                            title={translate('pos.dashboard.games.total')}
+                        />
+                    </div>
+                </div>
+                <div style={styles.rightCol}>
+                    <div style={styles.singleCol}>
+                        <PendingLots nbLots={nbLots} lots={pendingLots}/>
+                    </div>
+                </div>
+            </div>
+            <GameChart games={recentGames} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
+        </Card>
+    ) : (
         <Card>
             <div style={styles.flex}>
                 <div style={styles.leftCol}>
@@ -131,7 +162,7 @@ const Dashboard = () => {
                             title={translate('pos.dashboard.games.total')}
                         />
                         <br/>
-                        <GameChart games={recentGames}/>
+                        <GameChart games={recentGames} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
                     </div>
                 </div>
                 <div style={styles.rightCol}>
@@ -142,7 +173,7 @@ const Dashboard = () => {
                             title={translate('pos.dashboard.lots.total')}
                         />
                         <br/>
-                        <PendingLots nbLots={nbLots} />
+                        <PendingLots nbLots={nbLots} lots={pendingLots}/>
                     </div>
                 </div>
             </div>

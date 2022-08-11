@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useReference } from 'react-admin';
 import { LotRaRecord } from '../types/Lot';
 import { MediaObjectRaRecord } from '../types/MediaObject';
+// @ts-ignore
 import {ENTRYPOINT} from "../config/components/entrypoint.ts";
 import RedeemIcon from '@mui/icons-material/Redeem';
 

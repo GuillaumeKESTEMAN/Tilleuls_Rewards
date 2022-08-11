@@ -1,77 +1,61 @@
 import * as React from 'react';
-import { Card, CardHeader, CardContent } from '@mui/material';
+import {Card, CardHeader, CardContent} from '@mui/material';
 import {
     ResponsiveContainer,
-    AreaChart,
-    Area,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
+    BarChart,
+    Bar
 } from 'recharts';
-import { useTranslate } from 'react-admin';
-import { format, subDays, addDays } from 'date-fns';
+import {useTranslate} from 'react-admin';
+import {format, subDays, addDays} from 'date-fns';
 
-import { Game } from '../types/Game';
+import {Game} from '../types/Game';
 
-const lastDay = new Date();
-const lastMonthDays = Array.from({ length: 30 }, (_, i) => subDays(lastDay, i));
-const aMonthAgo = subDays(new Date(), 30);
 
-const dateFormatter = (date: number): string =>
-    new Date(date).toLocaleDateString();
-
-const aggregateGamesByDay = (games: Game[]): { [key: string]: number } =>
-    games
-        .reduce((acc, curr) => {
-            const day = format(new Date(curr.playDate), 'yyyy-MM-dd');
-            if (!acc[day]) {
-                acc[day] = 0;
-            }
-            acc[day]++;
-            return acc;
-        }, {} as { [key: string]: number });
-
-const getNbGamesPerDay = (games: Game[]): TotalByDay[] => {
-    const daysWithGames = aggregateGamesByDay(games);
-    return lastMonthDays.map(date => ({
-        date: date.getTime(),
-        total: daysWithGames[format(new Date(date), 'yyyy-MM-dd')] || 0,
-    }));
-};
-
-const GameChart = (props: { games?: Game[] }) => {
-    const { games } = props;
+const GameChart = (props: { games?: Game[], nbrMaxGamesDatesToShow?: number }) => {
+    const {games, nbrMaxGamesDatesToShow} = props;
     const translate = useTranslate();
-    if (!games) return (<CardHeader title={translate('pos.dashboard.games.no_games')} />);
+
+    const lastDay = new Date();
+    const lastMonthDays = Array.from({length: nbrMaxGamesDatesToShow}, (_, i) => subDays(lastDay, i));
+    const aMonthAgo = subDays(new Date(), nbrMaxGamesDatesToShow);
+
+    const dateFormatter = (date: number): string =>
+        new Date(date).toLocaleDateString();
+
+    const aggregateGamesByDay = (games: Game[]): { [key: string]: number } =>
+        games
+            .reduce((acc, curr) => {
+                const day = format(new Date(curr.playDate), 'yyyy-MM-dd');
+                if (!acc[day]) {
+                    acc[day] = 0;
+                }
+                acc[day]++;
+                return acc;
+            }, {} as { [key: string]: number });
+
+    const getNbGamesPerDay = (games: Game[]): TotalByDay[] => {
+        const daysWithGames = aggregateGamesByDay(games);
+        return lastMonthDays.map(date => ({
+            date: date.getTime(),
+            total: daysWithGames[format(new Date(date), 'yyyy-MM-dd')] || 0,
+        }));
+    };
+
+    if (!games) return (<CardHeader title={translate('pos.dashboard.games.no_games')}/>);
 
     return (
         <Card>
-            <CardHeader title={translate('pos.dashboard.games.month_history')} />
+            <CardHeader title={translate('pos.dashboard.games.month_history').replace('%nbr_jours%', nbrMaxGamesDatesToShow.toString())}/>
             <CardContent>
-                <div style={{ width: '100%', height: 300 }}>
+                <div style={{width: '100%', height: 300}}>
                     <ResponsiveContainer>
-                        <AreaChart data={getNbGamesPerDay(games)}>
-                            <defs>
-                                <linearGradient
-                                    id="colorUv"
-                                    x1="0"
-                                    y1="0"
-                                    x2="0"
-                                    y2="1"
-                                >
-                                    <stop
-                                        offset="5%"
-                                        stopColor="#288690"
-                                        stopOpacity={0.8}
-                                    />
-                                    <stop
-                                        offset="95%"
-                                        stopColor="#288690"
-                                        stopOpacity={0}
-                                    />
-                                </linearGradient>
-                            </defs>
+                        <BarChart width={600} height={600} data={getNbGamesPerDay(games)}>
+                            <CartesianGrid stroke="#ccc"/>
+                            <Bar dataKey="total" fill="#288690"/>
                             <XAxis
                                 dataKey="date"
                                 name="Date"
@@ -83,25 +67,18 @@ const GameChart = (props: { games?: Game[] }) => {
                                 ]}
                                 tickFormatter={dateFormatter}
                             />
-                            <YAxis dataKey="total" name="Game" />
-                            <CartesianGrid strokeDasharray="3 3" />
+                            <YAxis dataKey="total" name="Game"/>
                             <Tooltip
-                                cursor={{ strokeDasharray: '3 3' }}
+                                cursor={{strokeDasharray: '3 3'}}
                                 formatter={(value: any) =>
                                     new Intl.NumberFormat('fr').format(value)
                                 }
                                 labelFormatter={(label: any) =>
                                     dateFormatter(label)
                                 }
+                                contentStyle={{borderColor: '#288690'}}
                             />
-                            <Area
-                                type="monotone"
-                                dataKey="total"
-                                stroke="#288690"
-                                strokeWidth={2}
-                                fill="url(#colorUv)"
-                            />
-                        </AreaChart>
+                        </BarChart>
                     </ResponsiveContainer>
                 </div>
             </CardContent>
