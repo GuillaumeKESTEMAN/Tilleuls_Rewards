@@ -36,7 +36,7 @@ use Symfony\Component\Uid\Uuid;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['username' => 'ipartial', 'name' => 'ipartial'])]
 #[ApiFilter(ExistsFilter::class, properties: ['lastPlayDate'])]
-#[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'lastPlayDate' => ['nulls_comparison' => OrderFilterInterface::NULLS_SMALLEST, 'default_direction' => 'ASC']])]
+#[ApiFilter(OrderFilter::class, properties: ['lastPlayDate' => ['nulls_comparison' => OrderFilterInterface::NULLS_ALWAYS_LAST, 'default_direction' => 'DESC'], 'name', 'username'])]
 class Player
 {
     #[ORM\Id]

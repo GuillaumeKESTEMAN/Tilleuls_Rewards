@@ -45,7 +45,7 @@ export const List: FunctionComponent<Props> = ({players}) => {
     ];
 
     return (
-        <ListGuesser rowClick="show" filters={postFilters} {...players}>
+        <ListGuesser {...players} rowClick="show" filters={postFilters} sort={{field: 'lastPlayDate', order: 'DESC'}}>
             <FieldGuesser source="name"/>
             <FieldGuesser source="username"/>
             <DateField source="lastPlayDate"
