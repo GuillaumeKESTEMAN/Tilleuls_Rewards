@@ -30,7 +30,8 @@ CREATE TABLE "game" (
 CREATE TABLE "tweet" (
   "id" uuid PRIMARY KEY,
   "player" int NOT NULL,
-  "tweet_id" string NOT NULL
+  "tweet_id" string NOT NULL,
+  "creation_date" datetime NOT NULL
 );
 
 CREATE TABLE "player" (
