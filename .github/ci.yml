@@ -21,11 +21,27 @@ jobs:
                     case $status in
                       starting) sleep 1;;
                       healthy) exit 0;;
-                      unhealthy) exit 1;;
+                      unhealthy) 
+                        docker-compose ps
+                        docker-compose logs
+                        exit 1
+                      ;;
                     esac
                   done
                   exit 1
             - name: Check HTTP reachability
-              run: curl http://localhost
+              run: curl -v -o /dev/null http://localhost
             - name: Check HTTPS reachability
-              run: curl -k https://localhost
+              run: curl  -vk -o /dev/null https://localhost
+            - name: Create test database
+              run: |
+                docker-compose exec -T php bin/console -e test doctrine:database:create
+                docker-compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
+            - name: Create test fixtures
+              run: |
+                docker-compose exec -T php bin/console -e test hautelook:fixtures:load --no-interaction --purge-with-truncate
+            - name: Run security tests
+              run: |
+                docker-compose exec php bin/phpunit tests/Security
+            - name: Doctrine Schema Validator
+              run: docker-compose exec -T php bin/console doctrine:schema:validate --skip-sync
