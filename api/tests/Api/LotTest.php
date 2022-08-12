@@ -27,22 +27,22 @@ class LotTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/lots', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/lots', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Lot',
-            '@id' => '/api/lots',
+            '@context' => '/contexts/Lot',
+            '@id' => '/lots',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 61,
             'hydra:view' => [
-                '@id' => '/api/lots?page=1',
+                '@id' => '/lots?page=1',
                 '@type' => 'hydra:PartialCollectionView',
-                'hydra:first' => '/api/lots?page=1',
-                'hydra:last' => '/api/lots?page=4',
-                'hydra:next' => '/api/lots?page=2',
+                'hydra:first' => '/lots?page=1',
+                'hydra:last' => '/lots?page=4',
+                'hydra:next' => '/lots?page=2',
             ],
         ]);
 
@@ -71,7 +71,7 @@ class LotTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Lot',
+            '@context' => '/contexts/Lot',
             '@id' => $iri,
             '@type' => 'Lot',
         ]);
@@ -88,7 +88,7 @@ class LotTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('POST', '/api/lots', [
+        $response = static::createClient()->request('POST', '/lots', [
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'Nouveau lot de test',
@@ -101,14 +101,14 @@ class LotTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Lot',
+            '@context' => '/contexts/Lot',
             '@type' => 'Lot',
             'name' => 'Nouveau lot de test',
             'quantity' => 3,
             'message' => "C'est un super lot !"
         ]);
 
-        $this->assertMatchesRegularExpression('~^/api/lots/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        $this->assertMatchesRegularExpression('~^/lots/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(Lot::class);
     }
 

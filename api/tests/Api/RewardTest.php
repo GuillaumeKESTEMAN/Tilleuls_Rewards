@@ -26,22 +26,22 @@ class RewardTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/rewards', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/rewards', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Reward',
-            '@id' => '/api/rewards',
+            '@context' => '/contexts/Reward',
+            '@id' => '/rewards',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 60,
             'hydra:view' => [
-                '@id' => '/api/rewards?page=1',
+                '@id' => '/rewards?page=1',
                 '@type' => 'hydra:PartialCollectionView',
-                'hydra:first' => '/api/rewards?page=1',
-                'hydra:last' => '/api/rewards?page=3',
-                'hydra:next' => '/api/rewards?page=2',
+                'hydra:first' => '/rewards?page=1',
+                'hydra:last' => '/rewards?page=3',
+                'hydra:next' => '/rewards?page=2',
             ],
         ]);
 
@@ -70,7 +70,7 @@ class RewardTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Reward',
+            '@context' => '/contexts/Reward',
             '@id' => $iri,
             '@type' => 'Reward',
         ]);
@@ -84,7 +84,7 @@ class RewardTest extends ApiTestCase
      */
     public function testCreateReward(): void
     {
-        $response = static::createClient()->request('POST', '/api/rewards', ['json' => [
+        $response = static::createClient()->request('POST', '/rewards', ['json' => [
             'distributed' => true,
         ]]);
 

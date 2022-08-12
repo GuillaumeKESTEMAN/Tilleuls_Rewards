@@ -25,14 +25,14 @@ class TweetReplyTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/tweet_replies', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/tweet_replies', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TweetReply',
-            '@id' => '/api/tweet_replies',
+            '@context' => '/contexts/TweetReply',
+            '@id' => '/tweet_replies',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 1,
         ]);
@@ -62,7 +62,7 @@ class TweetReplyTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TweetReply',
+            '@context' => '/contexts/TweetReply',
             '@id' => $iri,
             '@type' => 'TweetReply',
         ]);
@@ -79,7 +79,7 @@ class TweetReplyTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('POST', '/api/tweet_replies', [
+        $response = static::createClient()->request('POST', '/tweet_replies', [
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'need_to_follow_us',
@@ -91,13 +91,13 @@ class TweetReplyTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TweetReply',
+            '@context' => '/contexts/TweetReply',
             '@type' => 'TweetReply',
             'name' => 'need_to_follow_us',
             'message' => 'you need to follow test !!!'
         ]);
 
-        $this->assertMatchesRegularExpression('~^/api/tweet_replies/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        $this->assertMatchesRegularExpression('~^/tweet_replies/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(TweetReply::class);
     }
 

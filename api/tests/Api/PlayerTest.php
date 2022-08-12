@@ -26,22 +26,22 @@ class PlayerTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/players', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/players', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Player',
-            '@id' => '/api/players',
+            '@context' => '/contexts/Player',
+            '@id' => '/players',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 60,
             'hydra:view' => [
-                '@id' => '/api/players?page=1',
+                '@id' => '/players?page=1',
                 '@type' => 'hydra:PartialCollectionView',
-                'hydra:first' => '/api/players?page=1',
-                'hydra:last' => '/api/players?page=3',
-                'hydra:next' => '/api/players?page=2',
+                'hydra:first' => '/players?page=1',
+                'hydra:last' => '/players?page=3',
+                'hydra:next' => '/players?page=2',
             ],
         ]);
 
@@ -70,7 +70,7 @@ class PlayerTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Player',
+            '@context' => '/contexts/Player',
             '@id' => $iri,
             '@type' => 'Player',
         ]);
@@ -84,7 +84,7 @@ class PlayerTest extends ApiTestCase
      */
     public function testCreatePlayer(): void
     {
-        $response = static::createClient()->request('POST', '/api/players', ['json' => [
+        $response = static::createClient()->request('POST', '/players', ['json' => [
             'name' => 'Twitter Account Name',
             'username' => '@TwitterAccountUsername',
             'twitterAccountId' => '123456789',

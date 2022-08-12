@@ -29,7 +29,7 @@ class GamePutProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
-        if ($data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
+        if ($_ENV['APP_ENV'] !== 'test' && $data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
             if (null === $data->getReward()) {
                 throw new \LogicException('Reward of the game n°' . $data->getId() . ' not exists during game PUT request');
             }

@@ -27,14 +27,14 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/media_objects', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/media_objects', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/MediaObject',
-            '@id' => '/api/media_objects',
+            '@context' => '/contexts/MediaObject',
+            '@id' => '/media_objects',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 1,
         ]);
@@ -63,7 +63,7 @@ class MediaObjectTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/MediaObject',
+            '@context' => '/contexts/MediaObject',
             '@id' => $iri,
             '@type' => 'https://schema.org/MediaObject',
         ]);
@@ -81,7 +81,7 @@ class MediaObjectTest extends ApiTestCase
 
         $file = new UploadedFile('fixtures/test/files/test_image.jpg', 'test_image.jpg');
 
-        $response = self::createClient()->request('POST', '/api/media_objects', [
+        $response = self::createClient()->request('POST', '/media_objects', [
             'auth_bearer' => $token,
             'headers' => ['Content-Type' => 'multipart/form-data'],
             'extra' => [
@@ -99,7 +99,7 @@ class MediaObjectTest extends ApiTestCase
             'name' => 'My uploaded file',
         ]);
 
-        $this->assertMatchesRegularExpression('~^/api/media_objects/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        $this->assertMatchesRegularExpression('~^/media_objects/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(MediaObject::class);
     }
 
@@ -116,7 +116,7 @@ class MediaObjectTest extends ApiTestCase
 
         $file = new UploadedFile('fixtures/test/files/invalid_file.txt', 'invalid_file.txt');
 
-        static::createClient()->request('POST', '/api/media_objects', [
+        static::createClient()->request('POST', '/media_objects', [
             'auth_bearer' => $token,
             'headers' => ['Content-Type' => 'multipart/form-data'],
             'extra' => [
@@ -133,7 +133,7 @@ class MediaObjectTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/ConstraintViolationList',
+            '@context' => '/contexts/ConstraintViolationList',
             '@type' => 'ConstraintViolationList',
             'hydra:title' => 'An error occurred',
             'hydra:description' => 'file: The mime type of the file is invalid ("text/plain"). Allowed mime types are "image/jpeg", "image/jpg", "image/png".',

@@ -1,9 +1,5 @@
 **/*.log
 **/*.md
-**/*.php~
-**/*.dist.php
-**/*.dist
-**/*.cache
 **/._*
 **/.dockerignore
 **/.DS_Store
@@ -17,14 +13,9 @@
 **/docker-compose.yml
 **/Dockerfile
 **/Thumbs.db
-.github/
-docs/
-public/bundles/
-tests/
-var/
-vendor/
+.next/
+build/
+node_modules/
 .editorconfig
 .env.*.local
 .env.local
-.env.local.php
-.env.test.local

@@ -27,22 +27,22 @@ class TwitterHashtagTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/twitter_hashtags', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/twitter_hashtags', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TwitterHashtag',
-            '@id' => '/api/twitter_hashtags',
+            '@context' => '/contexts/TwitterHashtag',
+            '@id' => '/twitter_hashtags',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 60,
             'hydra:view' => [
-                '@id' => '/api/twitter_hashtags?page=1',
+                '@id' => '/twitter_hashtags?page=1',
                 '@type' => 'hydra:PartialCollectionView',
-                'hydra:first' => '/api/twitter_hashtags?page=1',
-                'hydra:last' => '/api/twitter_hashtags?page=3',
-                'hydra:next' => '/api/twitter_hashtags?page=2',
+                'hydra:first' => '/twitter_hashtags?page=1',
+                'hydra:last' => '/twitter_hashtags?page=3',
+                'hydra:next' => '/twitter_hashtags?page=2',
             ],
         ]);
 
@@ -71,7 +71,7 @@ class TwitterHashtagTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TwitterHashtag',
+            '@context' => '/contexts/TwitterHashtag',
             '@id' => $iri,
             '@type' => 'TwitterHashtag',
         ]);
@@ -88,7 +88,7 @@ class TwitterHashtagTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('POST', '/api/twitter_hashtags', [
+        $response = static::createClient()->request('POST', '/twitter_hashtags', [
             'auth_bearer' => $token,
             'json' => [
                 'hashtag' => '#test',
@@ -100,13 +100,13 @@ class TwitterHashtagTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TwitterHashtag',
+            '@context' => '/contexts/TwitterHashtag',
             '@type' => 'TwitterHashtag',
             'hashtag' => '#test',
             'active' => true
         ]);
 
-        $this->assertMatchesRegularExpression('~^/api/twitter_hashtags/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        $this->assertMatchesRegularExpression('~^/twitter_hashtags/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(TwitterHashtag::class);
     }
 

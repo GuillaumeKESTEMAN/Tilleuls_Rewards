@@ -12,7 +12,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
             - name: Pull images
-              run: docker-compose pull
+              run: docker-compose pull --ignore-pull-failures || true
             - name: Start services
               run: docker-compose up --build -d
             - name: Wait for services

@@ -24,7 +24,7 @@ class TweetTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $response = static::createClient()->request('GET', '/api/tweets');
+        $response = static::createClient()->request('GET', '/tweets');
 
         self::assertResponseStatusCodeSame(404);
     }
@@ -49,7 +49,7 @@ class TweetTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Tweet',
+            '@context' => '/contexts/Tweet',
             '@id' => $iri,
             '@type' => 'https://schema.org/SocialMediaPosting',
         ]);
@@ -65,7 +65,7 @@ class TweetTest extends ApiTestCase
     {
         $iri = $this->findIriBy(Player::class, ['username' => '@TestAccountUsername']);
 
-        $response = static::createClient()->request('POST', '/api/tweets', ['json' => [
+        $response = static::createClient()->request('POST', '/tweets', ['json' => [
             'player' => $iri,
             'tweetId' => '123456789',
             'creationDate' => new \DateTime(),

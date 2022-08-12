@@ -18,7 +18,7 @@ class LoginTest extends ApiTestCase
      */
     public function testLogin(): void
     {
-        static::createClient()->request('POST', '/api/login', ['json' => [
+        static::createClient()->request('POST', '/login', ['json' => [
             'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
             'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
         ]]);
@@ -32,7 +32,7 @@ class LoginTest extends ApiTestCase
      */
     public function testLoginFail(): void
     {
-        static::createClient()->request('POST', '/api/login', ['json' => [
+        static::createClient()->request('POST', '/login', ['json' => [
             'username' => 'invalid user',
             'password' => 'invalid password'
         ]]);
@@ -50,7 +50,7 @@ class LoginTest extends ApiTestCase
      */
     public static function getLoginToken(): string
     {
-        $token = static::createClient()->request('POST', '/api/login', ['json' => [
+        $token = static::createClient()->request('POST', '/login', ['json' => [
             'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
             'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
         ]]);

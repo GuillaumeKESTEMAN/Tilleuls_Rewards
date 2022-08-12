@@ -27,14 +27,14 @@ class TwitterAccountToFollowTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/twitter_account_to_follows', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/twitter_account_to_follows', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TwitterAccountToFollow',
-            '@id' => '/api/twitter_account_to_follows',
+            '@context' => '/contexts/TwitterAccountToFollow',
+            '@id' => '/twitter_account_to_follows',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 1,
         ]);
@@ -64,7 +64,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TwitterAccountToFollow',
+            '@context' => '/contexts/TwitterAccountToFollow',
             '@id' => $iri,
             '@type' => 'TwitterAccountToFollow',
         ]);
@@ -81,7 +81,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('POST', '/api/twitter_account_to_follows', [
+        $response = static::createClient()->request('POST', '/twitter_account_to_follows', [
             'auth_bearer' => $token,
             'json' => [
                 "username" => "@coopTilleuls",
@@ -93,13 +93,13 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/TwitterAccountToFollow',
+            '@context' => '/contexts/TwitterAccountToFollow',
             '@type' => 'TwitterAccountToFollow',
             'username' => '@coopTilleuls',
             'active' => true
         ]);
 
-        $this->assertMatchesRegularExpression('~^/api/twitter_account_to_follows/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        $this->assertMatchesRegularExpression('~^/twitter_account_to_follows/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(TwitterAccountToFollow::class);
     }
 
@@ -116,7 +116,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
 
         $invalidTwitterUsernameAccount = 'invalidTwitterUsernameAccount';
 
-        static::createClient()->request('POST', '/api/twitter_account_to_follows', [
+        static::createClient()->request('POST', '/twitter_account_to_follows', [
             'auth_bearer' => $token,
             'json' => [
                 "username" => "@" . $invalidTwitterUsernameAccount,   # not exists for the moment
@@ -128,7 +128,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Error',
+            '@context' => '/contexts/Error',
             '@type' => 'hydra:Error',
             'hydra:title' => 'An error occurred',
             'hydra:description' => 'The `username` query parameter value [' . $invalidTwitterUsernameAccount . '] does not match ^[A-Za-z0-9_]{1,15}$',

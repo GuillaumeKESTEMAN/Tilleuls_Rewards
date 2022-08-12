@@ -14,86 +14,99 @@ generateTestsDB = docker-compose exec php bin/console --env=test doctrine:databa
 	docker-compose exec php bin/console --env=test doctrine:migrations:migrate --no-interaction;
 ### test database ###
 
+help:
+	@echo "MAKEFILE HELP :"
+	@echo "\t - help: list all makefile commands"
+	@echo "\t - start: start docker's containers, execute database migrations, execute fixtures, show docker's logs and stop docker containers on terminate signal"
+	@echo "\t - start-all: start docker's containers, execute database migrations, execute fixtures and show docker's logs"
+	@echo "\t - stop: stop docker containers"
+	@echo "\t - install: make a docker build"
+	@echo "\t - kill-docker-builds: stop, kill and down docker's containers (remove JWT keys)"
+	@echo "\t - new-db: make a new database with the new migrations"
+	@echo "\t - jwt-keypair: regenerate JWT keys"
+	@echo "\t - tests: launch all tests"
+	@echo "\t - tests-security: launch security tests"
+	@echo "\t - tests-api: launch api tests"
+	@echo "\t - fixtures: launch fixtures"
+	@echo "\t - fixtures-test: launch fixtures for tests"
 
 start:
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; $(MAKE) stop-all; exit 1' SIGINT SIGTERM ERR; $(MAKE) start-all"
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; $(MAKE) stop-all; exit 1' SIGINT SIGTERM ERR; $(MAKE) start-all"
 
 start-all:
-	docker-compose up -d
-	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
-	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
-	sleep 5
-	cd admin/ && yarn start
+	@docker-compose up -d
+	@docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
+	@docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
+	@docker-compose logs -f
 
 stop-all:
-	docker-compose stop
+	@docker-compose stop
 
 install:
-	docker-compose build --pull --no-cache
-	cp -R -n api/.env api/.env.local
-	cd admin/ && yarn install
+	@docker-compose build --pull --no-cache
+	@cp -R -n api/.env api/.env.local
 
 kill-docker-builds:
-	docker-compose stop
-	docker-compose kill
-	docker-compose down --volumes --remove-orphans
-	rmdir api/config/jwt
+	@docker-compose stop
+	@docker-compose kill
+	@docker-compose down --volumes --remove-orphans
+	@rmdir api/config/jwt
 
 new-db:
 ifeq ($(shell docker-compose ps | wc -l),2)
-	docker-compose up -d
-	$(generateDB)
-	docker-compose stop
+	@docker-compose up -d
+	@$(generateDB)
+	@docker-compose stop
 else
-	$(generateDB)
+	@$(generateDB)
 endif
 
 jwt-keypair:
 ifeq ($(shell docker-compose ps | wc -l),2)
-	docker-compose up -d
-	$(generateJWT)
-	docker-compose stop
+	@docker-compose up -d
+	@$(generateJWT)
+	@docker-compose stop
 else
-	$(generateJWT)
+	@$(generateJWT)
 endif
 
 tests:
 ifeq ($(shell docker-compose ps | wc -l),2)
-	docker-compose up -d
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-security"
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-api"
-	docker-compose stop
+	@docker-compose up -d
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-security"
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-api"
+	@docker-compose stop
 else
-	$(MAKE) tests-security
-	$(MAKE) tests-api
+	@$(MAKE) tests-security
+	@$(MAKE) tests-api
 endif
 
 tests-security:
 ifeq ($(shell docker-compose ps | wc -l),2)
-	docker-compose up -d
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Security"
-	docker-compose stop
+	@docker-compose up -d
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Security"
+	@docker-compose stop
 else
-	docker-compose exec php bin/phpunit tests/Security
+	@docker-compose exec php bin/phpunit tests/Security
 endif
 
 tests-api:
 ifeq ($(shell docker-compose ps | wc -l),2)
-	docker-compose up -d
-	$(generateTestsDB)
-	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Api"
-	docker-compose stop
+	@docker-compose up -d
+	@$(generateTestsDB)
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Api"
+	@docker-compose stop
 else
-	$(generateTestsDB)
-	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
-	docker-compose exec php bin/phpunit tests/Api
+	@$(generateTestsDB)
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	@docker-compose exec php bin/phpunit tests/Api
 endif
 
 fixtures:
-	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
-	docker-compose exec php bin/console hautelook:fixtures:load --no-interaction --purge-with-truncate
+	@docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
+	@docker-compose exec php bin/console hautelook:fixtures:load --no-interaction --purge-with-truncate
 
 fixtures-test:
-	docker-compose exec php bin/console --env=test doctrine:migrations:migrate --no-interaction
-	docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction --purge-with-truncate
+	@docker-compose exec php bin/console --env=test doctrine:migrations:migrate --no-interaction
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction --purge-with-truncate

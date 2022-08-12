@@ -27,22 +27,22 @@ class GameTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $response = static::createClient()->request('GET', '/api/games', ['auth_bearer' => $token]);
+        $response = static::createClient()->request('GET', '/games', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Game',
-            '@id' => '/api/games',
+            '@context' => '/contexts/Game',
+            '@id' => '/games',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 60,
             'hydra:view' => [
-                '@id' => '/api/games?page=1',
+                '@id' => '/games?page=1',
                 '@type' => 'hydra:PartialCollectionView',
-                'hydra:first' => '/api/games?page=1',
-                'hydra:last' => '/api/games?page=3',
-                'hydra:next' => '/api/games?page=2',
+                'hydra:first' => '/games?page=1',
+                'hydra:last' => '/games?page=3',
+                'hydra:next' => '/games?page=2',
             ],
         ]);
 
@@ -70,7 +70,7 @@ class GameTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/api/contexts/Game',
+            '@context' => '/contexts/Game',
             '@id' => $iri,
             '@type' => 'https://schema.org/VideoGame',
         ]);
@@ -84,7 +84,7 @@ class GameTest extends ApiTestCase
      */
     public function testCreateGame(): void
     {
-        static::createClient()->request('POST', '/api/games', ['json' => [
+        static::createClient()->request('POST', '/games', ['json' => [
             'playDate' => new DateTime('2022-01-01 12:35:00.000000'),
         ]]);
 
