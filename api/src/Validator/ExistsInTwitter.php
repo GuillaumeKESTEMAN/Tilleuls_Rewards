@@ -9,6 +9,6 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute]
 class ExistsInTwitter extends Constraint
 {
-    public string $message = 'The Twitter account "{{ username }}" does not exists.';
+    public string $message = 'Le compte Twitter "{{ username }}" n\'existe pas';
     public string $mode = 'strict';
 }

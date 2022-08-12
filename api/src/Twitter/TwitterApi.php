@@ -54,7 +54,7 @@ class TwitterApi
                 'response' => $response
             ]
         );
-        throw new BadRequestHttpException($response->errors[0]->message);
+        throw new BadRequestHttpException($response->detail);
     }
 
     /**
@@ -77,7 +77,7 @@ class TwitterApi
             ]
         );
 
-        throw new BadRequestHttpException($response->errors[0]->message);
+        throw new BadRequestHttpException($response->detail);
     }
 
     /**
