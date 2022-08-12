@@ -50,7 +50,7 @@ kill-docker-builds:
 	@docker-compose stop
 	@docker-compose kill
 	@docker-compose down --volumes --remove-orphans
-	@rmdir api/config/jwt
+	@rm -rf api/config/jwt
 
 new-db:
 ifeq ($(shell docker-compose ps | wc -l),2)
