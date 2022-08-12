@@ -42,9 +42,14 @@ jobs:
           docker-compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
       - name: Create test fixtures
         run: docker-compose exec -T php bin/console -e test hautelook:fixtures:load --no-interaction
+      - name: print secrets
+        run: |
+          echo "$TEST_SECRET" >> /api/.env.local
+          cat /api/.env.local
+        shell: bash
+        env:
+          TEST_SECRET: ${{secrets.TEST_SECRET}}
       - name: Run tests
-        run: | 
-          echo ${{ secrets.TEST_SECRET }}
-          docker-compose exec -T php bin/phpunit
+        run: docker-compose exec -T php bin/phpunit
       - name: Doctrine Schema Validator
         run: docker-compose exec -T php bin/console doctrine:schema:validate --skip-sync
