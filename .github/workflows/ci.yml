@@ -33,7 +33,13 @@ jobs:
               run: curl -v -o /dev/null http://localhost
             - name: Check HTTPS reachability
               run: curl  -vk -o /dev/null https://localhost
-            - name: Run security tests
-              run: docker-compose exec -T php bin/phpunit tests/Security
+            - name: Create test database
+              run: |
+                docker-compose exec -T php bin/console -e test doctrine:database:create
+                docker-compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
+            - name: Create test fixtures
+              run: docker-compose exec -T php bin/console -e test hautelook:fixtures:load --no-interaction
+            - name: Run tests
+              run: docker-compose exec -T php bin/phpunit
             - name: Doctrine Schema Validator
               run: docker-compose exec -T php bin/console doctrine:schema:validate --skip-sync

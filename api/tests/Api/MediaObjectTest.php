@@ -55,7 +55,7 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $iri = $this->findIriBy(MediaObject::class, ['filePath' => 'image.jpg']);
+        $iri = $this->findIriBy(MediaObject::class, ['filePath' => 'image.png']);
 
         static::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
@@ -79,7 +79,7 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $file = new UploadedFile('fixtures/test/files/test_image.jpg', 'test_image.jpg');
+        $file = new UploadedFile('fixtures/test/files/test_image.png', 'test_image.png');
 
         $response = self::createClient()->request('POST', '/media_objects', [
             'auth_bearer' => $token,

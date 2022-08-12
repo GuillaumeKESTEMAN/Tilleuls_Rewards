@@ -5,10 +5,6 @@
 
   or
 - Build docker with `docker-compose build --pull --no-cache`
-- Launch docker-compose with `docker-compose up -d`
-- Generate JWT keypair with `docker-compose exec php bin/console lexik:jwt:generate-keypair` or `make jwt-keypair`
-- Stop docker-compose with `docker-compose down`
-- Go to the directory `admin/` and install the admin panel dependencies with `yarn install`
 
 ### Database Schema :
 
@@ -28,20 +24,18 @@ or
 - Initialize data in database with `docker-compose exec php bin/console hautelook:fixtures:load`
 
 ### Project Launch :
-- Launch this command : `make start` or just `make`
+- Launch this command : `make start`
 
 or
 - Open a terminal in the root and launch this command : `docker-compose up -d`
 - Initialize the database with : `docker-compose exec php bin/console hautelook:fixtures:load`
-- And go to the `admin/` directory and launch this command : `yarn start`
 
 ### Project Stop :
-- Terminate the command `make`/`make start`/`yarn start`
-- If you didn't use the make command, you must terminate docker-compose with `docker-compose down`
+- Terminate the command `make start`
+- If you didn't use the make command, you must terminate with `docker-compose down`
 
 ### Project Tests :
 - Launch the project
-- Import a picture in [api/fixtures/tests/files/](https://github.com/GuillaumeKESTEMAN/Tilleuls_Rewards/tree/main/api/fixtures/files) with the name : 'image.jpg' (for MediaObject tests)
 - To launch all tests use : `make tests`
 - To launch security tests use : `make tests-security`
 - To launch api tests use : `make tests-api`
