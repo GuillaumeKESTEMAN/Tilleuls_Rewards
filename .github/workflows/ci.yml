@@ -34,7 +34,6 @@ jobs:
             - name: Check HTTPS reachability
               run: curl  -vk -o /dev/null https://localhost
             - name: Run security tests
-              run: |
-                docker-compose exec php bin/phpunit tests/Security
+              run: docker-compose exec -T php bin/phpunit tests/Security
             - name: Doctrine Schema Validator
               run: docker-compose exec -T php bin/console doctrine:schema:validate --skip-sync
