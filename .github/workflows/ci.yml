@@ -49,6 +49,10 @@ jobs:
           TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
           TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
           TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
-        run: docker-compose exec -T php bin/phpunit
+        run: | 
+          echo "$TWITTER_ACCESS_TOKEN"
+          echo "$env:TWITTER_ACCESS_TOKEN"
+          echo "%TWITTER_ACCESS_TOKEN%"
+          docker-compose exec -T php bin/phpunit
       - name: Doctrine Schema Validator
         run: docker-compose exec -T php bin/console doctrine:schema:validate --skip-sync
