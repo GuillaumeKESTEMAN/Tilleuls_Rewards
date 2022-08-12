@@ -56,7 +56,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@me']);
+        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@coopTilleuls']);
 
         $client->request('GET', $iri, ['auth_bearer' => $token]);
 
@@ -84,7 +84,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         $response = static::createClient()->request('POST', '/twitter_account_to_follows', [
             'auth_bearer' => $token,
             'json' => [
-                "username" => "@coopTilleuls",
+                "username" => "@ApiPlatform",
                 "active" => true
             ]
         ]);
@@ -95,7 +95,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertJsonContains([
             '@context' => '/contexts/TwitterAccountToFollow',
             '@type' => 'TwitterAccountToFollow',
-            'username' => '@coopTilleuls',
+            'username' => '@ApiPlatform',
             'active' => true
         ]);
 

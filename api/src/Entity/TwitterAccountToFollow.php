@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(processor: TwitterAccountToFollowProcessor::class),
+        new Post(validationContext: ['groups' => ['postValidation']], processor: TwitterAccountToFollowProcessor::class),
         new Get(),
         new Put(denormalizationContext: ['groups' => ['put']], processor: TwitterAccountToFollowProcessor::class),
         new Delete(),
@@ -57,7 +57,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
-    #[ExistsInTwitter]
+    #[ExistsInTwitter(groups: ['postValidation'])]
     private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
