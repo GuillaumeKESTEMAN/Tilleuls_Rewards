@@ -23,13 +23,16 @@ or
 
 [On this sql file](/doc/schema.sql)
 
-### Github Initialization :
-Create Github repository secrets for :
+### GitHub Initialization :
+Create GitHub repository secrets for :
 - TWITTER_ACCESS_TOKEN
 - TWITTER_ACCESS_TOKEN_SECRET
 - TWITTER_BEARER_TOKEN
 - TWITTER_CONSUMER_KEY
 - TWITTER_CONSUMER_SECRET
+
+### Makefile :
+A Makefile is available in this project, you can have all Makfile's commands by using `make help` or `make`
 
 ### Project Launch :
 - Launch this command : `make start`

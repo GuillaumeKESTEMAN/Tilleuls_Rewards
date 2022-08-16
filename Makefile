@@ -1,7 +1,14 @@
+### start all ###
+startAll = docker-compose up -d; \
+           docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction; \
+           docker-compose exec php bin/console hautelook:fixtures:load --no-interaction; \
+           docker-compose logs -f;
+### start all ###
+
 ### dev database ###
 generateDB = docker-compose exec php bin/console doctrine:database:drop --force --if-exists; \
-	docker-compose exec php bin/console doctrine:database:create; \
-	docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction;
+			 docker-compose exec php bin/console doctrine:database:create; \
+			 docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction;
 ### dev database ###
 
 ### lexik/jwt-authentication-bundle ###
@@ -10,15 +17,14 @@ generateJWT = docker-compose exec php bin/console lexik:jwt:generate-keypair --o
 
 ### test database ###
 generateTestsDB = docker-compose exec php bin/console --env=test doctrine:database:drop --force --if-exists; \
-	docker-compose exec php bin/console --env=test doctrine:database:create; \
-	docker-compose exec php bin/console --env=test doctrine:migrations:migrate --no-interaction;
+				  docker-compose exec php bin/console --env=test doctrine:database:create; \
+				  docker-compose exec php bin/console --env=test doctrine:migrations:migrate --no-interaction;
 ### test database ###
 
 help:
 	@echo "MAKEFILE HELP :"
 	@echo "\t - help: list all makefile commands"
 	@echo "\t - start: start docker's containers, execute database migrations, execute fixtures, show docker's logs and stop docker containers on terminate signal"
-	@echo "\t - start-all: start docker's containers, execute database migrations, execute fixtures and show docker's logs"
 	@echo "\t - stop: stop docker containers"
 	@echo "\t - install: make a docker build"
 	@echo "\t - kill-docker-builds: stop, kill and down docker's containers (remove JWT keys)"
@@ -31,13 +37,7 @@ help:
 	@echo "\t - fixtures-test: launch fixtures for tests"
 
 start:
-	@bash -c "trap 'trap - SIGINT SIGTERM ERR; $(MAKE) stop-all; exit 1' SIGINT SIGTERM ERR; $(MAKE) start-all"
-
-start-all:
-	@docker-compose up -d
-	@docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
-	@docker-compose exec php bin/console hautelook:fixtures:load --no-interaction
-	@docker-compose logs -f
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; $(MAKE) stop-all; exit 1' SIGINT SIGTERM ERR; $(startAll)"
 
 stop-all:
 	@docker-compose stop
