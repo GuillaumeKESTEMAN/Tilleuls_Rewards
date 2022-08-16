@@ -6,12 +6,6 @@
   or
 - Build docker with `docker-compose build --pull --no-cache`
 
-### Database Schema :
-
-[On this pdf](/doc/schema.pdf)
-
-[On this sql file](/doc/schema.sql)
-
 ### Database Initialization :
 - Initialize database with `make new-db`
 
@@ -22,6 +16,20 @@ or
 
 ### Database Data Initialization :
 - Initialize data in database with `docker-compose exec php bin/console hautelook:fixtures:load`
+
+### Database Schema :
+
+[On this pdf](/doc/schema.pdf)
+
+[On this sql file](/doc/schema.sql)
+
+### Github Initialization :
+Create Github repository secrets for :
+- TWITTER_ACCESS_TOKEN
+- TWITTER_ACCESS_TOKEN_SECRET
+- TWITTER_BEARER_TOKEN
+- TWITTER_CONSUMER_KEY
+- TWITTER_CONSUMER_SECRET
 
 ### Project Launch :
 - Launch this command : `make start`
