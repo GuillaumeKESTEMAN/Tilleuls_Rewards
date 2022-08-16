@@ -1,8 +1,12 @@
 App\Entity\TwitterHashtag:
-    twitter_hashtag_{1..59}:
+    twitter_hashtag_{1..58}:
         hashtag (unique): <word()>
-        active: <boolean()>
+        active: false
 
-    twitter_hashtag_60:
+    twitter_hashtag_59:
         hashtag (unique): getTest
         active: false
+    
+    twitter_hashtag_60:
+        hashtag (unique): symfony
+        active: true

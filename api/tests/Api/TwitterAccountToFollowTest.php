@@ -36,10 +36,10 @@ class TwitterAccountToFollowTest extends ApiTestCase
             '@context' => '/contexts/TwitterAccountToFollow',
             '@id' => '/twitter_account_to_follows',
             '@type' => 'hydra:Collection',
-            'hydra:totalItems' => 1,
+            'hydra:totalItems' => 2,
         ]);
 
-        $this->assertCount(1, $response->toArray()['hydra:member']);
+        $this->assertCount(2, $response->toArray()['hydra:member']);
 
         self::assertMatchesResourceCollectionJsonSchema(TwitterAccountToFollow::class);
     }
@@ -119,7 +119,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'username' => '@ApiPlatform',
-                'active' => true,
+                'active' => false,
             ],
         ]);
 
@@ -130,7 +130,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
             '@context' => '/contexts/TwitterAccountToFollow',
             '@type' => 'TwitterAccountToFollow',
             'username' => '@ApiPlatform',
-            'active' => true,
+            'active' => false,
         ]);
 
         $this->assertMatchesRegularExpression('~^/twitter_account_to_follows/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
@@ -155,7 +155,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         $client->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
-                'username' => '@symfony',
+                'username' => '@coopTilleuls',
                 'active' => false,
             ],
         ]);

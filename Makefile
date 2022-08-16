@@ -33,6 +33,7 @@ help:
 	@echo "\t - tests: launch all tests"
 	@echo "\t - tests-security: launch security tests"
 	@echo "\t - tests-api: launch api tests"
+	@echo "\t - tests-command: launch command tests"
 	@echo "\t - fixtures: launch fixtures"
 	@echo "\t - fixtures-test: launch fixtures for tests"
 
@@ -73,12 +74,14 @@ endif
 tests:
 ifeq ($(shell docker-compose ps | wc -l),2)
 	@docker-compose up -d
-	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-security"
-	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; $(MAKE) tests-api"
+	@$(generateTestsDB)
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit"
 	@docker-compose stop
 else
-	@$(MAKE) tests-security
-	@$(MAKE) tests-api
+	@$(generateTestsDB)
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	@docker-compose exec php bin/phpunit
 endif
 
 tests-security:
@@ -101,6 +104,19 @@ else
 	@$(generateTestsDB)
 	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
 	@docker-compose exec php bin/phpunit tests/Api
+endif
+
+tests-command:
+ifeq ($(shell docker-compose ps | wc -l),2)
+	@docker-compose up -d
+	@$(generateTestsDB)
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; docker-compose stop; exit 1' SIGINT SIGTERM ERR; docker-compose exec php bin/phpunit tests/Command"
+	@docker-compose stop
+else
+	@$(generateTestsDB)
+	@docker-compose exec php bin/console --env=test hautelook:fixtures:load --no-interaction
+	@docker-compose exec php bin/phpunit tests/Command
 endif
 
 fixtures:

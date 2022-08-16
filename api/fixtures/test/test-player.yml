@@ -7,6 +7,6 @@ App\Entity\Player:
 
     player_60:
         name: Test Account Name
-        username (unique): \@TestAccountUsername
+        username (unique): \@TestAccount
         twitterAccountId (unique): <isbn13()>
         lastPlayDate: <date_create()>

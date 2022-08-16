@@ -1,5 +1,11 @@
 App\Entity\TwitterAccountToFollow:
-    twitter_account_to_follow:
+    twitter_account_to_follow_1:
+        name: 'Symfony'
+        username (unique): \@symfony
+        twitterAccountId (unique): <isbn13()>
+        active: true
+    
+    twitter_account_to_follow_2:
         name: 'Les-Tilleuls.coop'
         username (unique): \@coopTilleuls
         twitterAccountId (unique): <isbn13()>

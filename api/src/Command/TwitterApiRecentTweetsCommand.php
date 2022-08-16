@@ -38,7 +38,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 
 #[AsCommand(
-    name: 'app:comment:getRecentTweets',
+    name: 'app:get-recent-tweets',
     description: 'Get recent tweets about DB active hashtags to update DB and reply to play a game for people who follow DB active accounts to follow',
 )]
 class TwitterApiRecentTweetsCommand extends Command
@@ -116,7 +116,7 @@ class TwitterApiRecentTweetsCommand extends Command
         ];
 
         $tweet = $this->tweetRepository->findLastTweet();
-        if (null !== $tweet) {
+        if ($_ENV['APP_ENV'] !== 'test' && null !== $tweet) {
             $params['since_id'] = $tweet->getTweetId();
         }
 

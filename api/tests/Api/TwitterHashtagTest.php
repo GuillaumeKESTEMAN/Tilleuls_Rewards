@@ -92,7 +92,7 @@ class TwitterHashtagTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'hashtag' => '#test',
-                'active' => true,
+                'active' => false,
             ],
         ]);
 
@@ -103,7 +103,7 @@ class TwitterHashtagTest extends ApiTestCase
             '@context' => '/contexts/TwitterHashtag',
             '@type' => 'TwitterHashtag',
             'hashtag' => '#test',
-            'active' => true,
+            'active' => false,
         ]);
 
         $this->assertMatchesRegularExpression('~^/twitter_hashtags/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);

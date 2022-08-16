@@ -55,7 +55,7 @@ or
 To use Mercure in the admin you must have a JWT stored in ./admin/.env like this : `REACT_APP_MERCURE_JWT=YOUR_JWT`
 
 ### Project Custom Commands :
-#### app:comment:getRecentTweets (`docker-compose exec php bin/console app:comment:getRecentTweets`)
+#### app:get-recent-tweets (`docker-compose exec php bin/console app:get-recent-tweets`)
 Command to get recent tweets with a query to update DB and a query to reply to play a game
 - update-db -> Boolean to update database (ex : `--update-db`)
 - reply -> Boolean to reply with game URL (ex : `--reply`)

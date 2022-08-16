@@ -63,7 +63,7 @@ class TweetTest extends ApiTestCase
      */
     public function testCreateTweet(): void
     {
-        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccountUsername']);
+        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccount']);
 
         $response = static::createClient()->request('POST', '/tweets', ['json' => [
             'player' => $iri,

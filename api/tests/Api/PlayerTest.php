@@ -62,7 +62,7 @@ class PlayerTest extends ApiTestCase
         $token = LoginTest::getLoginToken();
 
         $client = static::createClient();
-        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccountUsername']);
+        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccount']);
 
         $client->request('GET', $iri, ['auth_bearer' => $token]);
 
@@ -103,7 +103,7 @@ class PlayerTest extends ApiTestCase
     {
         $client = static::createClient();
 
-        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccountUsername']);
+        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccount']);
 
         $client->request('PUT', $iri, ['json' => [
             'name' => 'New Twitter Account Name',
@@ -118,7 +118,7 @@ class PlayerTest extends ApiTestCase
     public function testDeletePlayer(): void
     {
         $client = static::createClient();
-        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccountUsername']);
+        $iri = $this->findIriBy(Player::class, ['username' => '@TestAccount']);
 
         $client->request('DELETE', $iri);
 
