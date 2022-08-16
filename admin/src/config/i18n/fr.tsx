@@ -7,12 +7,12 @@ export const fr = {
             all_lots: 'Voir tous les lots',
             lots: {
                 pending: 'Stocks des lots :',
-                total: 'Nombre total de lots : ',
+                total: 'Nombre total des différents types de lots : ',
             },
             games: {
                 month_history: 'Nombre de parties créées sur %nbr_jours% jours :',
-                no_games: 'Pas de parties existantes',
-                total: 'Nombre total de parties : '
+                total: 'Nombre total de parties : ',
+                no_games: 'Pas de parties existantes'
             },
             players: {
                 total: 'Nombre total de joueurs : ',
@@ -83,7 +83,7 @@ export const fr = {
         tweet_replies: {
             name: 'Tweet de réponse |||| Tweets de réponses',
             fields: {
-                name: 'A quoi ça sert ?',
+                name: 'Usage',
                 message: 'Message'
             },
         },
