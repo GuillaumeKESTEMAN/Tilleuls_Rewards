@@ -25,7 +25,7 @@ abstract class CommonRepository extends ServiceEntityRepository
         }
 
         if ($flush) {
-            try{
+            try {
                 $this->getEntityManager()->flush();
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage(), $e->getTrace());
@@ -42,7 +42,7 @@ abstract class CommonRepository extends ServiceEntityRepository
         }
 
         if ($flush) {
-            try{
+            try {
                 $this->getEntityManager()->flush();
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage(), $e->getTrace());

@@ -37,7 +37,7 @@ class Tweet
 
     #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true)]
     #[Assert\Regex(
-        pattern: "/^[0-9]+$/",
+        pattern: '/^[0-9]+$/',
         message: "L'id ne doit contenir que des chiffres"
     )]
     #[ApiProperty(types: ['https://schema.org/identifier'])]

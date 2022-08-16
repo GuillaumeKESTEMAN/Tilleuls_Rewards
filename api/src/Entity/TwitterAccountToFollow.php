@@ -67,7 +67,7 @@ class TwitterAccountToFollow
         groups: ['firstPostValidation']
     )]
     #[Assert\Regex(
-        pattern: "/^[@]?[A-Za-z0-9_]+$/",
+        pattern: '/^[@]?[A-Za-z0-9_]+$/',
         message: "Le pseudo ne doit contenir que des lettres, des chiffres et des '_' (il est possible de mettre un @ au début)",
         groups: ['firstPostValidation']
     )]
@@ -76,7 +76,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
     #[Assert\Regex(
-        pattern: "/^[0-9]+$/",
+        pattern: '/^[0-9]+$/',
         message: "L'id ne doit contenir que des chiffres"
     )]
     #[ApiProperty(writable: false, types: ['https://schema.org/identifier'])]
@@ -109,7 +109,7 @@ class TwitterAccountToFollow
     public function setUsername(?string $username): void
     {
         if ('@' !== $username[0]) {
-            $username = '@' . $username;
+            $username = '@'.$username;
         }
 
         $this->username = $username;

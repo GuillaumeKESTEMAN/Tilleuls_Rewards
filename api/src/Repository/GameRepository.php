@@ -7,7 +7,6 @@ namespace App\Repository;
 use App\Entity\Game;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use Exception;
 use Psr\Log\LoggerInterface;
 
 /**

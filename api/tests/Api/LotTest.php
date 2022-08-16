@@ -93,8 +93,8 @@ class LotTest extends ApiTestCase
             'json' => [
                 'name' => 'Nouveau lot de test',
                 'quantity' => -12,
-                'message' => "C'est un super lot !"
-            ]
+                'message' => "C'est un super lot !",
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(422);
@@ -104,7 +104,7 @@ class LotTest extends ApiTestCase
             '@context' => '/contexts/ConstraintViolationList',
             '@type' => 'ConstraintViolationList',
             'hydra:title' => 'An error occurred',
-            'hydra:description' => 'quantity: This value should be either positive or zero.'
+            'hydra:description' => 'quantity: This value should be either positive or zero.',
         ]);
     }
 
@@ -124,8 +124,8 @@ class LotTest extends ApiTestCase
             'json' => [
                 'name' => 'Nouveau lot de test',
                 'quantity' => 3,
-                'message' => "C'est un super lot !"
-            ]
+                'message' => "C'est un super lot !",
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(201);
@@ -136,7 +136,7 @@ class LotTest extends ApiTestCase
             '@type' => 'Lot',
             'name' => 'Nouveau lot de test',
             'quantity' => 3,
-            'message' => "C'est un super lot !"
+            'message' => "C'est un super lot !",
         ]);
 
         $this->assertMatchesRegularExpression('~^/lots/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
@@ -163,7 +163,7 @@ class LotTest extends ApiTestCase
                 'name' => 'Lot de test 2.0',
                 'quantity' => 2,
                 'message' => 'C\'est un autre super lot !',
-            ]
+            ],
         ]);
 
         self::assertResponseIsSuccessful();

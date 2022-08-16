@@ -92,8 +92,8 @@ class TwitterHashtagTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'hashtag' => '#test',
-                'active' => true
-            ]
+                'active' => true,
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(201);
@@ -103,7 +103,7 @@ class TwitterHashtagTest extends ApiTestCase
             '@context' => '/contexts/TwitterHashtag',
             '@type' => 'TwitterHashtag',
             'hashtag' => '#test',
-            'active' => true
+            'active' => true,
         ]);
 
         $this->assertMatchesRegularExpression('~^/twitter_hashtags/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
@@ -129,15 +129,15 @@ class TwitterHashtagTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'hashtag' => '#getTest2.0',
-                'active' => true
-            ]
+                'active' => true,
+            ],
         ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
             'hashtag' => '#getTest',
-            'active' => true
+            'active' => true,
         ]);
     }
 
@@ -152,7 +152,6 @@ class TwitterHashtagTest extends ApiTestCase
 
         $client = static::createClient();
         $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest']);
-
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
 

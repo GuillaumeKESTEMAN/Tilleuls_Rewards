@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\MediaObject;
@@ -15,7 +17,8 @@ class ImageReaderController extends AbstractController
         $root = explode('/', __DIR__);
         $root = \array_slice($root, 0, -2);
         $root = implode('/', $root);
-        $filename = "/public/media/" . $image->getFilePath();
+        $filename = '/public/media/'.$image->getFilePath();
+
         return new BinaryFileResponse($root.$filename);
     }
 }

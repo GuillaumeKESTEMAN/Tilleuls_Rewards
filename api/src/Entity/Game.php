@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                 security: 'object.getScore() === null',
                 validationContext: ['groups' => ['putValidation']],
                 processor: GamePutProcessor::class
-            )
+            ),
         ],
         mercure: ['private' => true],
         order: ['playDate' => 'DESC'],

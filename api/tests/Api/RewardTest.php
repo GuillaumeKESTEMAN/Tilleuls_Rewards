@@ -110,7 +110,7 @@ class RewardTest extends ApiTestCase
             'json' => [
                 'distributed' => false,
             ],
-            'auth_bearer' => $token]);
+            'auth_bearer' => $token, ]);
 
         self::assertResponseIsSuccessful();
     }

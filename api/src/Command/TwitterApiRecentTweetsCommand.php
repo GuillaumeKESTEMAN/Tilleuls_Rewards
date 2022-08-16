@@ -43,18 +43,19 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 )]
 class TwitterApiRecentTweetsCommand extends Command
 {
-    public function __construct(private readonly TwitterApi                       $twitterApi,
-                                private readonly PlayerRepository                 $playerRepository,
-                                private readonly TweetRepository                  $tweetRepository,
-                                private readonly GameRepository                   $gameRepository,
-                                private readonly LotRepository                    $lotRepository,
-                                private readonly TweetReplyRepository             $tweetReplyRepository,
-                                private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository,
-                                private readonly TwitterHashtagRepository         $twitterHashtagRepository,
-                                private readonly string                           $communicationWebsiteUrl,
-                                private readonly LoggerInterface                  $logger,
-                                private readonly ValidatorInterface               $validator)
-    {
+    public function __construct(
+        private readonly TwitterApi $twitterApi,
+        private readonly PlayerRepository $playerRepository,
+        private readonly TweetRepository $tweetRepository,
+        private readonly GameRepository $gameRepository,
+        private readonly LotRepository $lotRepository,
+        private readonly TweetReplyRepository $tweetReplyRepository,
+        private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository,
+        private readonly TwitterHashtagRepository $twitterHashtagRepository,
+        private readonly string $communicationWebsiteUrl,
+        private readonly LoggerInterface $logger,
+        private readonly ValidatorInterface $validator
+    ) {
         parent::__construct();
     }
 
@@ -66,10 +67,10 @@ class TwitterApiRecentTweetsCommand extends Command
     }
 
     private const DEFAULTS_TWEETS_REPLIES = [
-        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@joueur%), merci de participer à notre jeu ! ' . PHP_EOL . 'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
-        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous.' . PHP_EOL . 'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous. ' . PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. ' . PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... ' . PHP_EOL . 'Retente ta chance un autre jour !']
+        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@joueur%), merci de participer à notre jeu ! '.\PHP_EOL.'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
+        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous.'.\PHP_EOL.'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! '.\PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous. '.\PHP_EOL.'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. '.\PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... '.\PHP_EOL.'Retente ta chance un autre jour !'],
     ];
 
     private function selectDefaultTweetReplieById(string $id): ?array
@@ -80,6 +81,7 @@ class TwitterApiRecentTweetsCommand extends Command
             }
         }
         $this->logger->error("'$id' was not found in DEFAULTS_TWEETS_REPLIES");
+
         return null;
     }
 
@@ -98,7 +100,7 @@ class TwitterApiRecentTweetsCommand extends Command
             throw new TweetReplyNotFoundException();
         }
 
-        return str_replace(array('%nom%', '%@joueur%', '%site_web%'), array($name, '@' . $userhandle, $this->communicationWebsiteUrl), $message['reply']);
+        return str_replace(['%nom%', '%@joueur%', '%site_web%'], [$name, '@'.$userhandle, $this->communicationWebsiteUrl], $message['reply']);
     }
 
     /**
@@ -128,7 +130,7 @@ class TwitterApiRecentTweetsCommand extends Command
      */
     private function setUser(object $tweets, object $tweet, int $index): ?object
     {
-        $user = array_key_exists($index, $tweets->includes->users) && $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : null;
+        $user = \array_key_exists($index, $tweets->includes->users) && $tweets->includes->users[$index]->id === $tweet->author_id ? $tweets->includes->users[$index] : null;
 
         if (null !== $user) {
             return $user;
@@ -146,14 +148,14 @@ class TwitterApiRecentTweetsCommand extends Command
         }
 
         try {
-            $user = $this->twitterApi->get('users/' . $tweet->author_id);
+            $user = $this->twitterApi->get('users/'.$tweet->author_id);
             $user = $user->data ?? null;
 
             if (null === $user) {
                 $this->logger->warning(
                     "Twitter user n°$tweet->author_id not found for the tweet n°$tweet->id",
                     [
-                        'tweet' => $tweet
+                        'tweet' => $tweet,
                     ]
                 );
             }
@@ -161,10 +163,10 @@ class TwitterApiRecentTweetsCommand extends Command
             return $user;
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API get request (users/) error ' . $e->getMessage(),
+                'Twitter API get request (users/) error '.$e->getMessage(),
                 [
                     'tweet' => $tweet,
-                    'error' => $e
+                    'error' => $e,
                 ]
             );
         }
@@ -189,9 +191,9 @@ class TwitterApiRecentTweetsCommand extends Command
                 }
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
-                    'Twitter API get request (friendships/show) error' . $e->getMessage(),
+                    'Twitter API get request (friendships/show) error'.$e->getMessage(),
                     [
-                        'error' => $e
+                        'error' => $e,
                     ]
                 );
             }
@@ -219,9 +221,9 @@ class TwitterApiRecentTweetsCommand extends Command
             $this->twitterApi->reply($message, $tweetId);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API post request (tweets) error' . $e->getMessage(),
+                'Twitter API post request (tweets) error'.$e->getMessage(),
                 [
-                    'error' => $e
+                    'error' => $e,
                 ]
             );
         }
@@ -242,19 +244,19 @@ class TwitterApiRecentTweetsCommand extends Command
         $databaseUpdated = false;
 
         $this->logger->notice(
-            'Command state: update-db: ' . $input->getOption('update-db') . ', reply: ' . $input->getOption('reply'),
+            'Command state: update-db: '.$input->getOption('update-db').', reply: '.$input->getOption('reply'),
             [
                 'Active hashtags for command' => $hashtags,
-                'Active Twitter accounts to follow for command' => $accountsToFollow
+                'Active Twitter accounts to follow for command' => $accountsToFollow,
             ]
         );
 
-        if(count($hashtags) <= 0) {
+        if (\count($hashtags) <= 0) {
             $io->error('No active hashtag for the TwitterApiRecentTweetsCommand');
             throw new NoActiveHashtagException();
         }
 
-        if(count($accountsToFollow) <= 0) {
+        if (\count($accountsToFollow) <= 0) {
             $io->error('No active twitter account to follow for the TwitterApiRecentTweetsCommand');
             throw new NoActiveTwitterAccountToFollowException();
         }
@@ -268,22 +270,24 @@ class TwitterApiRecentTweetsCommand extends Command
             $tweets = $this->getRecentTweets($stringHashtags);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API get request (tweets/search/recent) error' . $e->getMessage(),
+                'Twitter API get request (tweets/search/recent) error'.$e->getMessage(),
                 [
-                    'error' => $e
+                    'error' => $e,
                 ]
             );
+
             return Command::FAILURE;
         }
 
         if (!$tweets) {
-            $io->success('Aucun tweet trouvé pour : ' . $stringHashtags);
-            $this->logger->notice('Aucun tweet trouvé pour : ' . $stringHashtags);
+            $io->success('Aucun tweet trouvé pour : '.$stringHashtags);
+            $this->logger->notice('Aucun tweet trouvé pour : '.$stringHashtags);
+
             return Command::SUCCESS;
         }
 
-        $io->success('Tweets trouvés pour : ' . $stringHashtags);
-        $this->logger->notice('Tweets trouvés pour : ' . $stringHashtags);
+        $io->success('Tweets trouvés pour : '.$stringHashtags);
+        $this->logger->notice('Tweets trouvés pour : '.$stringHashtags);
 
         if (!$input->getOption('update-db')) {
             return Command::SUCCESS;
@@ -303,7 +307,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
             $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
 
-            if (null === $player || ($player->getUsername() !== '@' . $user->username || $player->getName() !== $user->name)) {
+            if (null === $player || ($player->getUsername() !== '@'.$user->username || $player->getName() !== $user->name)) {
                 if (null === $player) {
                     $player = new Player();
                     $player->setTwitterAccountId($user->id);
@@ -334,9 +338,10 @@ class TwitterApiRecentTweetsCommand extends Command
                             "No tweet reply message found for 'need_to_follow_us' in TwitterApiRecentTweetsCommand",
                             [
                                 'lot_id' => 'need_to_follow_us',
-                                'error' => $e
+                                'error' => $e,
                             ]
                         );
+
                         return Command::FAILURE;
                     }
                 }
@@ -353,9 +358,10 @@ class TwitterApiRecentTweetsCommand extends Command
                             "No tweet reply message found for 'game_already_generated_less_than_a_day_ago' in TwitterApiRecentTweetsCommand",
                             [
                                 'lot_id' => 'game_already_generated_less_than_a_day_ago',
-                                'error' => $e
+                                'error' => $e,
                             ]
                         );
+
                         return Command::FAILURE;
                     }
                 }
@@ -367,7 +373,7 @@ class TwitterApiRecentTweetsCommand extends Command
 
             $randomLot = $this->lotRepository->getRandom();
 
-            if (count($randomLot) > 0) {
+            if (\count($randomLot) > 0) {
                 $reward->setLot($randomLot[0]);
             } else {
                 $io->error('No lot available');
@@ -380,16 +386,14 @@ class TwitterApiRecentTweetsCommand extends Command
                             "No tweet reply message found for 'no_more_available_lots' in TwitterApiRecentTweetsCommand",
                             [
                                 'lot_id' => 'no_more_available_lots',
-                                'error' => $e
+                                'error' => $e,
                             ]
-
                         );
                     }
                 }
 
                 throw new NoLotAvailableException();
             }
-
 
             $game = new Game();
             $game->setTweet($recentTweet);
@@ -401,7 +405,7 @@ class TwitterApiRecentTweetsCommand extends Command
                 $this->gameRepository->persistAndFlush($game, true);
             } catch (ValidationException $e) {
                 $io->error($e->getMessage());
-                $this->logger->error($e->getMessage(), (array)$e);
+                $this->logger->error($e->getMessage(), (array) $e);
                 continue;
             }
 
@@ -417,9 +421,10 @@ class TwitterApiRecentTweetsCommand extends Command
                         "No tweet reply message found for 'on_new_game' in TwitterApiRecentTweetsCommand",
                         [
                             'lot_id' => 'on_new_game',
-                            'error' => $e
+                            'error' => $e,
                         ]
                     );
+
                     return Command::FAILURE;
                 }
             }

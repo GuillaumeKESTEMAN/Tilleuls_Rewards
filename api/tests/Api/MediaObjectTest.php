@@ -69,7 +69,6 @@ class MediaObjectTest extends ApiTestCase
         ]);
     }
 
-
     /**
      * @throws RedirectionExceptionInterface
      * @throws DecodingExceptionInterface
@@ -93,7 +92,7 @@ class MediaObjectTest extends ApiTestCase
                 'files' => [
                     'file' => $file,
                 ],
-            ]
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(422);
@@ -129,7 +128,7 @@ class MediaObjectTest extends ApiTestCase
                 'files' => [
                     'file' => $file,
                 ],
-            ]
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(201);
@@ -158,12 +157,12 @@ class MediaObjectTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'Change media object name',
-            ]]);
+            ], ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
-            'name' => 'Change media object name'
+            'name' => 'Change media object name',
         ]);
     }
 

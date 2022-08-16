@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
@@ -83,8 +85,8 @@ class TweetReplyTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'invalid_name',
-                'message' => 'valid message'
-            ]
+                'message' => 'valid message',
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(422);
@@ -94,7 +96,7 @@ class TweetReplyTest extends ApiTestCase
             '@context' => '/contexts/ConstraintViolationList',
             '@type' => 'ConstraintViolationList',
             'hydra:title' => 'An error occurred',
-            'hydra:description' => 'name: The value you selected is not a valid choice.'
+            'hydra:description' => 'name: The value you selected is not a valid choice.',
         ]);
     }
 
@@ -113,8 +115,8 @@ class TweetReplyTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'need_to_follow_us',
-                'message' => 'you need to follow test !!!'
-            ]
+                'message' => 'you need to follow test !!!',
+            ],
         ]);
 
         self::assertResponseStatusCodeSame(201);
@@ -124,7 +126,7 @@ class TweetReplyTest extends ApiTestCase
             '@context' => '/contexts/TweetReply',
             '@type' => 'TweetReply',
             'name' => 'need_to_follow_us',
-            'message' => 'you need to follow test !!!'
+            'message' => 'you need to follow test !!!',
         ]);
 
         $this->assertMatchesRegularExpression('~^/tweet_replies/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
@@ -149,15 +151,15 @@ class TweetReplyTest extends ApiTestCase
         $client->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
-                'message' => 'you need to follow test !!!! (i forgot one more !)'
-            ]
+                'message' => 'you need to follow test !!!! (i forgot one more !)',
+            ],
         ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
             'name' => 'need_to_follow_us',
-            'message' => 'you need to follow test !!!! (i forgot one more !)'
+            'message' => 'you need to follow test !!!! (i forgot one more !)',
         ]);
     }
 
@@ -172,7 +174,6 @@ class TweetReplyTest extends ApiTestCase
 
         $client = static::createClient();
         $iri = $this->findIriBy(TweetReply::class, ['name' => 'need_to_follow_us']);
-
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
 

@@ -108,12 +108,12 @@ class GameTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'score' => 10,
-            ]]);
+            ], ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
-            'score' => 10
+            'score' => 10,
         ]);
     }
 
@@ -134,7 +134,7 @@ class GameTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'score' => 11,
-            ]]);
+            ], ]);
 
         self::assertResponseStatusCodeSame(403);
     }

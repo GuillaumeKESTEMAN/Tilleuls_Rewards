@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Common\Filter\DateFilterInterface;
 use ApiPlatform\Doctrine\Common\Filter\OrderFilterInterface;
-use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
@@ -53,14 +51,14 @@ class Player
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
     #[Assert\Regex(
-        pattern: "/^[@]?[A-Za-z0-9_]+$/",
+        pattern: '/^[@]?[A-Za-z0-9_]+$/',
         message: "Le pseudo ne doit contenir que des lettres, des chiffres et des '_' (il est possible de mettre un @ au début)"
     )]
     private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
     #[Assert\Regex(
-        pattern: "/^[0-9]+$/",
+        pattern: '/^[0-9]+$/',
         message: "L'id ne doit contenir que des chiffres"
     )]
     #[ApiProperty(writable: false, types: ['https://schema.org/identifier'])]

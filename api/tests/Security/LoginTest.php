@@ -20,7 +20,7 @@ class LoginTest extends ApiTestCase
     {
         static::createClient()->request('POST', '/login', ['json' => [
             'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
+            'password' => $_ENV['USER_IN_MEMORY_PASSWORD'],
         ]]);
 
         self::assertResponseIsSuccessful();
@@ -34,7 +34,7 @@ class LoginTest extends ApiTestCase
     {
         static::createClient()->request('POST', '/login', ['json' => [
             'username' => 'invalid user',
-            'password' => 'invalid password'
+            'password' => 'invalid password',
         ]]);
 
         self::assertResponseStatusCodeSame(401);
@@ -52,7 +52,7 @@ class LoginTest extends ApiTestCase
     {
         $token = static::createClient()->request('POST', '/login', ['json' => [
             'username' => $_ENV['USER_IN_MEMORY_USERNAME'],
-            'password' => $_ENV['USER_IN_MEMORY_PASSWORD']
+            'password' => $_ENV['USER_IN_MEMORY_PASSWORD'],
         ]]);
 
         self::assertResponseIsSuccessful();

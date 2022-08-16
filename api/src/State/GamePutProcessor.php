@@ -21,32 +21,29 @@ class GamePutProcessor implements ProcessorInterface
 
     /**
      * @param $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return object
+     *
      * @throws TwitterOAuthException
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
-        if ($_ENV['APP_ENV'] !== 'test' && $data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
+        if ('test' !== $_ENV['APP_ENV'] && $data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
             if (null === $data->getReward()) {
-                throw new \LogicException('Reward of the game n°' . $data->getId() . ' not exists during game PUT request');
+                throw new \LogicException('Reward of the game n°'.$data->getId().' not exists during game PUT request');
             }
             if (null === $data->getReward()->getLot()) {
-                throw new \LogicException('Lot of the reward n°' . $data->getReward()->getId() . ' not exists during game PUT request');
+                throw new \LogicException('Lot of the reward n°'.$data->getReward()->getId().' not exists during game PUT request');
             }
             if (null === $data->getTweet()) {
-                throw new \LogicException('Tweet of the game n°' . $data->getId() . ' not exists during game PUT request');
+                throw new \LogicException('Tweet of the game n°'.$data->getId().' not exists during game PUT request');
             }
 
             try {
                 $this->twitterApi->reply($data->getReward()->getLot()->getMessage(), $data->getTweet()->getTweetId());
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
-                    'Twitter API post request (tweets) error' . $e->getMessage(),
+                    'Twitter API post request (tweets) error'.$e->getMessage(),
                     [
-                        'error' => $e
+                        'error' => $e,
                     ]
                 );
             }

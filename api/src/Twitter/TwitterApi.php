@@ -49,9 +49,9 @@ class TwitterApi
         }
 
         $this->logger->critical(
-            'Twitter API get request error : ' . $response->detail,
+            'Twitter API get request error : '.$response->detail,
             [
-                'response' => $response
+                'response' => $response,
             ]
         );
         throw new BadRequestHttpException($response->detail);
@@ -71,9 +71,9 @@ class TwitterApi
         }
 
         $this->logger->critical(
-            'Twitter API post request error : ' . $response->detail,
+            'Twitter API post request error : '.$response->detail,
             [
-                'response' => $response
+                'response' => $response,
             ]
         );
 

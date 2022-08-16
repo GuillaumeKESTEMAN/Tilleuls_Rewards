@@ -115,7 +115,7 @@ class Lot
         }
 
         if (null !== $score) {
-            $returnMessage = str_replace('%score%', (string)$score, $returnMessage);
+            $returnMessage = str_replace('%score%', (string) $score, $returnMessage);
         }
 
         return $returnMessage;
