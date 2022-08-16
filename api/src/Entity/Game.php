@@ -20,6 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[UniqueEntity('reward')]
@@ -32,7 +33,7 @@ use Symfony\Component\Uid\Uuid;
             new Get(),
             new Put(
                 denormalizationContext: ['groups' => ['put']],
-                security: 'object.getScore() == null',
+                security: 'object.getScore() === null',
                 validationContext: ['groups' => ['putValidation']],
                 processor: GamePutProcessor::class
             )
@@ -66,10 +67,14 @@ class Game
     #[ORM\Column(name: 'score', type: 'integer', nullable: true)]
     #[ApiProperty(types: ['https://schema.org/Rating'])]
     #[Groups('put')]
+    #[Assert\NotBlank(groups: ['putValidation'])]
+    #[Assert\PositiveOrZero(groups: ['putValidation'])]
     private ?int $score = null;
 
     #[ORM\Column(name: 'play_date', type: 'datetime')]
     #[ApiProperty(types: ['https://schema.org/DateTime'])]
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
     private ?\DateTime $playDate = null;
 
     #[ORM\OneToOne(inversedBy: 'game', targetEntity: Reward::class, cascade: ['persist', 'remove'])]
