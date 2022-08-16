@@ -23,6 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 
 #[ORM\Entity(repositoryClass: TwitterAccountToFollowRepository::class)]
 #[UniqueEntity('twitterAccountId')]
@@ -30,7 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(validationContext: ['groups' => ['postValidation']], processor: TwitterAccountToFollowProcessor::class),
+        new Post(validationContext: ['groups' => new GroupSequence(['firstPostValidation', 'secondPostValidation'])], processor: TwitterAccountToFollowProcessor::class),
         new Get(),
         new Put(denormalizationContext: ['groups' => ['put']], processor: TwitterAccountToFollowProcessor::class),
         new Delete(),
@@ -42,6 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'ipartial', 'username' => 'ipartial'])]
 #[ApiFilter(BooleanFilter::class, properties: ['active' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'active'])]
+
 class TwitterAccountToFollow
 {
     #[ORM\Id]
@@ -56,8 +58,20 @@ class TwitterAccountToFollow
     private ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
-    #[Assert\NotBlank]
-    #[ExistsInTwitter(groups: ['postValidation'])]
+    #[Assert\NotBlank(groups: ['firstPostValidation'])]
+    #[Assert\Length(
+        min: 1,
+        max: 16,
+        minMessage: 'Le pseudo demande au moins {{ limit }} caractère',
+        maxMessage: 'Le pseudo ne peut pas avoir plus de {{ limit }} caractères (@ inclut)',
+        groups: ['firstPostValidation']
+    )]
+    #[Assert\Regex(
+        pattern: "/^[@]?[A-Za-z0-9_]+$/",
+        message: "Le pseudo ne doit contenir que des lettres et des chiffres et des '_' (il est possible de mettre un @ au début)",
+        groups: ['firstPostValidation']
+    )]
+    #[ExistsInTwitter(groups: ['secondPostValidation'])]
     private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
@@ -90,9 +104,8 @@ class TwitterAccountToFollow
 
     public function setUsername(?string $username): void
     {
-        $username = str_replace(' ', '', $username);
         if ('@' !== $username[0]) {
-            $username = '@'.$username;
+            $username = '@' . $username;
         }
 
         $this->username = $username;
