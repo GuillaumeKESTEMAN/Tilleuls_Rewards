@@ -1,7 +1,7 @@
 App\Entity\Tweet:
     tweet_{1..59}:
         player: '@player_<current()>'
-        tweetId (unique): <uniqid()>
+        tweetId (unique): <isbn13()>
         creationDate: <date_create()>
 
     tweet_60:

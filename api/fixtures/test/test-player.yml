@@ -1,12 +1,12 @@
 App\Entity\Player:
     player_{1..59}:
         name: <name()>
-        username (unique): \@<username()>
-        twitterAccountId (unique): <uniqid()>
+        username (unique): \@<regexify('^[A-Za-z0-9_]{1,15}$')>
+        twitterAccountId (unique): <isbn13()>
         lastPlayDate: <date_create()>
 
     player_60:
         name: Test Account Name
         username (unique): \@TestAccountUsername
-        twitterAccountId (unique): <uniqid()>
+        twitterAccountId (unique): <isbn13()>
         lastPlayDate: <date_create()>

@@ -2,5 +2,5 @@ App\Entity\TwitterAccountToFollow:
     twitter_account_to_follow:
         name: <name()>
         username (unique): \@coopTilleuls
-        twitterAccountId (unique): <uniqid()>
+        twitterAccountId (unique): <isbn13()>
         active: <boolean()>
