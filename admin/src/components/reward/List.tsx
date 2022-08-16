@@ -1,7 +1,7 @@
 import {FunctionComponent} from "react";
 import {Reward} from "../../types/Reward";
 import {FieldGuesser, ListGuesser} from "@api-platform/admin";
-import {ReferenceField, useTranslate} from "react-admin";
+import {DateField, ReferenceField, useTranslate} from "react-admin";
 
 interface Props {
     reward: Reward[];
@@ -24,7 +24,16 @@ export const List: FunctionComponent<Props> = ({reward}) => {
             </ReferenceField>
             <FieldGuesser source="distributed"/>
             <ReferenceField label={translate('resources.games.fields.playDate')} source="game" reference="games" sortBy="game.playDate" link={false}>
-                <FieldGuesser source="playDate"/>
+                <DateField source="playDate"
+                           showTime
+                           locales="fr-FR"
+                           options={{
+                               day: 'numeric',
+                               month: 'numeric',
+                               year: 'numeric',
+                               hour: 'numeric',
+                               minute: 'numeric'
+                           }}/>
             </ReferenceField>
         </ListGuesser>
     );

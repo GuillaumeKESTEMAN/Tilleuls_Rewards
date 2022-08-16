@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 #[UniqueEntity('username')]
@@ -51,13 +52,22 @@ class Player
     private ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
+    #[Assert\Regex(
+        pattern: "/^[@]?[A-Za-z0-9_]+$/",
+        message: "Le pseudo ne doit contenir que des lettres, des chiffres et des '_' (il est possible de mettre un @ au début)"
+    )]
     private ?string $username = null;
 
     #[ORM\Column(name: 'twitter_account_id', type: 'string', length: 255, unique: true)]
+    #[Assert\Regex(
+        pattern: "/^[0-9]+$/",
+        message: "L'id ne doit contenir que des chiffres"
+    )]
     #[ApiProperty(writable: false, types: ['https://schema.org/identifier'])]
     private ?string $twitterAccountId = null;
 
     #[ORM\Column(name: 'last_play_date', type: 'datetime', nullable: true)]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[ApiProperty(writable: false, types: ['https://schema.org/DateTime'])]
     private ?\DateTime $lastPlayDate = null;
 

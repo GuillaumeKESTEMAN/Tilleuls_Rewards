@@ -50,6 +50,12 @@ class TwitterHashtag
 
     #[ORM\Column(name: 'hashtag', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 30,
+        minMessage: 'Le hashtag demande au moins {{ limit }} caractère',
+        maxMessage: 'Le hashtag ne peut pas avoir plus de {{ limit }} caractères (# inclut)'
+    )]
     private ?string $hashtag = null;
 
     #[ORM\Column(name: 'active', type: 'boolean')]
@@ -68,7 +74,7 @@ class TwitterHashtag
 
     public function setHashtag(?string $hashtag): void
     {
-        $hashtag = str_replace(' ', '', $hashtag);
+        $hashtag = str_replace(' ', '_', $hashtag);
         if ('#' !== $hashtag[0]) {
             $hashtag = '#'.$hashtag;
         }

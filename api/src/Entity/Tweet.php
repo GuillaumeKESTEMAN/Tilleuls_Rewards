@@ -11,6 +11,7 @@ use App\Repository\TweetRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TweetRepository::class)]
 #[UniqueEntity('tweetId')]
@@ -35,10 +36,15 @@ class Tweet
     private ?Player $player = null;
 
     #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true)]
+    #[Assert\Regex(
+        pattern: "/^[0-9]+$/",
+        message: "L'id ne doit contenir que des chiffres"
+    )]
     #[ApiProperty(types: ['https://schema.org/identifier'])]
     private ?string $tweetId = null;
 
     #[ORM\Column(name: 'creation_date', type: 'datetime')]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[ApiProperty(types: ['https://schema.org/DateTime'])]
     private ?\DateTime $creationDate = null;
 
