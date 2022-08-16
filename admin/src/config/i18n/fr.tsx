@@ -51,6 +51,19 @@ export const fr = {
                 active_last_play_date: 'Joueurs actifs'
             }
         },
+        games: {
+            name: 'Partie |||| Parties',
+            fields: {
+                tweet: 'Tweet',
+                player: 'Joueur',
+                score: 'Score',
+                playDate: 'Date de jeu',
+                reward: 'Récompense'
+            },
+            list: {
+                active_last_play_date: 'Joueurs actifs'
+            }
+        },
         twitter_account_to_follows: {
             name: 'Compte Twitter à suivre |||| Comptes Twitter à suivre',
             fields: {

@@ -25,11 +25,11 @@ use Symfony\Component\Uid\Uuid;
         new Put(denormalizationContext: ['groups' => ['put']]),
     ],
     mercure: ['private' => true],
-    order: ['distributed' => 'ASC'],
+    order: ['distributed' => 'ASC', 'game.playDate' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['distributed' => 'exact'])]
-#[ApiFilter(OrderFilter::class, properties: ['distributed'])]
+#[ApiFilter(OrderFilter::class, properties: ['distributed', 'game.playDate', 'game.player.username'])]
 class Reward
 {
     #[ORM\Id]

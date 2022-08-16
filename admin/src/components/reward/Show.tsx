@@ -19,6 +19,9 @@ export const Show: FunctionComponent<Props> = ({reward}) => {
                     <FieldGuesser source="username"/>
                 </ReferenceField>
             </ReferenceField>
+            <ReferenceField label={translate('resources.games.fields.playDate')} source="game" reference="games" sortBy="game.playDate" link={false}>
+                <FieldGuesser source="playDate"/>
+            </ReferenceField>
             <FieldGuesser source="distributed"/>
         </ShowGuesser>
     );
