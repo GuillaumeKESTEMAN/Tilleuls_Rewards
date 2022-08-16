@@ -67,6 +67,40 @@ class TwitterAccountToFollowTest extends ApiTestCase
             '@context' => '/contexts/TwitterAccountToFollow',
             '@id' => $iri,
             '@type' => 'TwitterAccountToFollow',
+            'username' => '@coopTilleuls',
+            'name' => 'Les-Tilleuls.coop'
+        ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testCreateInvalidTwitterAccountToFollow(): void
+    {
+        $token = LoginTest::getLoginToken();
+
+        $invalidTwitterUsernameAccount = 'testInvalidUser';
+
+        static::createClient()->request('POST', '/twitter_account_to_follows', [
+            'auth_bearer' => $token,
+            'json' => [
+                "username" => "@" . $invalidTwitterUsernameAccount,   # not exists for the moment
+                "active" => false
+            ]
+        ]);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        self::assertJsonContains([
+            '@context' => '/contexts/ConstraintViolationList',
+            '@type' => 'ConstraintViolationList',
+            'hydra:title' => 'An error occurred',
+            'hydra:description' => 'username: Le compte Twitter "@testInvalidUser" n\'existe pas',
         ]);
     }
 
@@ -101,38 +135,6 @@ class TwitterAccountToFollowTest extends ApiTestCase
 
         $this->assertMatchesRegularExpression('~^/twitter_account_to_follows/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
         self::assertMatchesResourceItemJsonSchema(TwitterAccountToFollow::class);
-    }
-
-    /**
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     */
-    public function testCreateInvalidTwitterAccountToFollow(): void
-    {
-        $token = LoginTest::getLoginToken();
-
-        $invalidTwitterUsernameAccount = 'testInvalidUser';
-
-        static::createClient()->request('POST', '/twitter_account_to_follows', [
-            'auth_bearer' => $token,
-            'json' => [
-                "username" => "@" . $invalidTwitterUsernameAccount,   # not exists for the moment
-                "active" => false
-            ]
-        ]);
-
-        self::assertResponseStatusCodeSame(422);
-        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-
-        self::assertJsonContains([
-            '@context' => '/contexts/ConstraintViolationList',
-            '@type' => 'ConstraintViolationList',
-            'hydra:title' => 'An error occurred',
-            'hydra:description' => 'username: Le compte Twitter "@testInvalidUser" n\'existe pas',
-        ]);
     }
 
     /**

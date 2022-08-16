@@ -119,6 +119,28 @@ class GameTest extends ApiTestCase
 
     /**
      * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     */
+    public function testFailedToReupdateGame(): void
+    {
+        $token = LoginTest::getLoginToken();
+
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+
+        static::createClient()->request('PUT', $iri, [
+            'auth_bearer' => $token,
+            'json' => [
+                'score' => 11,
+            ]]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    /**
+     * @throws TransportExceptionInterface
      */
     public function testDeleteGame(): void
     {

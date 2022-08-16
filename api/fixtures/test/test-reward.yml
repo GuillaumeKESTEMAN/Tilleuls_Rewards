@@ -1,8 +1,4 @@
 App\Entity\Reward:
-    reward_{1..59}:
+    reward_{1..60}:
         lot: '@lot_<current()>'
-        distributed: <boolean()>
-    
-    reward_60:
-        lot: '@lot_60'
         distributed: <boolean()>

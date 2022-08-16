@@ -75,6 +75,36 @@ class TweetReplyTest extends ApiTestCase
      * @throws ServerExceptionInterface
      * @throws DecodingExceptionInterface
      */
+    public function testCreateInvalidTweetReply(): void
+    {
+        $token = LoginTest::getLoginToken();
+
+        $response = static::createClient()->request('POST', '/tweet_replies', [
+            'auth_bearer' => $token,
+            'json' => [
+                'name' => 'invalid_name',
+                'message' => 'valid message'
+            ]
+        ]);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        self::assertJsonContains([
+            '@context' => '/contexts/ConstraintViolationList',
+            '@type' => 'ConstraintViolationList',
+            'hydra:title' => 'An error occurred',
+            'hydra:description' => 'name: The value you selected is not a valid choice.'
+        ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws DecodingExceptionInterface
+     */
     public function testCreateTweetReply(): void
     {
         $token = LoginTest::getLoginToken();

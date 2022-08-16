@@ -69,39 +69,6 @@ class MediaObjectTest extends ApiTestCase
         ]);
     }
 
-    /**
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface|DecodingExceptionInterface
-     */
-    public function testCreateAMediaObject(): void
-    {
-        $token = LoginTest::getLoginToken();
-
-        $file = new UploadedFile('fixtures/test/files/test_image.png', 'test_image.png');
-
-        $response = self::createClient()->request('POST', '/media_objects', [
-            'auth_bearer' => $token,
-            'headers' => ['Content-Type' => 'multipart/form-data'],
-            'extra' => [
-                'parameters' => [
-                    'name' => 'My uploaded file',
-                ],
-                'files' => [
-                    'file' => $file,
-                ],
-            ]
-        ]);
-
-        self::assertResponseStatusCodeSame(201);
-        self::assertJsonContains([
-            'name' => 'My uploaded file',
-        ]);
-
-        $this->assertMatchesRegularExpression('~^/media_objects/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
-        self::assertMatchesResourceItemJsonSchema(MediaObject::class);
-    }
 
     /**
      * @throws RedirectionExceptionInterface
@@ -138,6 +105,40 @@ class MediaObjectTest extends ApiTestCase
             'hydra:title' => 'An error occurred',
             'hydra:description' => 'file: The mime type of the file is invalid ("text/plain"). Allowed mime types are "image/jpeg", "image/jpg", "image/png".',
         ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface|DecodingExceptionInterface
+     */
+    public function testCreateAMediaObject(): void
+    {
+        $token = LoginTest::getLoginToken();
+
+        $file = new UploadedFile('fixtures/test/files/test_image.png', 'test_image.png');
+
+        $response = self::createClient()->request('POST', '/media_objects', [
+            'auth_bearer' => $token,
+            'headers' => ['Content-Type' => 'multipart/form-data'],
+            'extra' => [
+                'parameters' => [
+                    'name' => 'My uploaded file',
+                ],
+                'files' => [
+                    'file' => $file,
+                ],
+            ]
+        ]);
+
+        self::assertResponseStatusCodeSame(201);
+        self::assertJsonContains([
+            'name' => 'My uploaded file',
+        ]);
+
+        $this->assertMatchesRegularExpression('~^/media_objects/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        self::assertMatchesResourceItemJsonSchema(MediaObject::class);
     }
 
     /**

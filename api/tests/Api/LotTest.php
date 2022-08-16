@@ -84,6 +84,37 @@ class LotTest extends ApiTestCase
      * @throws ServerExceptionInterface
      * @throws DecodingExceptionInterface
      */
+    public function testCreateLotWithInvalidQuantity(): void
+    {
+        $token = LoginTest::getLoginToken();
+
+        $response = static::createClient()->request('POST', '/lots', [
+            'auth_bearer' => $token,
+            'json' => [
+                'name' => 'Nouveau lot de test',
+                'quantity' => -12,
+                'message' => "C'est un super lot !"
+            ]
+        ]);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        self::assertJsonContains([
+            '@context' => '/contexts/ConstraintViolationList',
+            '@type' => 'ConstraintViolationList',
+            'hydra:title' => 'An error occurred',
+            'hydra:description' => 'quantity: This value should be either positive or zero.'
+        ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws DecodingExceptionInterface
+     */
     public function testCreateLot(): void
     {
         $token = LoginTest::getLoginToken();
@@ -130,13 +161,17 @@ class LotTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'Lot de test 2.0',
+                'quantity' => 2,
+                'message' => 'C\'est un autre super lot !',
             ]
         ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
-            'name' => 'Lot de test 2.0'
+            'name' => 'Lot de test 2.0',
+            'quantity' => 2,
+            'message' => 'C\'est un autre super lot !',
         ]);
     }
 
@@ -154,7 +189,7 @@ class LotTest extends ApiTestCase
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
 
-        // ConstraintViolation with reward
+        // ConstraintViolation with a reward
         self::assertResponseStatusCodeSame(422);
     }
 

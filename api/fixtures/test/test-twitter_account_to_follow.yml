@@ -1,6 +1,6 @@
 App\Entity\TwitterAccountToFollow:
     twitter_account_to_follow:
-        name: <name()>
+        name: 'Les-Tilleuls.coop'
         username (unique): \@coopTilleuls
         twitterAccountId (unique): <isbn13()>
-        active: <boolean()>
+        active: true
