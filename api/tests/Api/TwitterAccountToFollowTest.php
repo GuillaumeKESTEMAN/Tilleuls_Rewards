@@ -114,7 +114,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $invalidTwitterUsernameAccount = 'invalidTwitterUsernameAccount';
+        $invalidTwitterUsernameAccount = 'testInvalidUser';
 
         static::createClient()->request('POST', '/twitter_account_to_follows', [
             'auth_bearer' => $token,
@@ -124,14 +124,14 @@ class TwitterAccountToFollowTest extends ApiTestCase
             ]
         ]);
 
-        self::assertResponseStatusCodeSame(400);
+        self::assertResponseStatusCodeSame(422);
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/contexts/Error',
-            '@type' => 'hydra:Error',
+            '@context' => '/contexts/ConstraintViolationList',
+            '@type' => 'ConstraintViolationList',
             'hydra:title' => 'An error occurred',
-            'hydra:description' => 'The `username` query parameter value [' . $invalidTwitterUsernameAccount . '] does not match ^[A-Za-z0-9_]{1,15}$',
+            'hydra:description' => 'username: Le compte Twitter "@testInvalidUser" n\'existe pas',
         ]);
     }
 
