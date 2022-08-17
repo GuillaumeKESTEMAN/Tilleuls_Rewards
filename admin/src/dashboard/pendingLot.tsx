@@ -27,7 +27,7 @@ export const PendingLot = (props: Props) => {
     });
 
     return (
-        <ListItem button component={Link} to={`/lots/%2Fapi%2Flots%2F${lot.originId}/show`}>
+        <ListItem button component={Link} to={`/lots/%2Flots%2F${lot.originId}/show`}>
             <ListItemAvatar>
                 {isLoading || !image ? (
                     <Avatar>
