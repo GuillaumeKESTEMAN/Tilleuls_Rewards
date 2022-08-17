@@ -4,6 +4,7 @@ import {
     EditButton,
     List,
     RecordContextProvider,
+    TextInput,
     useListContext
 } from 'react-admin';
 import inflection from 'inflection';
@@ -20,16 +21,22 @@ import {ENTRYPOINT} from "../../config/components/entrypoint.ts";
 
 
 // @ts-ignore
-export const MediaList = () => (
-    <List
-        sort={{field: 'name', order: 'ASC'}}
-        perPage={20}
-        pagination={false}
-        component="div"
-    >
-        <CategoryGrid/>
-    </List>
-);
+export const MediaList = () => {
+    const filters = [
+        <TextInput source="name"/>,
+    ];
+
+    return (
+        <List
+            sort={{field: 'name', order: 'ASC'}}
+            perPage={20}
+            filters={filters}
+            component="div"
+        >
+            <CategoryGrid/>
+        </List>
+    );
+}
 
 const CategoryGrid = () => {
     const {data, isLoading} = useListContext<MediaObject>();

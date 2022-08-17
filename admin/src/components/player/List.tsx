@@ -38,14 +38,14 @@ const PostFilterButton = ({ label }) => {
 export const List: FunctionComponent<Props> = ({players}) => {
     const translate = useTranslate();
 
-    const postFilters = [
+    const filters = [
         <PostFilterButton source="lastPlayDate" label={translate('resources.players.list.active_last_play_date')} alwaysOn/>,
         <TextInput source="name"/>,
         <TextInput source="username"/>,
     ];
 
     return (
-        <ListGuesser {...players} rowClick="show" filters={postFilters} sort={{field: 'lastPlayDate', order: 'DESC'}}>
+        <ListGuesser {...players} rowClick="show" filters={filters} sort={{field: 'lastPlayDate', order: 'DESC'}}>
             <FieldGuesser source="name"/>
             <FieldGuesser source="username"/>
             <DateField source="lastPlayDate"
