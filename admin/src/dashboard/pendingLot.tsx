@@ -1,37 +1,37 @@
 import * as React from 'react';
 import {
-    ListItem,
+    ListItemButton,
     ListItemSecondaryAction,
     ListItemAvatar,
     ListItemText,
     Avatar,
     Box,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { useReference } from 'react-admin';
-import { LotRaRecord } from '../types/Lot';
-import { MediaObjectRaRecord } from '../types/MediaObject';
+import RedeemIcon from '@mui/icons-material/Redeem';
+import {Link} from 'react-router-dom';
+import {useReference} from 'react-admin';
+import {LotRaRecord} from '../types/Lot';
+import {MediaObjectRaRecord} from '../types/MediaObject';
 // @ts-ignore
 import {ENTRYPOINT} from "../config/components/entrypoint.ts";
-import RedeemIcon from '@mui/icons-material/Redeem';
 
 interface Props {
     lot: LotRaRecord;
 }
 
 export const PendingLot = (props: Props) => {
-    const { lot } = props;
-    const { referenceRecord: image, isLoading } = useReference<MediaObjectRaRecord>({
+    const {lot} = props;
+    const {referenceRecord: image, isLoading} = useReference<MediaObjectRaRecord>({
         reference: 'media_objects',
         id: lot.image,
     });
 
     return (
-        <ListItem button component={Link} to={`/lots/%2Flots%2F${lot.originId}/show`}>
+        <ListItemButton component={Link} to={`/lots/%2Flots%2F${lot.originId}/show`}>
             <ListItemAvatar>
                 {isLoading || !image ? (
                     <Avatar>
-                        <RedeemIcon htmlColor={'#288690'} />
+                        <RedeemIcon htmlColor={'#288690'}/>
                     </Avatar>
                 ) : (
                     <Avatar
@@ -56,6 +56,6 @@ export const PendingLot = (props: Props) => {
                     quantité : {lot.quantity}
                 </Box>
             </ListItemSecondaryAction>
-        </ListItem>
+        </ListItemButton>
     );
 };
