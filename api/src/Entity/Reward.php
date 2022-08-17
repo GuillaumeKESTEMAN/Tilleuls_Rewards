@@ -29,7 +29,7 @@ use Symfony\Component\Uid\Uuid;
     paginationClientItemsPerPage: true
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['distributed' => 'exact'])]
-#[ApiFilter(OrderFilter::class, properties: ['distributed', 'game.playDate', 'game.player.username'])]
+#[ApiFilter(OrderFilter::class, properties: ['distributed', 'lot.name', 'game.playDate', 'game.player.username'])]
 class Reward
 {
     #[ORM\Id]

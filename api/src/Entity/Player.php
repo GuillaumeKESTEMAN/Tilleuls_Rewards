@@ -45,11 +45,18 @@ class Player
     #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255)]
+    #[ORM\Column(name: 'name', type: 'string')]
+    #[Assert\NotBlank]
     #[ApiProperty(types: ['https://schema.org/name'])]
     private ?string $name = null;
 
-    #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
+    #[ORM\Column(name: 'username', type: 'string', unique: true)]
+    #[Assert\Length(
+        min: 1,
+        max: 16,
+        minMessage: 'Le pseudo demande au moins {{ limit }} caractère',
+        maxMessage: 'Le pseudo ne peut pas avoir plus de {{ limit }} caractères (@ inclut)'
+    )]
     #[Assert\Regex(
         pattern: '/^[@]?[A-Za-z0-9_]+$/',
         message: "Le pseudo ne doit contenir que des lettres, des chiffres et des '_' (il est possible de mettre un @ au début)"

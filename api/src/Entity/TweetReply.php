@@ -55,6 +55,13 @@ class TweetReply
     #[ORM\Column(name: 'message', type: 'string')]
     #[Groups('put')]
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 300,
+        minMessage: 'Le message demande au moins {{ limit }} caractère',
+        maxMessage: 'Le message ne peut pas avoir plus de {{ limit }} caractères'
+    )]
+
     #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle mention : %@joueur%, and same for communication website link : %site_web%', types: ['https://schema.org/Message'])]
     private ?string $message = null;
 

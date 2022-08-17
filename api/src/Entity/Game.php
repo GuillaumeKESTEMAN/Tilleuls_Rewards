@@ -43,7 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         paginationClientItemsPerPage: true
     )
 ]
-#[ApiFilter(SearchFilter::class, properties: ['url' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['player.username' => 'partial'])]
 #[ApiFilter(DateFilter::class, properties: ['playDate'])]
 #[ApiFilter(OrderFilter::class, properties: ['tweet', 'player.username', 'score', 'playDate'])]
 class Game

@@ -80,6 +80,13 @@ class MediaObject
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank(groups: ['media_object_create'])]
+    #[Assert\Length(
+        min: 1,
+        max: 50,
+        minMessage: 'Le lot demande au moins {{ limit }} caractère',
+        maxMessage: 'Le lot ne peut pas avoir plus de {{ limit }} caractères',
+        groups: ['media_object_create']
+    )]
     #[ApiProperty(types: ['https://schema.org/name'])]
     #[Groups(['media_object:read', 'put'])]
     public ?string $name = null;

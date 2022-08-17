@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(validationContext: ['groups' => ['deleteValidation']], processor: LotProcessor::class),
     ],
     mercure: ['private' => true],
-    order: ['name' => 'ASC', 'quantity' => 'DESC'],
+    order: ['quantity' => 'ASC', 'name' => 'ASC'],
     paginationClientItemsPerPage: true
 )]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'ipartial'])]
@@ -48,8 +48,14 @@ class Lot
     #[ApiProperty(types: ['https://schema.org/identifier'])]
     private Uuid $id;
 
-    #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
+    #[ORM\Column(name: 'name', type: 'string', unique: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 50,
+        minMessage: 'Le lot demande au moins {{ limit }} caractère',
+        maxMessage: 'Le lot ne peut pas avoir plus de {{ limit }} caractères'
+    )]
     #[ApiProperty(types: ['https://schema.org/name'])]
     private ?string $name = null;
 
@@ -61,6 +67,12 @@ class Lot
 
     #[ORM\Column(name: 'message', type: 'string')]
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 300,
+        minMessage: 'Le message demande au moins {{ limit }} caractère',
+        maxMessage: 'Le message ne peut pas avoir plus de {{ limit }} caractères'
+    )]
     #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle to mention it : %@joueur% and same for the score : %score%', types: ['https://schema.org/Message'])]
     private ?string $message = null;
 
