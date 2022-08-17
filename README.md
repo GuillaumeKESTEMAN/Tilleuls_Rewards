@@ -23,7 +23,7 @@ or
 
 [On this sql file](/doc/schema.sql)
 
-### GitHub Initialization :
+### GitHub Repository Secrets :
 Create GitHub repository secrets for :
 - TWITTER_ACCESS_TOKEN
 - TWITTER_ACCESS_TOKEN_SECRET
@@ -43,13 +43,14 @@ or
 
 ### Project Stop :
 - Terminate the command `make start`
-- If you didn't use the make command, you must terminate with `docker-compose down`
+- If you didn't use the make command, you must terminate with `docker-compose stop`
 
 ### Project Tests :
 - Launch the project
 - To launch all tests use : `make tests`
 - To launch security tests use : `make tests-security`
 - To launch api tests use : `make tests-api`
+- To launch command tests use : `make tests-command`
 
 ### Mercure :
 To use Mercure in the admin you must have a JWT stored in ./admin/.env like this : `REACT_APP_MERCURE_JWT=YOUR_JWT`
