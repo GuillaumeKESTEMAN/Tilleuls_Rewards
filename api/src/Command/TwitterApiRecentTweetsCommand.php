@@ -107,10 +107,10 @@ class TwitterApiRecentTweetsCommand extends Command
      * @throws TwitterOAuthException
      * @throws NonUniqueResultException
      */
-    private function getRecentTweets(string $hashtag): ?object
+    private function getRecentTweets(string $hashtags): ?object
     {
         $params = [
-            'query' => $hashtag,
+            'query' => $hashtags,
             'expansions' => 'author_id',
             'tweet.fields' => 'created_at',
         ];
@@ -120,9 +120,20 @@ class TwitterApiRecentTweetsCommand extends Command
             $params['since_id'] = $tweet->getTweetId();
         }
 
-        $tweets = $this->twitterApi->get('tweets/search/recent', $params);
+        $tweets = null;
 
-        return $tweets->meta->result_count > 0 ? $tweets : null;
+        try {
+            $tweets = $this->twitterApi->get('tweets/search/recent', $params);
+        } catch (BadRequestHttpException $e) {
+            $this->logger->critical(
+                'Twitter API get request (tweets/search/recent) error : '.$e->getMessage(),
+                [
+                    'error' => $e,
+                ]
+            );
+        }
+
+        return $tweets !== null && $tweets->meta->result_count > 0 ? $tweets : null;
     }
 
     /**
@@ -159,11 +170,9 @@ class TwitterApiRecentTweetsCommand extends Command
                     ]
                 );
             }
-
-            return $user;
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API get request (users/) error '.$e->getMessage(),
+                'Twitter API get request (users/) error : '.$e->getMessage(),
                 [
                     'tweet' => $tweet,
                     'error' => $e,
@@ -171,7 +180,7 @@ class TwitterApiRecentTweetsCommand extends Command
             );
         }
 
-        return null;
+        return $user;
     }
 
     /**
@@ -191,7 +200,7 @@ class TwitterApiRecentTweetsCommand extends Command
                 }
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
-                    'Twitter API get request (friendships/show) error'.$e->getMessage(),
+                    'Twitter API get request (friendships/show) error : '.$e->getMessage(),
                     [
                         'error' => $e,
                     ]
@@ -206,10 +215,9 @@ class TwitterApiRecentTweetsCommand extends Command
      * @throws NonUniqueResultException
      * @throws TwitterOAuthException
      */
-    private function notFollowAccounts(object $user, object $tweet): void
+    private function notFollowAccountsMessage(object $user, object $tweet): void
     {
-        $message = $this->getTweetReplyMessage('need_to_follow_us', $user->name, $user->username);
-        $this->newReply($message, $tweet->id);
+        $this->newReply($this->getTweetReplyMessage('need_to_follow_us', $user->name, $user->username), $tweet->id);
     }
 
     /**
@@ -221,7 +229,7 @@ class TwitterApiRecentTweetsCommand extends Command
             $this->twitterApi->reply($message, $tweetId);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API post request (tweets) error'.$e->getMessage(),
+                'Twitter API post request (tweets) error : '.$e->getMessage(),
                 [
                     'error' => $e,
                 ]
@@ -270,7 +278,7 @@ class TwitterApiRecentTweetsCommand extends Command
             $tweets = $this->getRecentTweets($stringHashtags);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API get request (tweets/search/recent) error'.$e->getMessage(),
+                'Twitter API get request (tweets/search/recent) error : '.$e->getMessage(),
                 [
                     'error' => $e,
                 ]
@@ -332,12 +340,12 @@ class TwitterApiRecentTweetsCommand extends Command
             if (!$this->following($user->id, $accountsToFollow)) {
                 if ($input->getOption('reply')) {
                     try {
-                        $this->notFollowAccounts($user, $tweet);
+                        $this->notFollowAccountsMessage($user, $tweet);
                     } catch (TweetReplyNotFoundException $e) {
                         $this->logger->error(
                             "No tweet reply message found for 'need_to_follow_us' in TwitterApiRecentTweetsCommand",
                             [
-                                'lot_id' => 'need_to_follow_us',
+                                'tweet_reply_id' => 'need_to_follow_us',
                                 'error' => $e,
                             ]
                         );
@@ -357,7 +365,7 @@ class TwitterApiRecentTweetsCommand extends Command
                         $this->logger->error(
                             "No tweet reply message found for 'game_already_generated_less_than_a_day_ago' in TwitterApiRecentTweetsCommand",
                             [
-                                'lot_id' => 'game_already_generated_less_than_a_day_ago',
+                                'tweet_reply_id' => 'game_already_generated_less_than_a_day_ago',
                                 'error' => $e,
                             ]
                         );
@@ -385,7 +393,7 @@ class TwitterApiRecentTweetsCommand extends Command
                         $this->logger->error(
                             "No tweet reply message found for 'no_more_available_lots' in TwitterApiRecentTweetsCommand",
                             [
-                                'lot_id' => 'no_more_available_lots',
+                                'tweet_reply_id' => 'no_more_available_lots',
                                 'error' => $e,
                             ]
                         );
@@ -420,7 +428,7 @@ class TwitterApiRecentTweetsCommand extends Command
                     $this->logger->error(
                         "No tweet reply message found for 'on_new_game' in TwitterApiRecentTweetsCommand",
                         [
-                            'lot_id' => 'on_new_game',
+                            'tweet_reply_id' => 'on_new_game',
                             'error' => $e,
                         ]
                     );
