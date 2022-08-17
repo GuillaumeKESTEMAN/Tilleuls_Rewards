@@ -9,4 +9,4 @@ App\Entity\TwitterAccountToFollow:
         name: 'Les-Tilleuls.coop'
         username (unique): \@coopTilleuls
         twitterAccountId (unique): <isbn13()>
-        active: true
+        active: false

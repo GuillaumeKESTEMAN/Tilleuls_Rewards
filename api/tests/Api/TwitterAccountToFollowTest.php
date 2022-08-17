@@ -88,7 +88,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         static::createClient()->request('POST', '/twitter_account_to_follows', [
             'auth_bearer' => $token,
             'json' => [
-                'username' => '@'.$invalidTwitterUsernameAccount,   // not exists for the moment
+                'username' => '@'.$invalidTwitterUsernameAccount,   // doesn't exist
                 'active' => false,
             ],
         ]);
@@ -100,7 +100,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
             '@context' => '/contexts/ConstraintViolationList',
             '@type' => 'ConstraintViolationList',
             'hydra:title' => 'An error occurred',
-            'hydra:description' => 'username: Le compte Twitter "@testInvalidUser" n\'existe pas',
+            'hydra:description' => 'username: Le compte Twitter "@'.$invalidTwitterUsernameAccount.'" n\'existe pas',
         ]);
     }
 
@@ -156,7 +156,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
             'auth_bearer' => $token,
             'json' => [
                 'username' => '@coopTilleuls',
-                'active' => false,
+                'active' => true,
             ],
         ]);
 
@@ -164,7 +164,7 @@ class TwitterAccountToFollowTest extends ApiTestCase
         self::assertJsonContains([
             '@id' => $iri,
             'username' => '@coopTilleuls',
-            'active' => false,
+            'active' => true,
         ]);
     }
 

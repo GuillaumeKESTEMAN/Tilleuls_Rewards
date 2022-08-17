@@ -29,10 +29,6 @@ final class MediaObjectProcessor implements ProcessorInterface
         $root = \array_slice($root, 0, -3);
         $root = implode('/', $root);
 
-        $originPath = $root.'/fixtures/test/files/image.png';
-        $targetPath = $root.'/fixtures/test/files/test_image.png';
-        $fs->copy($originPath, $targetPath);
-
         $fs->touch($root.'/fixtures/test/files/invalid_file.txt');
         $fs->appendToFile($root.'/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
     }

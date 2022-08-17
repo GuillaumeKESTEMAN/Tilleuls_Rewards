@@ -116,7 +116,7 @@ class MediaObjectTest extends ApiTestCase
     {
         $token = LoginTest::getLoginToken();
 
-        $file = new UploadedFile('fixtures/test/files/test_image.png', 'test_image.png');
+        $file = new UploadedFile('fixtures/test/files/image.png', 'image.png');
 
         $response = self::createClient()->request('POST', '/media_objects', [
             'auth_bearer' => $token,
