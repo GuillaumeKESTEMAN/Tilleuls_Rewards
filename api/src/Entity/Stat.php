@@ -20,7 +20,7 @@ use App\State\StatGamesCountProvider;
         paginationClientItemsPerPage: true
     )
 ]
-final class Stat
+class Stat
 {
 
     public int $nbrGames = 0;

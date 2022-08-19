@@ -44,7 +44,7 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 #[ApiFilter(BooleanFilter::class, properties: ['active' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['name', 'username', 'active'])]
 
-final class TwitterAccountToFollow
+class TwitterAccountToFollow
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]

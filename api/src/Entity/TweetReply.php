@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['name', 'message'])]
-final class TweetReply
+class TweetReply
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
