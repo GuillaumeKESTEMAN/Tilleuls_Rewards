@@ -14,11 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-<<<<<<< HEAD
 final class StatTest extends ApiTestCase
-=======
-class StatTest extends ApiTestCase
->>>>>>> 0caddfb... Add Stat entity to get the count of games creations by days on a period (#1)
 {
     /**
      * @throws RedirectionExceptionInterface
