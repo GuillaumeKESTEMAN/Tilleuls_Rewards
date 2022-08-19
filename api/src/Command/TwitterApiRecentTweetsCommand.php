@@ -212,7 +212,7 @@ final class TwitterApiRecentTweetsCommand extends Command
      * @throws NonUniqueResultException
      * @throws TwitterOAuthException
      */
-    private function notFollowAccountsMessage(object $user, object $tweet): void
+    private function notFollowAllNeededAccountsReply(object $user, object $tweet): void
     {
         $this->newReply($this->getTweetReplyMessage('need_to_follow_us', $user->name, $user->username), $tweet->id);
     }
@@ -337,7 +337,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             if (!$this->following($user->id, $accountsToFollow)) {
                 if ($input->getOption('reply')) {
                     try {
-                        $this->notFollowAccountsMessage($user, $tweet);
+                        $this->notFollowAllNeededAccountsReply($user, $tweet);
                     } catch (TweetReplyNotFoundException $e) {
                         $this->logger->error(
                             "No tweet reply message found for 'need_to_follow_us' in TwitterApiRecentTweetsCommand",
