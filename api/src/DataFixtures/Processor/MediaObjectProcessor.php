@@ -10,6 +10,10 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class MediaObjectProcessor implements ProcessorInterface
 {
+    public function __construct(private readonly string $appEnv)
+    {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -19,7 +23,7 @@ final class MediaObjectProcessor implements ProcessorInterface
             return;
         }
 
-        if ('test' !== $_ENV['APP_ENV']) {
+        if ('test' !== $this->appEnv) {
             return;
         }
 
@@ -29,8 +33,8 @@ final class MediaObjectProcessor implements ProcessorInterface
         $root = \array_slice($root, 0, -3);
         $root = implode('/', $root);
 
-        $fs->touch($root.'/fixtures/test/files/invalid_file.txt');
-        $fs->appendToFile($root.'/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
+        $fs->touch($root . '/fixtures/test/files/invalid_file.txt');
+        $fs->appendToFile($root . '/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
     }
 
     /**

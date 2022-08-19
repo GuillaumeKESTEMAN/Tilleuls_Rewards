@@ -15,7 +15,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class GamePutProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly PersistProcessor $persistProcessor, private readonly TwitterApi $twitterApi, private readonly LoggerInterface $logger)
+    public function __construct(private readonly PersistProcessor $persistProcessor,
+                                private readonly TwitterApi       $twitterApi,
+                                private readonly string           $appEnv,
+                                private readonly LoggerInterface  $logger)
     {
     }
 
@@ -26,22 +29,22 @@ final class GamePutProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
-        if ('test' !== $_ENV['APP_ENV'] && $data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
+        if ('test' !== $this->appEnv && $data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
             if (null === $data->getReward()) {
-                throw new \LogicException('Reward of the game n°'.$data->getId().' not exists during game PUT request');
+                throw new \LogicException('Reward of the game n°' . $data->getId() . ' not exists during game PUT request');
             }
             if (null === $data->getReward()->getLot()) {
-                throw new \LogicException('Lot of the reward n°'.$data->getReward()->getId().' not exists during game PUT request');
+                throw new \LogicException('Lot of the reward n°' . $data->getReward()->getId() . ' not exists during game PUT request');
             }
             if (null === $data->getTweet()) {
-                throw new \LogicException('Tweet of the game n°'.$data->getId().' not exists during game PUT request');
+                throw new \LogicException('Tweet of the game n°' . $data->getId() . ' not exists during game PUT request');
             }
 
             try {
                 $this->twitterApi->reply($data->getReward()->getLot()->getMessage(), $data->getTweet()->getTweetId());
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
-                    'Twitter API post request (tweets) error'.$e->getMessage(),
+                    'Twitter API post request (tweets) error' . $e->getMessage(),
                     [
                         'error' => $e,
                     ]
