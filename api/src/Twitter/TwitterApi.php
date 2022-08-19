@@ -6,6 +6,8 @@ namespace App\Twitter;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;
+use App\Repository\TweetRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -14,12 +16,15 @@ final class TwitterApi
     private array $memoize = [];
 
     public function __construct(
-        private readonly string $twitterConsumerKey,
-        private readonly string $twitterConsumerSecret,
-        private readonly string $twitterAccessToken,
-        private readonly string $twitterAccessTokenSecret,
+        private readonly string          $twitterConsumerKey,
+        private readonly string          $twitterConsumerSecret,
+        private readonly string          $twitterAccessToken,
+        private readonly string          $twitterAccessTokenSecret,
+        private readonly TweetRepository $tweetRepository,
+        private readonly string          $appEnv,
         private readonly LoggerInterface $logger
-    ) {
+    )
+    {
     }
 
     private function getConnection(): TwitterOAuth
@@ -49,7 +54,7 @@ final class TwitterApi
         }
 
         $this->logger->critical(
-            'Twitter API get request error : '.$response->detail,
+            'Twitter API get request error : ' . $response->detail,
             [
                 'response' => $response,
             ]
@@ -71,7 +76,7 @@ final class TwitterApi
         }
 
         $this->logger->critical(
-            'Twitter API post request error : '.$response->detail,
+            'Twitter API post request error : ' . $response->detail,
             [
                 'response' => $response,
             ]
@@ -93,5 +98,44 @@ final class TwitterApi
         ];
 
         return $this->post('tweets', $params);
+    }
+
+    /**
+     * @throws TwitterOAuthException
+     */
+    public function getUser(string $authorId): array|object
+    {
+        return $this->get('users/' . $authorId);
+    }
+
+    /**
+     * @throws TwitterOAuthException
+     */
+    public function isFollowing(string $sourceId, string $targetId): bool
+    {
+        return $this->get('friendships/show', [
+            'source_id' => $sourceId,
+            'target_id' => $targetId,
+        ], '1.1')->relationship->source->following;
+    }
+
+    /**
+     * @throws TwitterOAuthException
+     * @throws NonUniqueResultException
+     */
+    public function getRecentTweets(string $query = ''): array|object
+    {
+        $params = [
+            'query' => $query,
+            'expansions' => 'author_id',
+            'tweet.fields' => 'created_at',
+        ];
+
+        $tweet = $this->tweetRepository->findLastTweet();
+        if ($this->appEnv !== 'test' && null !== $tweet) {
+            $params['since_id'] = $tweet->getTweetId();
+        }
+
+        return $this->get('tweets/search/recent', $params);
     }
 }

@@ -60,7 +60,6 @@ final class TwitterApiRecentTweetsCommand extends Command
         private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository,
         private readonly TwitterHashtagRepository         $twitterHashtagRepository,
         private readonly string                           $communicationWebsiteUrl,
-        private readonly string                           $appEnv,
         private readonly LoggerInterface                  $logger,
         private readonly ValidatorInterface               $validator
     )
@@ -75,7 +74,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             ->addOption('reply', null, InputOption::VALUE_NONE, 'Reply with game URL');
     }
 
-    private function selectDefaultTweetReplieById(string $id): ?array
+    private function selectDefaultTweetReplyById(string $id): ?array
     {
         foreach (self::DEFAULTS_TWEETS_REPLIES as $row) {
             if ($row['id'] === $id) {
@@ -97,7 +96,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             return $message;
         }
 
-        $message = $this->selectDefaultTweetReplieById($id);
+        $message = $this->selectDefaultTweetReplyById($id);
         if (null === $message) {
             throw new TweetReplyNotFoundException();
         }
@@ -111,21 +110,10 @@ final class TwitterApiRecentTweetsCommand extends Command
      */
     private function getRecentTweets(string $hashtags): ?object
     {
-        $params = [
-            'query' => $hashtags,
-            'expansions' => 'author_id',
-            'tweet.fields' => 'created_at',
-        ];
-
-        $tweet = $this->tweetRepository->findLastTweet();
-        if ($this->appEnv !== 'test' && null !== $tweet) {
-            $params['since_id'] = $tweet->getTweetId();
-        }
-
         $tweets = null;
 
         try {
-            $tweets = $this->twitterApi->get('tweets/search/recent', $params);
+            $tweets = $this->twitterApi->getRecentTweets($hashtags);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
                 'Twitter API get request (tweets/search/recent) error : ' . $e->getMessage(),
@@ -156,7 +144,7 @@ final class TwitterApiRecentTweetsCommand extends Command
         }
 
         try {
-            $user = $this->twitterApi->get('users/' . $tweet->author_id);
+            $user = $this->twitterApi->getUser($tweet->author_id);
             $user = $user->data ?? null;
 
             if (null === $user) {
@@ -187,12 +175,9 @@ final class TwitterApiRecentTweetsCommand extends Command
     {
         foreach ($accountsToFollow as $accountToFollow) {
             try {
-                $friendships = $this->twitterApi->get('friendships/show', [
-                    'source_id' => $userId,
-                    'target_id' => $accountToFollow->getTwitterAccountId(),
-                ], '1.1');
+                $friendships = $this->twitterApi->isFollowing($userId, $accountToFollow->getTwitterAccountId());
 
-                if (!$friendships->relationship->source->following) {
+                if (!$friendships) {
                     return false;
                 }
             } catch (BadRequestHttpException $e) {
