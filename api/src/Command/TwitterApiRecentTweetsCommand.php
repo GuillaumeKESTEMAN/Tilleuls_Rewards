@@ -151,13 +151,8 @@ final class TwitterApiRecentTweetsCommand extends Command
 
         foreach ($tweets->includes->users as $tweetUser) {
             if ($tweetUser->id === $tweet->author_id) {
-                $user = $tweetUser;
-                break;
+                return $tweetUser;
             }
-        }
-
-        if (null !== $user) {
-            return $user;
         }
 
         try {
@@ -289,7 +284,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             return Command::FAILURE;
         }
 
-        if (!$tweets) {
+        if (null === $tweets) {
             $io->success('Aucun tweet trouvé pour : ' . $stringHashtags);
             $this->logger->notice('Aucun tweet trouvé pour : ' . $stringHashtags);
 
