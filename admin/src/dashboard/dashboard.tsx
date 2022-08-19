@@ -10,6 +10,7 @@ import NbResource from "./nbResource.tsx";
 // @ts-ignore
 import PendingLots from "./pendingLots.tsx";
 import {Game} from '../types/Game';
+import {Stat_Game} from '../types/Stat_Game';
 import {PlayerRaRecord} from '../types/Player';
 import {LotRaRecord} from '../types/Lot';
 import {useMediaQuery, Theme} from '@mui/material';
@@ -21,7 +22,7 @@ interface State {
     nbLots: number;
     pendingLots?: LotRaRecord[];
     nbGames: number;
-    recentGames?: Game[];
+    gamesCount?: LotRaRecord[];
     nbPlayers: number;
 }
 
@@ -46,6 +47,7 @@ const Dashboard = () => {
     const nbrMaxGamesDatesToShow = isXSmall ? 7 : isSmall ? 15 : 30;
 
     const aSubDaysAgoForGames = useMemo(() => subDays(startOfDay(new Date()), nbrMaxGamesDatesToShow), [nbrMaxGamesDatesToShow]);
+    console.log(aSubDaysAgoForGames);
 
     const {data: lots = [], total: totalLots = 0} = useGetList<LotRaRecord>('lots', {
         sort: {field: 'quantity', order: 'ASC'},
@@ -60,35 +62,33 @@ const Dashboard = () => {
         };
     }, [lots, totalLots]);
 
-    const {data: games = [], total: totalGames = 0} = useGetList<Game>('games', {
-        filter: {playDate: aSubDaysAgoForGames.toISOString()},
-        sort: {field: 'playDate', order: 'DESC'},
-        pagination: {page: 1, perPage: 100},
+    const {data: gamesCountStats = []} = useGetList<Stat_Game>(`stats/games/after/${aSubDaysAgoForGames.toISOString()}`);
+    const {total: totalGames = 0} = useGetList<Game>('games', {
+        pagination: {page: 1, perPage: 1},
     });
 
     // @ts-ignore
     const gamesAggregation = useMemo<State>(() => {
         return {
-            recentGames: games,
+            gamesCount: gamesCountStats,
             nbGames: totalGames,
         };
-    }, [games, totalGames]);
-
+    }, [gamesCountStats, totalGames]);
 
     const {total: totalPlayers = 0} = useGetList<PlayerRaRecord>('players', {
         filter: {"exists[lastPlayDate]": true},
         pagination: {page: 1, perPage: 1},
     });
-
     // @ts-ignore
+
     const playersAggregation = useMemo<State>(() => {
         return {
             nbPlayers: totalPlayers,
         };
     }, [totalPlayers]);
-
-    const {recentGames, nbGames} = gamesAggregation;
+    const {gamesCount, nbGames} = gamesAggregation;
     const {nbPlayers} = playersAggregation;
+
     const {nbLots, pendingLots} = lotsAggregation;
 
     return isXSmall ? (
@@ -111,7 +111,7 @@ const Dashboard = () => {
                 icon={VideogameAssetIcon}
                 title={translate('pos.dashboard.games.total')}
             />
-            <GameChart games={recentGames} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
+            <GameChart gamesCount={gamesCount} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
         </Card>
     ) : isSmall ? (
         <Card>
@@ -143,7 +143,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <GameChart games={recentGames} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
+            <GameChart gamesCount={gamesCount} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
         </Card>
     ) : (
         <Card>
@@ -162,7 +162,7 @@ const Dashboard = () => {
                             title={translate('pos.dashboard.games.total')}
                         />
                         <br/>
-                        <GameChart games={recentGames} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
+                        <GameChart gamesCount={gamesCount} nbrMaxGamesDatesToShow={nbrMaxGamesDatesToShow}/>
                     </div>
                 </div>
                 <div style={styles.rightCol}>

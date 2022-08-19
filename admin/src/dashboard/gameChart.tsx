@@ -12,11 +12,11 @@ import {
 import {useTranslate} from 'react-admin';
 import {format, subDays, addDays} from 'date-fns';
 
-import {Game} from '../types/Game';
+import {Stat_Game} from '../types/Stat_Game';
 
 
-const GameChart = (props: { games?: Game[], nbrMaxGamesDatesToShow?: number }) => {
-    const {games, nbrMaxGamesDatesToShow} = props;
+const GameChart = (props: { gamesCount?: Stat_Game[], nbrMaxGamesDatesToShow?: number }) => {
+    const {gamesCount, nbrMaxGamesDatesToShow} = props;
     const translate = useTranslate();
 
     const lastDay = new Date();
@@ -26,34 +26,32 @@ const GameChart = (props: { games?: Game[], nbrMaxGamesDatesToShow?: number }) =
     const dateFormatter = (date: number): string =>
         new Date(date).toLocaleDateString();
 
-    const aggregateGamesByDay = (games: Game[]): { [key: string]: number } =>
-        games
+    const aggregateGamesByDay = (gamesCount: Stat_Game[]): { [key: string]: number } =>
+        gamesCount
             .reduce((acc, curr) => {
-                const day = format(new Date(curr.playDate), 'yyyy-MM-dd');
-                if (!acc[day]) {
-                    acc[day] = 0;
-                }
-                acc[day]++;
+                const day = format(new Date(curr.date), 'yyyy-MM-dd');
+                acc[day] = curr.nbrGames;
                 return acc;
             }, {} as { [key: string]: number });
 
-    const getNbGamesPerDay = (games: Game[]): TotalByDay[] => {
-        const daysWithGames = aggregateGamesByDay(games);
+    const getNbGamesPerDay = (gamesCount: Stat_Game[]): TotalByDay[] => {
+        const daysWithGames = aggregateGamesByDay(gamesCount);
         return lastMonthDays.map(date => ({
             date: date.getTime(),
             total: daysWithGames[format(new Date(date), 'yyyy-MM-dd')] || 0,
         }));
     };
 
-    if (!games) return (<CardHeader title={translate('pos.dashboard.games.no_games')}/>);
+    if (!gamesCount || (Array.isArray(gamesCount) && gamesCount.length === 0)) return (<CardHeader title={translate('pos.dashboard.games.no_games')}/>);
 
     return (
         <Card>
-            <CardHeader title={translate('pos.dashboard.games.month_history').replace('%nbr_jours%', nbrMaxGamesDatesToShow.toString())}/>
+            <CardHeader
+                title={translate('pos.dashboard.games.month_history').replace('%nbr_jours%', nbrMaxGamesDatesToShow.toString())}/>
             <CardContent>
                 <div style={{width: '100%', height: 300}}>
                     <ResponsiveContainer>
-                        <BarChart width={600} height={600} data={getNbGamesPerDay(games)}>
+                        <BarChart width={600} height={600} data={getNbGamesPerDay(gamesCount)}>
                             <CartesianGrid stroke="#ccc"/>
                             <Bar dataKey="total" fill="#288690"/>
                             <XAxis
@@ -62,7 +60,7 @@ const GameChart = (props: { games?: Game[], nbrMaxGamesDatesToShow?: number }) =
                                 type="number"
                                 scale="time"
                                 domain={[
-                                    addDays(aMonthAgo, 1).getTime(),
+                                    addDays(aMonthAgo, 0).getTime(),
                                     new Date().getTime(),
                                 ]}
                                 tickFormatter={dateFormatter}
