@@ -110,20 +110,9 @@ final class TwitterApiRecentTweetsCommand extends Command
      */
     private function getRecentTweets(string $hashtags): ?object
     {
-        $tweets = null;
+        $tweets = $this->twitterApi->getRecentTweets($hashtags);
 
-        try {
-            $tweets = $this->twitterApi->getRecentTweets($hashtags);
-        } catch (BadRequestHttpException $e) {
-            $this->logger->critical(
-                'Twitter API get request (tweets/search/recent) error : ' . $e->getMessage(),
-                [
-                    'error' => $e,
-                ]
-            );
-        }
-
-        return $tweets !== null && $tweets->meta->result_count > 0 ? $tweets : null;
+        return $tweets->meta->result_count > 0 ? $tweets : null;
     }
 
     /**
@@ -265,6 +254,8 @@ final class TwitterApiRecentTweetsCommand extends Command
                     'error' => $e,
                 ]
             );
+
+            $io->error('Twitter API get request (tweets/search/recent) error : ' . $e->getMessage());
 
             return Command::FAILURE;
         }
