@@ -47,7 +47,6 @@ const Dashboard = () => {
     const nbrMaxGamesDatesToShow = isXSmall ? 7 : isSmall ? 15 : 30;
 
     const aSubDaysAgoForGames = useMemo(() => subDays(startOfDay(new Date()), nbrMaxGamesDatesToShow), [nbrMaxGamesDatesToShow]);
-    console.log(aSubDaysAgoForGames);
 
     const {data: lots = [], total: totalLots = 0} = useGetList<LotRaRecord>('lots', {
         sort: {field: 'quantity', order: 'ASC'},
