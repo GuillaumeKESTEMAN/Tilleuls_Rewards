@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class TwitterHashtagTest extends ApiTestCase
+final class TwitterHashtagTest extends ApiTestCase
 {
     /**
      * @throws RedirectionExceptionInterface

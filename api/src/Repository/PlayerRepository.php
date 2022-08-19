@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
  * @method Player[]    findAll()
  * @method Player[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PlayerRepository extends CommonRepository
+final class PlayerRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {

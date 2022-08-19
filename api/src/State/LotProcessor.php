@@ -11,7 +11,7 @@ use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use App\Entity\Lot;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class LotProcessor implements ProcessorInterface
+final class LotProcessor implements ProcessorInterface
 {
     public function __construct(private readonly RemoveProcessor $removeProcessor, private readonly ValidatorInterface $validator)
     {

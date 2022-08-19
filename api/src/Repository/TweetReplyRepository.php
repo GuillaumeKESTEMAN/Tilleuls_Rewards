@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
  * @method TweetReply[]    findAll()
  * @method TweetReply[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TweetReplyRepository extends CommonRepository
+final class TweetReplyRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {

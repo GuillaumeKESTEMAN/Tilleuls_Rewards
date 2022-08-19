@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class MediaObjectTest extends ApiTestCase
+final class MediaObjectTest extends ApiTestCase
 {
     /**
      * @throws RedirectionExceptionInterface

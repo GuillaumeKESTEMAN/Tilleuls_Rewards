@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-class NoActiveHashtagException extends \RuntimeException
+final class NoActiveHashtagException extends \RuntimeException
 {
 }

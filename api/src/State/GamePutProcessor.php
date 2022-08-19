@@ -13,7 +13,7 @@ use App\Twitter\TwitterApi;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class GamePutProcessor implements ProcessorInterface
+final class GamePutProcessor implements ProcessorInterface
 {
     public function __construct(private readonly PersistProcessor $persistProcessor, private readonly TwitterApi $twitterApi, private readonly LoggerInterface $logger)
     {

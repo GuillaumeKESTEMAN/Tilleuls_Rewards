@@ -13,7 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class RewardTest extends ApiTestCase
+final class RewardTest extends ApiTestCase
 {
     /**
      * @throws RedirectionExceptionInterface

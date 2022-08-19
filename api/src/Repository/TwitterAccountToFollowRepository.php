@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * @method TwitterAccountToFollow[]    findAll()
  * @method TwitterAccountToFollow[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TwitterAccountToFollowRepository extends CommonRepository
+final class TwitterAccountToFollowRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {

@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class LotTest extends ApiTestCase
+final class LotTest extends ApiTestCase
 {
     /**
      * @throws RedirectionExceptionInterface

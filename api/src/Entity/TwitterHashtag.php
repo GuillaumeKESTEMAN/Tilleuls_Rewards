@@ -39,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(SearchFilter::class, properties: ['hashtag' => 'ipartial'])]
 #[ApiFilter(BooleanFilter::class, properties: ['active' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['hashtag', 'active'])]
-class TwitterHashtag
+final class TwitterHashtag
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]

@@ -11,7 +11,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class LoginTest extends ApiTestCase
+final class LoginTest extends ApiTestCase
 {
     /**
      * @throws TransportExceptionInterface

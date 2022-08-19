@@ -41,7 +41,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
     name: 'app:get-recent-tweets',
     description: 'Get recent tweets about DB active hashtags to update DB and reply to play a game for people who follow DB active accounts to follow',
 )]
-class TwitterApiRecentTweetsCommand extends Command
+final class TwitterApiRecentTweetsCommand extends Command
 {
     public function __construct(
         private readonly TwitterApi $twitterApi,

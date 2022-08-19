@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ImageReaderController extends AbstractController
+final class ImageReaderController extends AbstractController
 {
     #[Route('/image/{filePath}', name: 'app_image_reader')]
     public function indexReader(MediaObject $image): BinaryFileResponse

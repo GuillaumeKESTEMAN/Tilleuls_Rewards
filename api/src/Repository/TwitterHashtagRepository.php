@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * @method TwitterHashtag[]    findAll()
  * @method TwitterHashtag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TwitterHashtagRepository extends CommonRepository
+final class TwitterHashtagRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {

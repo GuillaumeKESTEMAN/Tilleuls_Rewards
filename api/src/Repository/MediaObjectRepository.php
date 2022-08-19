@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * @method MediaObject[]    findAll()
  * @method MediaObject[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MediaObjectRepository extends CommonRepository
+final class MediaObjectRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {

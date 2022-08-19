@@ -7,7 +7,7 @@ namespace App\Validator;
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute]
-class HasNotPlayedForADay extends Constraint
+final class HasNotPlayedForADay extends Constraint
 {
     public string $message = 'The player {{username}} has an existing game less than 1 day old';
     public string $mode = 'strict';

@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
  * @method Lot[]    findAll()
  * @method Lot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LotRepository extends CommonRepository
+final class LotRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {

@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * @method Reward[]    findAll()
  * @method Reward[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RewardRepository extends CommonRepository
+final class RewardRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {

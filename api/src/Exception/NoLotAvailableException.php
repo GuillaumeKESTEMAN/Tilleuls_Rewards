@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-class NoLotAvailableException extends \RuntimeException
+final class NoLotAvailableException extends \RuntimeException
 {
 }

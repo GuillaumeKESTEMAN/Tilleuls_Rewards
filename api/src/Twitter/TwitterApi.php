@@ -9,7 +9,7 @@ use Abraham\TwitterOAuth\TwitterOAuthException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class TwitterApi
+final class TwitterApi
 {
     private array $memoize = [];
 

@@ -70,7 +70,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['name'])]
-class MediaObject
+final class MediaObject
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'uuid', unique: true)]
