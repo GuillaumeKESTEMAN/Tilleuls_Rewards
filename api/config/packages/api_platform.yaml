@@ -10,6 +10,6 @@ api_platform:
                 name: Authorization
                 type: header
     defaults:
-        security: 'is_granted("ROLE_USER")'
+        security: 'is_granted("ROLE_ADMIN")'
         pagination_items_per_page: 20
     metadata_backward_compatibility_layer: false

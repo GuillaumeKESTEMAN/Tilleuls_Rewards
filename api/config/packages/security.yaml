@@ -8,7 +8,7 @@ security:
         app_user_provider:
             memory:
                 users:
-                    '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_HASHED_PASSWORD)%', roles: ['ROLE_USER'] }
+                    '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_HASHED_PASSWORD)%', roles: ['ROLE_ADMIN'] }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -35,6 +35,7 @@ security:
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
+        ROLE_GAME: ROLE_USER
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
@@ -59,4 +60,4 @@ when@test:
             app_user_provider:
                 memory:
                     users:
-                        '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: [ 'ROLE_USER' ] }
+                        '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: [ 'ROLE_ADMIN' ] }

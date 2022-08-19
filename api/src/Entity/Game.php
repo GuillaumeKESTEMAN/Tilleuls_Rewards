@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             new Get(),
             new Put(
                 denormalizationContext: ['groups' => ['put']],
-                security: 'object.getScore() === null',
+                security: 'is_granted("ROLE_ADMIN") && object.getScore() === null',
                 validationContext: ['groups' => ['putValidation']],
                 processor: GamePutProcessor::class
             ),
