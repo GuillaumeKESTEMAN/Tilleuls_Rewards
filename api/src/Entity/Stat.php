@@ -20,7 +20,11 @@ use App\State\StatGamesCountProvider;
         paginationClientItemsPerPage: true
     )
 ]
+<<<<<<< HEAD
 final class Stat
+=======
+class Stat
+>>>>>>> 0caddfb... Add Stat entity to get the count of games creations by days on a period (#1)
 {
 
     public int $nbrGames = 0;
