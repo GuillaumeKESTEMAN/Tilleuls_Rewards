@@ -8,7 +8,8 @@ security:
         app_user_provider:
             memory:
                 users:
-                    '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_HASHED_PASSWORD)%', roles: ['ROLE_ADMIN'] }
+                    '%env(USER_ADMIN_IN_MEMORY_USERNAME)%': { password: '%env(USER_ADMIN_IN_MEMORY_HASHED_PASSWORD)%', roles: ['ROLE_ADMIN'] }
+                    '%env(USER_GAME_IN_MEMORY_USERNAME)%': { password: '%env(USER_GAME_IN_MEMORY_HASHED_PASSWORD)%', roles: ['ROLE_GAME'] }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -60,4 +61,5 @@ when@test:
             app_user_provider:
                 memory:
                     users:
-                        '%env(USER_IN_MEMORY_USERNAME)%': { password: '%env(USER_IN_MEMORY_PASSWORD)%', roles: [ 'ROLE_ADMIN' ] }
+                        '%env(USER_ADMIN_IN_MEMORY_USERNAME)%': { password: '%env(USER_ADMIN_IN_MEMORY_PASSWORD)%', roles: [ 'ROLE_ADMIN' ] }
+                        '%env(USER_GAME_IN_MEMORY_USERNAME)%': { password: '%env(USER_GAME_IN_MEMORY_PASSWORD)%', roles: ['ROLE_GAME'] }

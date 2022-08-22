@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 #[UniqueEntity('username')]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(security: 'is_granted("ROLE_ADMIN") || is_granted("ROLE_GAME")'),
         new Post(validationContext: ['groups' => new GroupSequence(['firstPostValidation', 'secondPostValidation'])], processor: TwitterAccountToFollowProcessor::class),
         new Get(),
         new Put(denormalizationContext: ['groups' => ['put']], processor: TwitterAccountToFollowProcessor::class),

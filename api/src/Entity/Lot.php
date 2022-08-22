@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection(),
         new Post(),
-        new Get(),
+        new Get(security: 'is_granted("ROLE_ADMIN") || is_granted("ROLE_GAME")'),
         new Put(),
         new Delete(validationContext: ['groups' => ['deleteValidation']], processor: LotProcessor::class),
     ],

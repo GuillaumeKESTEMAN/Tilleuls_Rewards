@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Get(),
+        new Get(security: 'is_granted("ROLE_ADMIN") || is_granted("ROLE_GAME")'),
     ],
     mercure: ['private' => true],
     order: ['lastPlayDate' => 'DESC', 'name' => 'ASC'],

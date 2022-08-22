@@ -59,7 +59,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             validationContext: ['groups' => ['Default', 'media_object_create']],
             deserialize: false,
         ),
-        new Get(),
+        new Get(security: 'is_granted("ROLE_ADMIN") || is_granted("ROLE_GAME")'),
         new Put(denormalizationContext: ['groups' => ['put']]),
         new Delete(),
     ],

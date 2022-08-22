@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('hashtag')]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(security: 'is_granted("ROLE_ADMIN") || is_granted("ROLE_GAME")'),
         new Post(),
         new Get(),
         new Put(denormalizationContext: ['groups' => ['put']]),
