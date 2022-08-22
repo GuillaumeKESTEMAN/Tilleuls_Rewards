@@ -48,11 +48,32 @@ final class LoginTest extends ApiTestCase
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      */
-    public static function getLoginToken(): string
+    public static function getAdminLoginToken(): string
     {
         $token = self::createClient()->request('POST', '/login', ['json' => [
             'username' => $_ENV['USER_ADMIN_IN_MEMORY_USERNAME'],
             'password' => $_ENV['USER_ADMIN_IN_MEMORY_PASSWORD'],
+        ]]);
+
+        self::assertResponseIsSuccessful();
+
+        self::assertResponseHeaderSame('content-type', 'application/json');
+
+        return $token->toArray()['token'];
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public static function getGameLoginToken(): string
+    {
+        $token = self::createClient()->request('POST', '/login', ['json' => [
+            'username' => $_ENV['USER_GAME_IN_MEMORY_USERNAME'],
+            'password' => $_ENV['USER_GAME_IN_MEMORY_PASSWORD'],
         ]]);
 
         self::assertResponseIsSuccessful();

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_GAME;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\TwitterHashtag;
@@ -25,9 +25,9 @@ final class TwitterHashtagTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getGameLoginToken();
 
-        $response = static::createClient()->request('GET', '/twitter_hashtags', ['auth_bearer' => $token]);
+        $response = self::createClient()->request('GET', '/twitter_hashtags', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -60,21 +60,14 @@ final class TwitterHashtagTest extends ApiTestCase
      */
     public function testGetTwitterHashtag(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getGameLoginToken();
 
-        $client = static::createClient();
-        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest']);
+        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#symfony']);
 
-        $client->request('GET', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseStatusCodeSame(403);
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-
-        self::assertJsonContains([
-            '@context' => '/contexts/TwitterHashtag',
-            '@id' => $iri,
-            '@type' => 'TwitterHashtag',
-        ]);
     }
 
     /**
@@ -86,9 +79,9 @@ final class TwitterHashtagTest extends ApiTestCase
      */
     public function testCreateTwitterHashtag(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getGameLoginToken();
 
-        $response = static::createClient()->request('POST', '/twitter_hashtags', [
+        $response = self::createClient()->request('POST', '/twitter_hashtags', [
             'auth_bearer' => $token,
             'json' => [
                 'hashtag' => '#test',
@@ -96,18 +89,8 @@ final class TwitterHashtagTest extends ApiTestCase
             ],
         ]);
 
-        self::assertResponseStatusCodeSame(201);
+        self::assertResponseStatusCodeSame(403);
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-
-        self::assertJsonContains([
-            '@context' => '/contexts/TwitterHashtag',
-            '@type' => 'TwitterHashtag',
-            'hashtag' => '#test',
-            'active' => false,
-        ]);
-
-        $this->assertMatchesRegularExpression('~^/twitter_hashtags/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
-        self::assertMatchesResourceItemJsonSchema(TwitterHashtag::class);
     }
 
     /**
@@ -119,26 +102,20 @@ final class TwitterHashtagTest extends ApiTestCase
      */
     public function testUpdateTwitterHashtag(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getGameLoginToken();
 
-        $client = static::createClient();
+        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#symfony']);
 
-        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest']);
-
-        $client->request('PUT', $iri, [
+        self::createClient()->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
-                'hashtag' => '#getTest2.0',
+                'hashtag' => '#symfony2.0',
                 'active' => true,
             ],
         ]);
 
-        self::assertResponseIsSuccessful();
-        self::assertJsonContains([
-            '@id' => $iri,
-            'hashtag' => '#getTest',
-            'active' => true,
-        ]);
+        self::assertResponseStatusCodeSame(403);
+        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
     }
 
     /**
@@ -148,16 +125,13 @@ final class TwitterHashtagTest extends ApiTestCase
      */
     public function testDeleteTwitterHashtag(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getGameLoginToken();
 
-        $client = static::createClient();
-        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#getTest']);
+        $iri = $this->findIriBy(TwitterHashtag::class, ['hashtag' => '#symfony']);
 
-        $client->request('DELETE', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('DELETE', $iri, ['auth_bearer' => $token]);
 
-        self::assertResponseStatusCodeSame(204);
-        $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(TwitterHashtag::class)->findOneBy(['hashtag' => '#getTest'])
-        );
+        self::assertResponseStatusCodeSame(403);
+        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
     }
 }

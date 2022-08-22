@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Reward;
@@ -24,9 +24,9 @@ final class RewardTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('GET', '/rewards', ['auth_bearer' => $token]);
+        $response = self::createClient()->request('GET', '/rewards', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -59,9 +59,9 @@ final class RewardTest extends ApiTestCase
      */
     public function testGetReward(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
+        $client = self::createClient();
         $iri = $this->findIriBy(Reward::class, ['distributed' => true]);
 
         $client->request('GET', $iri, ['auth_bearer' => $token]);
@@ -77,16 +77,23 @@ final class RewardTest extends ApiTestCase
     }
 
     /**
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      */
     public function testCreateReward(): void
     {
-        $response = static::createClient()->request('POST', '/rewards', ['json' => [
-            'distributed' => true,
-        ]]);
+        $token = LoginTest::getAdminLoginToken();
+
+        self::createClient()->request('POST', '/rewards', [
+                'auth_bearer' => $token,
+                'json' => [
+                    'distributed' => true,
+                ]
+            ]
+        );
 
         self::assertResponseStatusCodeSame(405);
     }
@@ -100,30 +107,38 @@ final class RewardTest extends ApiTestCase
      */
     public function testUpdateReward(): void
     {
-        $token = LoginTest::getLoginToken();
-
-        $client = static::createClient();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = $this->findIriBy(Reward::class, ['distributed' => true]);
 
-        $client->request('PUT', $iri, [
-            'json' => [
-                'distributed' => false,
-            ],
-            'auth_bearer' => $token, ]);
+        self::createClient()->request('PUT', $iri, [
+                'auth_bearer' => $token,
+                'json' => [
+                    'distributed' => false,
+                ],
+            ]
+        );
 
         self::assertResponseIsSuccessful();
     }
 
     /**
      * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      */
     public function testDeleteReward(): void
     {
-        $client = static::createClient();
+        $token = LoginTest::getAdminLoginToken();
+
         $iri = $this->findIriBy(Reward::class, ['distributed' => true]);
 
-        $client->request('DELETE', $iri);
+        self::createClient()->request('DELETE', $iri, [
+                'auth_bearer' => $token,
+            ]
+        );
 
         self::assertResponseStatusCodeSame(405);
     }

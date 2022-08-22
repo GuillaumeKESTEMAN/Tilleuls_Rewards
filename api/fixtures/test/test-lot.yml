@@ -1,15 +1,25 @@
 App\Entity\Lot:
-    lot_{1..59}:
+    lot_{1..58}:
         name (unique): <word()>
         quantity: <numberBetween(1, 100)>
         message: <sentence()>
     
-    lot_60:
+    lot_59:
         name (unique): 'Lot de test'
+        quantity: <numberBetween(1, 100)>
+        message: <sentence()>
+    
+    lot_60:
+        name (unique): 'Lot de test pour game'
         quantity: <numberBetween(1, 100)>
         message: <sentence()>
 
     lot_61:
         name (unique): 'Supprime moi !'
+        quantity: <numberBetween(1, 100)>
+        message: <sentence()>
+        
+    lot_62:
+        name (unique): 'Supprime moi game !'
         quantity: <numberBetween(1, 100)>
         message: <sentence()>

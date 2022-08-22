@@ -2,3 +2,7 @@ App\Entity\TweetReply:
     tweet_reply:
         name (unique): on_new_game
         message: <sentence()>
+        
+    tweet_reply_game:
+        name (unique): no_more_available_lots
+        message: <sentence()>

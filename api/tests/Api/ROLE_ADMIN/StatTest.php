@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Game;
@@ -25,11 +25,11 @@ final class StatTest extends ApiTestCase
      */
     public function testGetStatGame(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = '/stats/games/after/'.date('Y-m-d', strtotime('-30 days'));
 
-        static::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');

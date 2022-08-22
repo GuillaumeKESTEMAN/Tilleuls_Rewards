@@ -1,9 +1,15 @@
 App\Entity\Game:
-    game_{1..59}:
+    game_{1..58}:
         tweet: '@tweet_<current()>'
         player: '@player_<current()>'
         reward: '@reward_<current()>'
         playDate: '<dateTimeBetween("-30 days", "now")>'
+    game_59:
+        tweet: '@tweet_59'
+        player: '@player_59'
+        reward: '@reward_59'
+        playDate: <identity(new \DateTime('2022-01-01 12:00:00.000000'))>
+    
     game_60:
         tweet: '@tweet_60'
         player: '@player_60'

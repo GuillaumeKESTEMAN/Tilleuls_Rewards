@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Player;
 use App\Entity\Tweet;
 use App\Tests\Security\LoginTest;
+use DateTime;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -24,7 +25,7 @@ final class TweetTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $response = static::createClient()->request('GET', '/tweets');
+        self::createClient()->request('GET', '/tweets');
 
         self::assertResponseStatusCodeSame(404);
     }
@@ -38,12 +39,11 @@ final class TweetTest extends ApiTestCase
      */
     public function testGetTweet(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
         $iri = $this->findIriBy(Tweet::class, ['tweetId' => '123456']);
 
-        $client->request('GET', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -65,43 +65,59 @@ final class TweetTest extends ApiTestCase
     {
         $iri = $this->findIriBy(Player::class, ['username' => '@TestAccount']);
 
-        $response = static::createClient()->request('POST', '/tweets', ['json' => [
-            'player' => $iri,
-            'tweetId' => '123456789',
-            'creationDate' => new \DateTime(),
-        ]]);
+        self::createClient()->request('POST', '/tweets', [
+                'json' => [
+                    'player' => $iri,
+                    'tweetId' => '123456789',
+                    'creationDate' => new DateTime(),
+                ]
+            ]
+        );
 
         self::assertResponseStatusCodeSame(404);
     }
 
     /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
      */
     public function testUpdateTweet(): void
     {
-        $client = static::createClient();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = $this->findIriBy(Tweet::class, ['tweetId' => '123456']);
 
-        $client->request('PUT', $iri, ['json' => [
-            'tweetId' => '1234567',
-        ]]);
+        self::createClient()->request('PUT', $iri, [
+                'auth_bearer' => $token,
+                'json' => [
+                    'tweetId' => '1234567',
+                ]
+            ]
+        );
 
         self::assertResponseStatusCodeSame(405);
     }
 
     /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
      */
     public function testDeleteTweet(): void
     {
-        $client = static::createClient();
+        $token = LoginTest::getAdminLoginToken();
+
         $iri = $this->findIriBy(Tweet::class, ['tweetId' => '123456']);
 
-        $client->request('DELETE', $iri);
+        self::createClient()->request('DELETE', $iri, [
+                'auth_bearer' => $token,
+            ]
+        );
 
         self::assertResponseStatusCodeSame(405);
     }

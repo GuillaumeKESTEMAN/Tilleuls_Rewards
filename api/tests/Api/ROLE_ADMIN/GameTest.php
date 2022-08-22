@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Game;
@@ -25,9 +25,9 @@ final class GameTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('GET', '/games', ['auth_bearer' => $token]);
+        $response = self::createClient()->request('GET', '/games', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -60,11 +60,11 @@ final class GameTest extends ApiTestCase
      */
     public function testGetGame(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
 
-        static::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -78,15 +78,22 @@ final class GameTest extends ApiTestCase
 
     /**
      * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      */
     public function testCreateGame(): void
     {
-        static::createClient()->request('POST', '/games', ['json' => [
-            'playDate' => new DateTime('2022-01-01 12:35:00.000000'),
-        ]]);
+        $token = LoginTest::getAdminLoginToken();
+
+        self::createClient()->request('POST', '/games', [
+            'auth_bearer' => $token,
+                'json' => [
+                    'playDate' => new DateTime('2022-01-01 12:35:00.000000'),
+                ]
+            ]
+        );
 
         self::assertResponseStatusCodeSame(405);
     }
@@ -100,15 +107,15 @@ final class GameTest extends ApiTestCase
      */
     public function testUpdateGame(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:00:00.000000')]);
 
-        static::createClient()->request('PUT', $iri, [
+        self::createClient()->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
                 'score' => 10,
-            ], ]);
+            ],]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
@@ -126,27 +133,36 @@ final class GameTest extends ApiTestCase
      */
     public function testFailedToReupdateGame(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:00:00.000000')]);
 
-        static::createClient()->request('PUT', $iri, [
+        self::createClient()->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
                 'score' => 11,
-            ], ]);
+            ],]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     /**
      * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      */
     public function testDeleteGame(): void
     {
-        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:30:00.000000')]);
+        $token = LoginTest::getAdminLoginToken();
 
-        static::createClient()->request('DELETE', $iri);
+        $iri = $this->findIriBy(Game::class, ['playDate' => new DateTime('2022-01-01 12:00:00.000000')]);
+
+        self::createClient()->request('DELETE', $iri, [
+                'auth_bearer' => $token,
+            ]
+        );
 
         self::assertResponseStatusCodeSame(405);
     }

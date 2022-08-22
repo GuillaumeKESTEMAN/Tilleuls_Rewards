@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Lot;
@@ -25,9 +25,9 @@ final class LotTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('GET', '/lots', ['auth_bearer' => $token]);
+        $response = self::createClient()->request('GET', '/lots', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -36,7 +36,7 @@ final class LotTest extends ApiTestCase
             '@context' => '/contexts/Lot',
             '@id' => '/lots',
             '@type' => 'hydra:Collection',
-            'hydra:totalItems' => 61,
+            'hydra:totalItems' => 62,
             'hydra:view' => [
                 '@id' => '/lots?page=1',
                 '@type' => 'hydra:PartialCollectionView',
@@ -60,9 +60,9 @@ final class LotTest extends ApiTestCase
      */
     public function testGetLot(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
+        $client = self::createClient();
         $iri = $this->findIriBy(Lot::class, ['name' => 'Lot de test']);
 
         $client->request('GET', $iri, ['auth_bearer' => $token]);
@@ -86,9 +86,9 @@ final class LotTest extends ApiTestCase
      */
     public function testCreateLotWithInvalidQuantity(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('POST', '/lots', [
+        self::createClient()->request('POST', '/lots', [
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'Nouveau lot de test',
@@ -117,9 +117,9 @@ final class LotTest extends ApiTestCase
      */
     public function testCreateLot(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('POST', '/lots', [
+        $response = self::createClient()->request('POST', '/lots', [
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'Nouveau lot de test',
@@ -152,9 +152,9 @@ final class LotTest extends ApiTestCase
      */
     public function testUpdateLot(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
+        $client = self::createClient();
         $iri = $this->findIriBy(Lot::class, ['name' => 'Lot de test']);
 
         $client->request('PUT', $iri, [
@@ -182,9 +182,9 @@ final class LotTest extends ApiTestCase
      */
     public function testFailedDeleteLot(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
+        $client = self::createClient();
         $iri = $this->findIriBy(Lot::class, ['name' => 'Lot de test 2.0']);
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
@@ -200,9 +200,9 @@ final class LotTest extends ApiTestCase
      */
     public function testDeleteLot(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
+        $client = self::createClient();
         $iri = $this->findIriBy(Lot::class, ['name' => 'Supprime moi !']);
 
         $client->request('DELETE', $iri, ['auth_bearer' => $token]);
@@ -210,7 +210,7 @@ final class LotTest extends ApiTestCase
         self::assertResponseStatusCodeSame(204);
 
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(Lot::class)->findOneBy(['name' => 'Supprime moi !'])
+            self::getContainer()->get('doctrine')->getRepository(Lot::class)->findOneBy(['name' => 'Supprime moi !'])
         );
     }
 }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
-use App\Entity\TwitterAccountToFollow;
+use App\Entity\TweetReply;
 use App\Tests\Security\LoginTest;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-final class TwitterAccountToFollowTest extends ApiTestCase
+final class TweetReplyTest extends ApiTestCase
 {
     /**
      * @throws RedirectionExceptionInterface
@@ -25,23 +25,23 @@ final class TwitterAccountToFollowTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('GET', '/twitter_account_to_follows', ['auth_bearer' => $token]);
+        $response = self::createClient()->request('GET', '/tweet_replies', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/contexts/TwitterAccountToFollow',
-            '@id' => '/twitter_account_to_follows',
+            '@context' => '/contexts/TweetReply',
+            '@id' => '/tweet_replies',
             '@type' => 'hydra:Collection',
             'hydra:totalItems' => 2,
         ]);
 
         $this->assertCount(2, $response->toArray()['hydra:member']);
 
-        self::assertMatchesResourceCollectionJsonSchema(TwitterAccountToFollow::class);
+        self::assertMatchesResourceCollectionJsonSchema(TweetReply::class);
     }
 
     /**
@@ -51,45 +51,40 @@ final class TwitterAccountToFollowTest extends ApiTestCase
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      */
-    public function testGetTwitterAccountToFollow(): void
+    public function testGetTweetReply(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@coopTilleuls']);
+        $iri = $this->findIriBy(TweetReply::class, ['name' => 'on_new_game']);
 
-        $client->request('GET', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/contexts/TwitterAccountToFollow',
+            '@context' => '/contexts/TweetReply',
             '@id' => $iri,
-            '@type' => 'TwitterAccountToFollow',
-            'username' => '@coopTilleuls',
-            'name' => 'Les-Tilleuls.coop',
+            '@type' => 'TweetReply',
         ]);
     }
 
     /**
      * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
+     * @throws DecodingExceptionInterface
      */
-    public function testCreateInvalidTwitterAccountToFollow(): void
+    public function testCreateInvalidTweetReply(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $invalidTwitterUsernameAccount = 'testInvalidUser';
-
-        static::createClient()->request('POST', '/twitter_account_to_follows', [
+        self::createClient()->request('POST', '/tweet_replies', [
             'auth_bearer' => $token,
             'json' => [
-                'username' => '@'.$invalidTwitterUsernameAccount,   // doesn't exist
-                'active' => false,
+                'name' => 'invalid_name',
+                'message' => 'valid message',
             ],
         ]);
 
@@ -100,7 +95,7 @@ final class TwitterAccountToFollowTest extends ApiTestCase
             '@context' => '/contexts/ConstraintViolationList',
             '@type' => 'ConstraintViolationList',
             'hydra:title' => 'An error occurred',
-            'hydra:description' => 'username: Le compte Twitter "@'.$invalidTwitterUsernameAccount.'" n\'existe pas',
+            'hydra:description' => 'name: The value you selected is not a valid choice.',
         ]);
     }
 
@@ -111,15 +106,15 @@ final class TwitterAccountToFollowTest extends ApiTestCase
      * @throws ServerExceptionInterface
      * @throws DecodingExceptionInterface
      */
-    public function testCreateTwitterAccountToFollow(): void
+    public function testCreateTweetReply(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('POST', '/twitter_account_to_follows', [
+        $response = self::createClient()->request('POST', '/tweet_replies', [
             'auth_bearer' => $token,
             'json' => [
-                'username' => '@ApiPlatform',
-                'active' => false,
+                'name' => 'need_to_follow_us',
+                'message' => 'you need to follow test !!!',
             ],
         ]);
 
@@ -127,14 +122,14 @@ final class TwitterAccountToFollowTest extends ApiTestCase
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         self::assertJsonContains([
-            '@context' => '/contexts/TwitterAccountToFollow',
-            '@type' => 'TwitterAccountToFollow',
-            'username' => '@ApiPlatform',
-            'active' => false,
+            '@context' => '/contexts/TweetReply',
+            '@type' => 'TweetReply',
+            'name' => 'need_to_follow_us',
+            'message' => 'you need to follow test !!!',
         ]);
 
-        $this->assertMatchesRegularExpression('~^/twitter_account_to_follows/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
-        self::assertMatchesResourceItemJsonSchema(TwitterAccountToFollow::class);
+        $this->assertMatchesRegularExpression('~^/tweet_replies/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$~', $response->toArray()['@id']);
+        self::assertMatchesResourceItemJsonSchema(TweetReply::class);
     }
 
     /**
@@ -144,27 +139,24 @@ final class TwitterAccountToFollowTest extends ApiTestCase
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
      */
-    public function testUpdateTwitterAccountToFollow(): void
+    public function testUpdateTweetReply(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
+        $iri = $this->findIriBy(TweetReply::class, ['name' => 'need_to_follow_us']);
 
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@coopTilleuls']);
-
-        $client->request('PUT', $iri, [
+        self::createClient()->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
-                'username' => '@coopTilleuls',
-                'active' => true,
+                'message' => 'you need to follow test !!!! (i forgot one more !)',
             ],
         ]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
             '@id' => $iri,
-            'username' => '@coopTilleuls',
-            'active' => true,
+            'name' => 'need_to_follow_us',
+            'message' => 'you need to follow test !!!! (i forgot one more !)',
         ]);
     }
 
@@ -173,19 +165,18 @@ final class TwitterAccountToFollowTest extends ApiTestCase
      * @throws Exception
      * @throws DecodingExceptionInterface
      */
-    public function testDeleteTwitterAccountToFollow(): void
+    public function testDeleteTweetReply(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $client = static::createClient();
-        $iri = $this->findIriBy(TwitterAccountToFollow::class, ['username' => '@coopTilleuls']);
+        $iri = $this->findIriBy(TweetReply::class, ['name' => 'need_to_follow_us']);
 
-        $client->request('DELETE', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('DELETE', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseStatusCodeSame(204);
 
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(TwitterAccountToFollow::class)->findOneBy(['username' => '@coopTilleuls'])
+            self::getContainer()->get('doctrine')->getRepository(TweetReply::class)->findOneBy(['name' => 'need_to_follow_us'])
         );
     }
 }

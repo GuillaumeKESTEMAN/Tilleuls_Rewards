@@ -1,4 +1,8 @@
 App\Entity\MediaObject:
-    media_object:
+    media_object_admin:
         name: <name()>
         filePath: 'image.png'
+    
+    media_object_game:
+        name: <name()>
+        filePath: 'game_image.png'

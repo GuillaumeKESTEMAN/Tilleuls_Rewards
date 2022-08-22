@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\ROLE_ADMIN;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\MediaObject;
 use App\Tests\Security\LoginTest;
+use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -25,9 +26,9 @@ final class MediaObjectTest extends ApiTestCase
      */
     public function testGetCollection(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
-        $response = static::createClient()->request('GET', '/media_objects', ['auth_bearer' => $token]);
+        $response = self::createClient()->request('GET', '/media_objects', ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -36,10 +37,10 @@ final class MediaObjectTest extends ApiTestCase
             '@context' => '/contexts/MediaObject',
             '@id' => '/media_objects',
             '@type' => 'hydra:Collection',
-            'hydra:totalItems' => 1,
+            'hydra:totalItems' => 2,
         ]);
 
-        $this->assertCount(1, $response->toArray()['hydra:member']);
+        $this->assertCount(2, $response->toArray()['hydra:member']);
 
         self::assertMatchesResourceCollectionJsonSchema(MediaObject::class);
     }
@@ -53,11 +54,11 @@ final class MediaObjectTest extends ApiTestCase
      */
     public function testGetMediaObject(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = $this->findIriBy(MediaObject::class, ['filePath' => 'image.png']);
 
-        static::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('GET', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -78,11 +79,11 @@ final class MediaObjectTest extends ApiTestCase
      */
     public function testCreateInvalidMediaObject(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $file = new UploadedFile('fixtures/test/files/invalid_file.txt', 'invalid_file.txt');
 
-        static::createClient()->request('POST', '/media_objects', [
+        self::createClient()->request('POST', '/media_objects', [
             'auth_bearer' => $token,
             'headers' => ['Content-Type' => 'multipart/form-data'],
             'extra' => [
@@ -114,7 +115,7 @@ final class MediaObjectTest extends ApiTestCase
      */
     public function testCreateAMediaObject(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $file = new UploadedFile('fixtures/test/files/image.png', 'image.png');
 
@@ -149,40 +150,43 @@ final class MediaObjectTest extends ApiTestCase
      */
     public function testUpdateMediaObject(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = $this->findIriBy(MediaObject::class, ['name' => 'My uploaded file']);
 
-        static::createClient()->request('PUT', $iri, [
+        self::createClient()->request('PUT', $iri, [
             'auth_bearer' => $token,
             'json' => [
                 'name' => 'Change media object name',
-            ], ]);
+            ],]);
 
         self::assertResponseIsSuccessful();
         self::assertJsonContains([
-            '@id' => $iri,
-            'name' => 'Change media object name',
-        ]);
+                '@id' => $iri,
+                'name' => 'Change media object name',
+            ]
+        );
     }
+
 
     /**
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface|DecodingExceptionInterface
+     * @throws Exception
      */
     public function testDeleteMediaObject(): void
     {
-        $token = LoginTest::getLoginToken();
+        $token = LoginTest::getAdminLoginToken();
 
         $iri = $this->findIriBy(MediaObject::class, ['name' => 'Change media object name']);
 
-        static::createClient()->request('DELETE', $iri, ['auth_bearer' => $token]);
+        self::createClient()->request('DELETE', $iri, ['auth_bearer' => $token]);
 
         self::assertResponseStatusCodeSame(204);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(MediaObject::class)->findOneBy(['name' => 'Change media object name'])
+            self::getContainer()->get('doctrine')->getRepository(MediaObject::class)->findOneBy(['name' => 'Change media object name'])
         );
     }
 }
