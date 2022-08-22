@@ -1,5 +1,8 @@
 # Tilleuls_Rewards
 
+### Documentation :
+- [Roles and permissions](/doc/roles_and_permissions.docx)
+
 ### Project Initialization :
 - Install all dependencies of the project with the `make install` command
 
