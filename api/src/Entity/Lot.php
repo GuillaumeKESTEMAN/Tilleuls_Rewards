@@ -16,6 +16,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\LotRepository;
 use App\State\LotProcessor;
+use App\Visitor\MessageNormalizer;
+use App\Visitor\Visitor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -97,20 +99,7 @@ class Lot
 
     public function getMessage(?string $name = null, ?string $userhandle = null, ?int $score = null): ?string
     {
-        $returnMessage = $this->message;
-        if (null !== $name) {
-            $returnMessage = str_replace('%nom%', $name, $returnMessage);
-        }
-
-        if (null !== $userhandle) {
-            $returnMessage = str_replace('%@joueur%', '@'.$userhandle, $returnMessage);
-        }
-
-        if (null !== $score) {
-            $returnMessage = str_replace('%score%', (string) $score, $returnMessage);
-        }
-
-        return $returnMessage;
+        return (new MessageNormalizer())->normalizeLotMessage($this->message, $name, $userhandle, $score);
     }
 
     public function setMessage(string $message): void

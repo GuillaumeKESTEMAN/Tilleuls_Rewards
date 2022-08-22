@@ -92,7 +92,7 @@ final class TwitterApiRecentTweetsCommand extends Command
      */
     private function getTweetReplyMessage(string $id, string $name, string $userhandle): string
     {
-        $message = $this->tweetReplyRepository->findOneByName($id)?->getMessage($name, $userhandle);
+        $message = $this->tweetReplyRepository->findOneByName($id)?->getMessage($name, $userhandle, $this->communicationWebsiteUrl);
         if (null !== $message) {
             return $message;
         }

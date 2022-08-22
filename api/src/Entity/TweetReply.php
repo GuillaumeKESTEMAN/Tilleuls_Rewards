@@ -15,6 +15,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\TweetReplyRepository;
+use App\Visitor\MessageNormalizer;
+use App\Visitor\Visitor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -71,21 +73,7 @@ class TweetReply
 
     public function getMessage(?string $name = null, ?string $userhandle = null, ?string $gameLink = null): ?string
     {
-        $returnMessage = $this->message;
-
-        if (null !== $name) {
-            $returnMessage = str_replace('%nom%', $name, $returnMessage);
-        }
-
-        if (null !== $userhandle) {
-            $returnMessage = str_replace('%@joueur%', '@'.$userhandle, $returnMessage);
-        }
-
-        if (null !== $gameLink) {
-            $returnMessage = str_replace('%site_web%', $gameLink ?? 'no_link', $returnMessage);
-        }
-
-        return $returnMessage;
+        return (new MessageNormalizer())->normalizeTweetReplyMessage($this->message, $name, $userhandle, $gameLink);
     }
 
     public function setMessage(?string $message): void

@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Game;
 use App\Twitter\TwitterApi;
+use App\Visitor\MessageNormalizer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -23,8 +24,6 @@ final class GamePutProcessor implements ProcessorInterface
     }
 
     /**
-     * @param $data
-     *
      * @throws TwitterOAuthException
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
@@ -39,9 +38,12 @@ final class GamePutProcessor implements ProcessorInterface
             if (null === $data->tweet) {
                 throw new \LogicException('Tweet of the game n°' . $data->getId() . ' not exists during game PUT request');
             }
+            if (null === $data->player) {
+                throw new \LogicException('Player of the game n°' . $data->getId() . ' not exists during game PUT request');
+            }
 
             try {
-                $this->twitterApi->reply($data->reward->lot->getMessage(), $data->tweet->tweetId);
+                $this->twitterApi->reply($data->reward->lot->getMessage($data->player->name, $data->player->getUsername(), $data->score), $data->tweet->tweetId);
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
                     'Twitter API post request (tweets) error' . $e->getMessage(),
