@@ -10,14 +10,15 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class MediaObjectProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly string $appEnv)
+    public function __construct(private readonly string $appEnv, private readonly string $kernelDir)
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function preProcess(string $id, $object): void
+    public
+    function preProcess(string $id, $object): void
     {
         if (!$object instanceof MediaObject) {
             return;
@@ -29,18 +30,15 @@ final class MediaObjectProcessor implements ProcessorInterface
 
         $fs = new Filesystem();
 
-        $root = explode('/', __DIR__);
-        $root = \array_slice($root, 0, -3);
-        $root = implode('/', $root);
-
-        $fs->touch($root . '/fixtures/test/files/invalid_file.txt');
-        $fs->appendToFile($root . '/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
+        $fs->touch($this->kernelDir . '/fixtures/test/files/invalid_file.txt');
+        $fs->appendToFile($this->kernelDir . '/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function postProcess(string $id, $object): void
+    public
+    function postProcess(string $id, $object): void
     {
         // do nothing
     }

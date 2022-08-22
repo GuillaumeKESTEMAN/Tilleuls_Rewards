@@ -18,6 +18,7 @@ services:
             $twitterAccessTokenSecret: '%env(TWITTER_ACCESS_TOKEN_SECRET)%'
             $communicationWebsiteUrl: '%env(COMMUNICATION_WEBSITE_URL)%'
             $appEnv: '%env(APP_ENV)%'
+            $kernelDir: '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
