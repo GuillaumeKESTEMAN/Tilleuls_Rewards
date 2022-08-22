@@ -60,7 +60,7 @@ class TwitterHashtag
 
     #[ORM\Column(name: 'active', type: 'boolean')]
     #[Groups('put')]
-    private bool $active = false;
+    public bool $active = false;
 
     public function getId(): Uuid
     {
@@ -80,15 +80,5 @@ class TwitterHashtag
         }
 
         $this->hashtag = $hashtag;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    public function setActive(bool $active): void
-    {
-        $this->active = $active;
     }
 }

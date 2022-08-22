@@ -21,7 +21,7 @@ final class HasNotPlayedForADayValidator extends ConstraintValidator
             throw new UnexpectedTypeException($player, Player::class);
         }
 
-        if (null !== $player->getLastPlayDate() && date_diff($player->getLastPlayDate(), new \DateTime())->d < 1) {
+        if (null !== $player->lastPlayDate && date_diff($player->lastPlayDate, new \DateTime())->d < 1) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ username }}', $player->getUsername())
                 ->addViolation();

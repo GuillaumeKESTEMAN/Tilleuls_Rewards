@@ -112,44 +112,14 @@ class MediaObject
             'image/png',
         ],
     ], groups: ['media_object_create'])]
-    private ?File $file = null;
+    public ?File $file = null;
 
     #[ORM\Column(name: 'file_path', unique: true, nullable: true)]
     #[Groups(['media_object:read'])]
-    private ?string $filePath = null;
+    public ?string $filePath = null;
 
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
-
-    public function setFile(?File $file): void
-    {
-        $this->file = $file;
-    }
-
-    public function getFilePath(): ?string
-    {
-        return $this->filePath;
-    }
-
-    public function setFilePath(?string $filePath): void
-    {
-        $this->filePath = $filePath;
     }
 }

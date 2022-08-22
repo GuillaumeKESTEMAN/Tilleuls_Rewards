@@ -20,8 +20,8 @@ final class CreateMediaObjectAction extends AbstractController
         $uploadedFile = $request->files->get('file');
 
         $mediaObject = new MediaObject();
-        $mediaObject->setFile($uploadedFile);
-        $mediaObject->setName($request->get('name'));
+        $mediaObject->file = $uploadedFile;
+        $mediaObject->name = $request->get('name');
 
         try {
             $validator->validate($mediaObject);

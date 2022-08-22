@@ -57,13 +57,13 @@ class Lot
         maxMessage: 'Le lot ne peut pas avoir plus de {{ limit }} caractères'
     )]
     #[ApiProperty(types: ['https://schema.org/name'])]
-    private ?string $name = null;
+    public ?string $name = null;
 
     #[ORM\Column(name: 'quantity', type: 'integer')]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
     #[ApiProperty(types: ['https://schema.org/Quantity'])]
-    private ?int $quantity = null;
+    public ?int $quantity = null;
 
     #[ORM\Column(name: 'message', type: 'string')]
     #[Assert\NotBlank]
@@ -95,26 +95,6 @@ class Lot
         return $this->id;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
-
     public function getMessage(?string $name = null, ?string $userhandle = null, ?int $score = null): ?string
     {
         $returnMessage = $this->message;
@@ -138,16 +118,6 @@ class Lot
         $this->message = $message;
     }
 
-    public function getImage(): ?MediaObject
-    {
-        return $this->image;
-    }
-
-    public function setImage(?MediaObject $image): void
-    {
-        $this->image = $image;
-    }
-
     public function getRewards(): Collection
     {
         return $this->rewards;
@@ -162,7 +132,7 @@ class Lot
     {
         if (!$this->rewards->contains($reward)) {
             $this->rewards->add($reward);
-            $reward->setLot($this);
+            $reward->lot = $this;
         }
     }
 
@@ -170,7 +140,7 @@ class Lot
     {
         if ($this->rewards->contains($reward)) {
             $this->rewards->removeElement($reward);
-            $reward->setLot(null);
+            $reward->lot = null;
         }
     }
 }

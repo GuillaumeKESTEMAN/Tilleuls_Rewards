@@ -50,7 +50,7 @@ class TweetReply
     #[Assert\NotBlank]
     #[Assert\Choice(['on_new_game', 'game_already_generated_less_than_a_day_ago', 'need_to_follow_us', 'no_more_available_lots'])]
     #[ApiProperty(types: ['https://schema.org/name'])]
-    private ?string $name = null;
+    public ?string $name = null;
 
     #[ORM\Column(name: 'message', type: 'string')]
     #[Groups('put')]
@@ -68,16 +68,6 @@ class TweetReply
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(?string $name): void
-    {
-        $this->name = $name;
     }
 
     public function getMessage(?string $name = null, ?string $userhandle = null, ?string $gameLink = null): ?string

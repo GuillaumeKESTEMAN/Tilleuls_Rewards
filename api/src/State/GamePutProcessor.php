@@ -29,19 +29,19 @@ final class GamePutProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
     {
-        if ('test' !== $this->appEnv && $data instanceof Game && 'PUT' === $context['operation']->getMethod() && null !== $data->getScore()) {
-            if (null === $data->getReward()) {
+        if ('test' !== $this->appEnv && $data instanceof Game && null !== $data->score && 'PUT' === $context['operation']->getMethod()) {
+            if (null === $data->reward) {
                 throw new \LogicException('Reward of the game n°' . $data->getId() . ' not exists during game PUT request');
             }
-            if (null === $data->getReward()->getLot()) {
-                throw new \LogicException('Lot of the reward n°' . $data->getReward()->getId() . ' not exists during game PUT request');
+            if (null === $data->reward->lot) {
+                throw new \LogicException('Lot of the reward n°' . $data->reward->getId() . ' not exists during game PUT request');
             }
-            if (null === $data->getTweet()) {
+            if (null === $data->tweet) {
                 throw new \LogicException('Tweet of the game n°' . $data->getId() . ' not exists during game PUT request');
             }
 
             try {
-                $this->twitterApi->reply($data->getReward()->getLot()->getMessage(), $data->getTweet()->getTweetId());
+                $this->twitterApi->reply($data->reward->lot->getMessage(), $data->tweet->tweetId);
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
                     'Twitter API post request (tweets) error' . $e->getMessage(),

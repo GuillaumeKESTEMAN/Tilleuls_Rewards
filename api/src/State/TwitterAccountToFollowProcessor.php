@@ -30,8 +30,8 @@ final class TwitterAccountToFollowProcessor implements ProcessorInterface
             try {
                 $user = $this->twitterApi->get('users/by/username/'.substr($data->getUsername(), 1));
 
-                $data->setTwitterAccountId($user->data->id);
-                $data->setName($user->data->name);
+                $data->twitterAccountId = $user->data->id;
+                $data->name = $user->data->name;
                 $data->setUsername($user->data->username);
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(

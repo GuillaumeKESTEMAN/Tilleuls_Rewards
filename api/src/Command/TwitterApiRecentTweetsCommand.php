@@ -23,6 +23,7 @@ use App\Repository\TweetRepository;
 use App\Repository\TwitterAccountToFollowRepository;
 use App\Repository\TwitterHashtagRepository;
 use App\Twitter\TwitterApi;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -288,23 +289,23 @@ final class TwitterApiRecentTweetsCommand extends Command
 
             $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
 
-            if (null === $player || ($player->getUsername() !== '@' . $user->username || $player->getName() !== $user->name)) {
+            if (null === $player || ($player->getUsername() !== '@' . $user->username || $player->name !== $user->name)) {
                 if (null === $player) {
                     $player = new Player();
-                    $player->setTwitterAccountId($user->id);
+                    $player->twitterAccountId = $user->id;
                 }
-                $player->setName($user->name);
+                $player->name = $user->name;
                 $player->setUsername($user->username);
 
                 $this->playerRepository->persistAndFlush($player, true);
             }
 
-            $lastGameDate = $player->getLastPlayDate();
+            $lastGameDate = $player->lastPlayDate;
 
             $recentTweet = new Tweet();
-            $recentTweet->setPlayer($player);
-            $recentTweet->setTweetId($tweet->id);
-            $recentTweet->setCreationDate(new \DateTime($tweet->created_at));
+            $recentTweet->player = $player;
+            $recentTweet->tweetId = $tweet->id;
+            $recentTweet->creationDate = new DateTime($tweet->created_at);
 
             $this->tweetRepository->persistAndFlush($recentTweet, true);
 
@@ -329,10 +330,10 @@ final class TwitterApiRecentTweetsCommand extends Command
                 continue;
             }
 
-            if (null !== $lastGameDate && date_diff($lastGameDate, new \DateTime())->d < 1) {
+            if (null !== $lastGameDate && date_diff($lastGameDate, new DateTime())->d < 1) {
                 if ($input->getOption('reply')) {
                     try {
-                        $message = $this->getTweetReplyMessage('game_already_generated_less_than_a_day_ago', $player->getName(), $player->getUsername());
+                        $message = $this->getTweetReplyMessage('game_already_generated_less_than_a_day_ago', $player->name, $player->getUsername());
                         $this->newReply($message, $tweet->id);
                     } catch (TweetReplyNotFoundException $e) {
                         $this->logger->error(
@@ -350,17 +351,17 @@ final class TwitterApiRecentTweetsCommand extends Command
             }
 
             $reward = new Reward();
-            $reward->setDistributed(false);
+            $reward->distributed = false;
 
             $randomLot = $this->lotRepository->getRandom();
 
             if (\count($randomLot) > 0) {
-                $reward->setLot($randomLot[0]);
+                $reward->lot = $randomLot[0];
             } else {
                 $io->error('No lot available');
                 if ($input->getOption('reply')) {
                     try {
-                        $message = $this->getTweetReplyMessage('no_more_available_lots', $player->getName(), $player->getUsername());
+                        $message = $this->getTweetReplyMessage('no_more_available_lots', $player->name, $player->getUsername());
                         $this->newReply($message, $tweet->id);
                     } catch (TweetReplyNotFoundException $e) {
                         $this->logger->error(
@@ -377,9 +378,9 @@ final class TwitterApiRecentTweetsCommand extends Command
             }
 
             $game = new Game();
-            $game->setTweet($recentTweet);
-            $game->setPlayer($player);
-            $game->setReward($reward);
+            $game->tweet = $recentTweet;
+            $game->player = $player;
+            $game->reward = $reward;
 
             try {
                 $this->validator->validate($game);
@@ -390,12 +391,12 @@ final class TwitterApiRecentTweetsCommand extends Command
                 continue;
             }
 
-            $player->setLastPlayDate(new \DateTime());
+            $player->lastPlayDate = new DateTime();
             $this->playerRepository->persistAndFlush($player, true);
 
             if ($input->getOption('reply')) {
                 try {
-                    $message = $this->getTweetReplyMessage('on_new_game', $player->getName(), $player->getUsername());
+                    $message = $this->getTweetReplyMessage('on_new_game', $player->name, $player->getUsername());
                     $this->newReply($message, $tweet->id);
                 } catch (TweetReplyNotFoundException $e) {
                     $this->logger->error(

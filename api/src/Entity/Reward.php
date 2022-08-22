@@ -41,48 +41,18 @@ class Reward
 
     #[ORM\ManyToOne(targetEntity: Lot::class, inversedBy: 'rewards')]
     #[ApiProperty(writable: false)]
-    private ?Lot $lot = null;
+    public ?Lot $lot = null;
 
     #[ORM\OneToOne(mappedBy: 'reward', targetEntity: Game::class)]
     #[ApiProperty(writable: false)]
-    private ?Game $game = null;
+    public ?Game $game = null;
 
     #[ORM\Column(name: 'distributed', type: 'boolean')]
     #[Groups('put')]
-    private bool $distributed = false;
+    public bool $distributed = false;
 
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getLot(): ?Lot
-    {
-        return $this->lot;
-    }
-
-    public function setLot(?Lot $lot): void
-    {
-        $this->lot = $lot;
-    }
-
-    public function getGame(): ?Game
-    {
-        return $this->game;
-    }
-
-    public function setGame(?Game $game): void
-    {
-        $this->game = $game;
-    }
-
-    public function isDistributed(): ?bool
-    {
-        return $this->distributed;
-    }
-
-    public function setDistributed(bool $distributed): void
-    {
-        $this->distributed = $distributed;
     }
 }

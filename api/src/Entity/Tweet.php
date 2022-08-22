@@ -33,7 +33,7 @@ class Tweet
     private Uuid $id;
 
     #[ORM\ManyToOne(targetEntity: Player::class, inversedBy: 'tweets')]
-    private ?Player $player = null;
+    public ?Player $player = null;
 
     #[ORM\Column(name: 'tweet_id', type: 'string', length: 255, unique: true)]
     #[Assert\Regex(
@@ -41,45 +41,15 @@ class Tweet
         message: "L'id ne doit contenir que des chiffres"
     )]
     #[ApiProperty(types: ['https://schema.org/identifier'])]
-    private ?string $tweetId = null;
+    public ?string $tweetId = null;
 
     #[ORM\Column(name: 'creation_date', type: 'datetime')]
     #[Assert\Type(\DateTimeInterface::class)]
     #[ApiProperty(types: ['https://schema.org/DateTime'])]
-    private ?\DateTime $creationDate = null;
+    public ?\DateTime $creationDate = null;
 
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getPlayer(): ?Player
-    {
-        return $this->player;
-    }
-
-    public function setPlayer(?Player $player): void
-    {
-        $this->player = $player;
-    }
-
-    public function getTweetId(): ?string
-    {
-        return $this->tweetId;
-    }
-
-    public function setTweetId(string $tweetId): void
-    {
-        $this->tweetId = $tweetId;
-    }
-
-    public function getCreationDate(): ?\DateTime
-    {
-        return $this->creationDate;
-    }
-
-    public function setCreationDate(?\DateTime $creationDate): void
-    {
-        $this->creationDate = $creationDate;
     }
 }

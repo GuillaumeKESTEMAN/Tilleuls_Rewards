@@ -41,12 +41,12 @@ final class LotRepository extends CommonRepository
         for ($i = 0; $i < $numberOfLotReturn; ++$i) {
             $totalQuantity = 0;
             foreach ($lots as $lot) {
-                if ($lot->getQuantity() <= 0) {
+                if ($lot->quantity <= 0) {
                     continue;
                 }
 
                 $lot->min = $totalQuantity;
-                $totalQuantity += $lot->getQuantity();
+                $totalQuantity += $lot->quantity;
                 $lot->max = $totalQuantity;
             }
 
@@ -71,7 +71,7 @@ final class LotRepository extends CommonRepository
                 return $dataReturn;
             }
 
-            $lot->setQuantity($lot->getQuantity() - 1);
+            $lot->quantity--;
             $this->persistAndFlush($lot, true);
 
             $dataReturn[] = $lot;

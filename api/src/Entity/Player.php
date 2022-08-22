@@ -48,7 +48,7 @@ class Player
     #[ORM\Column(name: 'name', type: 'string')]
     #[Assert\NotBlank]
     #[ApiProperty(types: ['https://schema.org/name'])]
-    private ?string $name = null;
+    public ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', unique: true)]
     #[Assert\Length(
@@ -69,12 +69,12 @@ class Player
         message: "L'id ne doit contenir que des chiffres"
     )]
     #[ApiProperty(writable: false, types: ['https://schema.org/identifier'])]
-    private ?string $twitterAccountId = null;
+    public ?string $twitterAccountId = null;
 
     #[ORM\Column(name: 'last_play_date', type: 'datetime', nullable: true)]
     #[Assert\Type(\DateTimeInterface::class)]
     #[ApiProperty(writable: false, types: ['https://schema.org/DateTime'])]
-    private ?\DateTime $lastPlayDate = null;
+    public ?\DateTime $lastPlayDate = null;
 
     #[ORM\OneToMany(mappedBy: 'player', targetEntity: Tweet::class, orphanRemoval: true)]
     #[ApiProperty(readable: false, writable: false, types: ['https://schema.org/Collection'])]
@@ -88,16 +88,6 @@ class Player
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(?string $name): void
-    {
-        $this->name = $name;
     }
 
     public function getUsername(): ?string
@@ -114,26 +104,6 @@ class Player
         $this->username = $username;
     }
 
-    public function getTwitterAccountId(): ?string
-    {
-        return $this->twitterAccountId;
-    }
-
-    public function setTwitterAccountId(string $twitterAccountId): void
-    {
-        $this->twitterAccountId = $twitterAccountId;
-    }
-
-    public function getLastPlayDate(): ?\DateTime
-    {
-        return $this->lastPlayDate;
-    }
-
-    public function setLastPlayDate(?\DateTime $lastPlayDate): void
-    {
-        $this->lastPlayDate = $lastPlayDate;
-    }
-
     /**
      * @return Collection<int, Tweet>
      */
@@ -146,7 +116,7 @@ class Player
     {
         if (!$this->tweets->contains($tweet)) {
             $this->tweets->add($tweet);
-            $tweet->setPlayer($this);
+            $tweet->player = $this;
         }
     }
 
@@ -154,7 +124,7 @@ class Player
     {
         if (!$this->tweets->contains($tweet)) {
             $this->tweets->removeElement($tweet);
-            $tweet->setPlayer(null);
+            $tweet->player = null;
         }
     }
 }

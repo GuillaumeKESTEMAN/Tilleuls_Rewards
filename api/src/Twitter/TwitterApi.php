@@ -133,7 +133,7 @@ final class TwitterApi
 
         $tweet = $this->tweetRepository->findLastTweet();
         if ($this->appEnv !== 'test' && null !== $tweet) {
-            $params['since_id'] = $tweet->getTweetId();
+            $params['since_id'] = $tweet->tweetId;
         }
 
         return $this->get('tweets/search/recent', $params);

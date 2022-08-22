@@ -55,7 +55,7 @@ class TwitterAccountToFollow
 
     #[ORM\Column(name: 'name', type: 'string', length: 255)]
     #[ApiProperty(writable: false, types: ['https://schema.org/name'])]
-    private ?string $name = null;
+    public ?string $name = null;
 
     #[ORM\Column(name: 'username', type: 'string', length: 255, unique: true)]
     #[Assert\NotBlank(groups: ['firstPostValidation'])]
@@ -80,25 +80,15 @@ class TwitterAccountToFollow
         message: "L'id ne doit contenir que des chiffres"
     )]
     #[ApiProperty(writable: false, types: ['https://schema.org/identifier'])]
-    private ?string $twitterAccountId = null;
+    public ?string $twitterAccountId = null;
 
     #[ORM\Column(name: 'active', type: 'boolean')]
     #[Groups('put')]
-    private bool $active = false;
+    public bool $active = false;
 
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(?string $name): void
-    {
-        $this->name = $name;
     }
 
     public function getUsername(): ?string
@@ -113,25 +103,5 @@ class TwitterAccountToFollow
         }
 
         $this->username = $username;
-    }
-
-    public function getTwitterAccountId(): ?string
-    {
-        return $this->twitterAccountId;
-    }
-
-    public function setTwitterAccountId(?string $twitterAccountId): void
-    {
-        $this->twitterAccountId = $twitterAccountId;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    public function setActive(bool $active): void
-    {
-        $this->active = $active;
     }
 }
