@@ -111,6 +111,14 @@ final class TwitterApi
     /**
      * @throws TwitterOAuthException
      */
+    public function getUserByUsername(string $username): array|object
+    {
+        return $this->get('users/by/username/' . $username);
+    }
+
+    /**
+     * @throws TwitterOAuthException
+     */
     public function isFollowing(string $sourceId, string $targetId): bool
     {
         return $this->get('friendships/show', [
