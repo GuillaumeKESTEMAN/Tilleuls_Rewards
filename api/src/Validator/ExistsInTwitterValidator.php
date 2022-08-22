@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
+use function is_string;
 
 final class ExistsInTwitterValidator extends ConstraintValidator
 {
@@ -26,23 +27,17 @@ final class ExistsInTwitterValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ExistsInTwitter::class);
         }
 
-        // custom constraints should ignore null and empty values to allow
-        // other constraints (NotBlank, NotNull, etc.) to take care of that
         if (null === $username || '' === $username) {
             return;
         }
 
-        if (!\is_string($username)) {
-            // throw this exception if your validator cannot handle the passed type so that it can be marked as invalid
+        if (!is_string($username)) {
             throw new UnexpectedValueException($username, 'string');
-            // separate multiple types using pipes
-            // throw new UnexpectedValueException($username, 'string|int');
         }
 
-        $user = $this->twitterApi->get('users/by/username/'.substr($username, 1));
+        $user = $this->twitterApi->get('users/by/username/'.str_replace('@', '', $username));
 
         if (property_exists($user, 'errors')) {
-            // the argument must be a string or an object implementing __toString()
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ username }}', $username)
                 ->addViolation();
