@@ -16,37 +16,38 @@ abstract class CommonRepository extends ServiceEntityRepository
         parent::__construct($registry, $entityClass);
     }
 
+    /**
+     * @throws Exception
+     */
     public function persistAndFlush(object $entity, bool $flush = false): void
     {
         try {
             $this->getEntityManager()->persist($entity);
+
+            if ($flush) {
+                $this->getEntityManager()->flush();
+            }
         } catch (Exception $e) {
             $this->logger->error($e->getMessage(), $e->getTrace());
-        }
-
-        if ($flush) {
-            try {
-                $this->getEntityManager()->flush();
-            } catch (Exception $e) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
-            }
+            throw $e;
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeAndFlush(object $entity, bool $flush = false): void
     {
         try {
             $this->getEntityManager()->remove($entity);
+
+            if ($flush) {
+                $this->getEntityManager()->flush();
+            }
         } catch (Exception $e) {
             $this->logger->error($e->getMessage(), $e->getTrace());
+            throw $e;
         }
 
-        if ($flush) {
-            try {
-                $this->getEntityManager()->flush();
-            } catch (Exception $e) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
-            }
-        }
     }
 }
