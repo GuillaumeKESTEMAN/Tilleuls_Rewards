@@ -21,7 +21,7 @@ export const List: FunctionComponent<Props> = ({tweetReplies}) => {
                 source="name"
                 render={record => {return getTweetReplyNameMessage(record).name;}}
             />;
-            <FieldGuesser source="message"/>
+            <FieldGuesser source="message" style={{whiteSpace: 'pre-line'}}/>
         </ListGuesser>
     );
 }

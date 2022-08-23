@@ -14,7 +14,7 @@ export const Show: FunctionComponent<Props> = ({lot}) => {
         <ShowGuesser {...lot}>
             <FieldGuesser source="name"/>
             <FieldGuesser source="quantity"/>
-            <FieldGuesser source="message"/>
+            <FieldGuesser source="message" style={{whiteSpace: 'pre-line'}}/>
             <ReferenceField source="image" reference="media_objects" link="show">
                 <FieldGuesser source="name"/><br/>
                 <FunctionField

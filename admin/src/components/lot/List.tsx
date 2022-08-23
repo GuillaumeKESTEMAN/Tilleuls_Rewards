@@ -12,7 +12,7 @@ export const List: FunctionComponent<Props> = ({lots}) => (
     <ListGuesser rowClick="show" {...lots}>
         <FieldGuesser source="name"/>
         <FieldGuesser source="quantity"/>
-        <FieldGuesser source="message"/>
+        <FieldGuesser source="message" style={{whiteSpace: 'pre-line'}}/>
         <ReferenceField source="image" reference="media_objects" link="show">
             <FieldGuesser source="name"/>
         </ReferenceField>

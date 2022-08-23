@@ -20,7 +20,7 @@ export const Show: FunctionComponent<Props> = ({tweetReply}) => {
                 source="name"
                 render={record => {return getTweetReplyNameMessage(record).name;}}
             />;
-            <FieldGuesser source="message"/>
+            <FieldGuesser source="message" style={{whiteSpace: 'pre-line'}}/>
         </ShowGuesser>
     );
 }
