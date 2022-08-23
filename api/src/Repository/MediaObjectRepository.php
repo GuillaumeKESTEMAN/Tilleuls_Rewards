@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\MediaObject;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<MediaObject>
@@ -18,8 +17,8 @@ use Psr\Log\LoggerInterface;
  */
 final class MediaObjectRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MediaObject::class, $logger);
+        parent::__construct($registry, MediaObject::class);
     }
 }

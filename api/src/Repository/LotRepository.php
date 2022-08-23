@@ -22,7 +22,7 @@ final class LotRepository extends CommonRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
-        parent::__construct($registry, Lot::class, $logger);
+        parent::__construct($registry, Lot::class);
     }
 
     /**

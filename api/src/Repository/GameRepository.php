@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Game;
-use App\Entity\Stat;
 use DateTime;
-use Doctrine\DBAL\Result;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<Game>
@@ -25,9 +22,9 @@ use Psr\Log\LoggerInterface;
  */
 final class GameRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Game::class, $logger);
+        parent::__construct($registry, Game::class);
     }
 
     /**

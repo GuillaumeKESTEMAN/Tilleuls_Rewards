@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\Reward;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 
 /**
  * @extends CommonRepository<Reward>
@@ -18,8 +17,8 @@ use Psr\Log\LoggerInterface;
  */
 final class RewardRepository extends CommonRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Reward::class, $logger);
+        parent::__construct($registry, Reward::class);
     }
 }
