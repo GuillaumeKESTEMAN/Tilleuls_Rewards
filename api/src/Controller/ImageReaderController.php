@@ -26,16 +26,18 @@ final class ImageReaderController extends AbstractController
     public function indexReader(MediaObject $image): Response
     {
         $imageContent = null;
+        $imageMimeType = 'image/*';
 
         try {
             $imageContent = $this->defaultMedia->read($image->getFilePath());
+            $imageMimeType = $this->defaultMedia->mimeType($image->getFilePath());
         } catch (FilesystemException | UnableToReadFile $e) {
             $this->logger->error('Error on /image/'.$image->getFilePath().' : "'.$e->getMessage().'"', (array) $e);
             throw $e;
         }
 
         $headers = [
-            'Content-Type' => 'image/*',
+            'Content-Type' => $imageMimeType,
         ];
 
         return new Response($imageContent, 200, $headers);
