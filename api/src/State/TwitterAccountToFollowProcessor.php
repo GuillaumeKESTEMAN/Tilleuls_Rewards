@@ -20,11 +20,6 @@ final class TwitterAccountToFollowProcessor implements ProcessorInterface
     }
 
     /**
-     * @param $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return object
      * @throws TwitterOAuthException
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): object
