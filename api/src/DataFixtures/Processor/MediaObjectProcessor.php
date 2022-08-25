@@ -17,8 +17,7 @@ final class MediaObjectProcessor implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public
-    function preProcess(string $id, $object): void
+    public function preProcess(string $id, $object): void
     {
         if (!$object instanceof MediaObject) {
             return;
@@ -37,8 +36,7 @@ final class MediaObjectProcessor implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public
-    function postProcess(string $id, $object): void
+    public function postProcess(string $id, $object): void
     {
         // do nothing
     }
