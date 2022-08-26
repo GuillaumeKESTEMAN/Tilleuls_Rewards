@@ -65,11 +65,11 @@ class Lot
     #[ApiProperty(types: ['https://schema.org/Quantity'])]
     public ?int $quantity = null;
 
-    #[ORM\Column(name: 'message', type: 'string')]
+    #[ORM\Column(name: 'message', type: 'string', length: 270)]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 1,
-        max: 300,
+        max: 270,
         minMessage: 'Le message demande au moins {{ limit }} caractère',
         maxMessage: 'Le message ne peut pas avoir plus de {{ limit }} caractères'
     )]

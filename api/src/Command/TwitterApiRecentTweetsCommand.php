@@ -165,7 +165,7 @@ final class TwitterApiRecentTweetsCommand extends Command
     {
         foreach ($accountsToFollow as $accountToFollow) {
             try {
-                $friendships = $this->twitterApi->isFollowing($userId, $accountToFollow->getTwitterAccountId());
+                $friendships = $this->twitterApi->isFollowing($userId, $accountToFollow->twitterAccountId);
 
                 if (!$friendships) {
                     return false;
