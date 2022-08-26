@@ -15,7 +15,7 @@ export const Show: FunctionComponent<Props> = ({mediaObject}) => {
             <FieldGuesser source="name"/><br/>
             <FunctionField
                 source="file"
-                render={record => {return <img style={{ width:"100%", maxWidth: "500px", maxHeight: "500px"}} src={ENTRYPOINT + "/image/" + record.filePath} alt={record.name} />;}}
+                render={record => {return <img style={{ width:"100%", maxWidth: "300px", maxHeight: "300px"}} src={ENTRYPOINT + "/image/" + record.filePath} alt={record.name} />;}}
             />
         </ShowGuesser>
     );

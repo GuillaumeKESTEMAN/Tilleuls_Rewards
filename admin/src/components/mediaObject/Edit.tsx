@@ -14,7 +14,7 @@ export const Edit: FunctionComponent<Props> = ({mediaObject}) => (
         <InputGuesser source="name"/>
         <FunctionField
             source="file"
-            render={record => {return <img style={{ width:"100%", maxWidth: "500px", maxHeight: "500px"}} src={ENTRYPOINT + "/image/" + record.filePath} alt={record.name} />;}}
+            render={record => {return <img style={{ width:"100%", maxWidth: "300px", maxHeight: "300px"}} src={ENTRYPOINT + "/image/" + record.filePath} alt={record.name} />;}}
         />
     </EditGuesser>
 );
