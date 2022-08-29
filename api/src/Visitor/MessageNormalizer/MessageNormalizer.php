@@ -21,7 +21,7 @@ class MessageNormalizer
         $this->visitors[] = new WebsiteVisitor();
     }
 
-    public function normalizeMessage(string $message, array $params = []): string
+    public function normalize(string $message, array $params = []): string
     {
         foreach ($this->visitors as $visitor) {
             if ($visitor->accept($message, $params)) {

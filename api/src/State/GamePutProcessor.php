@@ -51,7 +51,7 @@ final class GamePutProcessor implements ProcessorInterface
                     'score' => $data->score
                 ];
 
-                $message = $this->messageNormalizer->normalizeMessage($data->reward->lot->message, $params);
+                $message = $this->messageNormalizer->normalize($data->reward->lot->message, $params);
 
                 $this->twitterApi->reply($message, $data->tweet->tweetId);
             } catch (BadRequestHttpException $e) {

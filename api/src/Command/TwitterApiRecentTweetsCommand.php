@@ -103,7 +103,7 @@ final class TwitterApiRecentTweetsCommand extends Command
                 'site_web' => $this->communicationWebsiteUrl
             ];
 
-            return $this->messageNormalizer->normalizeMessage($message, $params);
+            return $this->messageNormalizer->normalize($message, $params);
         }
 
         $message = $this->selectDefaultTweetReplyById($id);
