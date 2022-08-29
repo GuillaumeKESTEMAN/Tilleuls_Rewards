@@ -75,7 +75,7 @@ class Lot
         maxMessage: 'Le message ne peut pas avoir plus de {{ limit }} caractères'
     )]
     #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle to mention it : %@joueur% and same for the score : %score%', types: ['https://schema.org/Message'])]
-    private ?string $message = null;
+    public ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -94,22 +94,6 @@ class Lot
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getMessage(?string $name = null, ?string $userhandle = null, ?int $score = null): ?string
-    {
-        $params = [
-            'nom' => $name,
-            'joueur' => $userhandle,
-            'score' => $score
-        ];
-
-        return (new MessageNormalizer())->normalizeMessage($this->message, $params);
-    }
-
-    public function setMessage(string $message): void
-    {
-        $this->message = $message;
     }
 
     public function getRewards(): Collection

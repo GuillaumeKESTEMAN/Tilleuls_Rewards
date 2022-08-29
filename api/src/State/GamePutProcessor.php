@@ -10,15 +10,18 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Game;
 use App\Twitter\TwitterApi;
+use App\Visitor\MessageNormalizer\MessageNormalizer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class GamePutProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly PersistProcessor $persistProcessor,
-                                private readonly TwitterApi       $twitterApi,
-                                private readonly string           $appEnv,
-                                private readonly LoggerInterface  $logger)
+    public function __construct(private readonly PersistProcessor  $persistProcessor,
+                                private readonly TwitterApi        $twitterApi,
+                                private readonly string            $appEnv,
+                                private readonly LoggerInterface   $logger,
+                                private readonly MessageNormalizer $messageNormalizer
+    )
     {
     }
 
@@ -42,7 +45,15 @@ final class GamePutProcessor implements ProcessorInterface
             }
 
             try {
-                $this->twitterApi->reply($data->reward->lot->getMessage($data->player->name, $data->player->getUsername(), $data->score), $data->tweet->tweetId);
+                $params = [
+                    'nom' => $data->player->name,
+                    'joueur' => $data->player->getUsername(),
+                    'score' => $data->score
+                ];
+
+                $message = $this->messageNormalizer->normalizeMessage($data->reward->lot->message, $params);
+
+                $this->twitterApi->reply($message, $data->tweet->tweetId);
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
                     'Twitter API post request (tweets) error' . $e->getMessage(),

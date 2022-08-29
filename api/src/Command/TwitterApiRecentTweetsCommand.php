@@ -23,6 +23,7 @@ use App\Repository\TweetRepository;
 use App\Repository\TwitterAccountToFollowRepository;
 use App\Repository\TwitterHashtagRepository;
 use App\Twitter\TwitterApi;
+use App\Visitor\MessageNormalizer\MessageNormalizer;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
@@ -62,7 +63,8 @@ final class TwitterApiRecentTweetsCommand extends Command
         private readonly TwitterHashtagRepository         $twitterHashtagRepository,
         private readonly string                           $communicationWebsiteUrl,
         private readonly LoggerInterface                  $logger,
-        private readonly ValidatorInterface               $validator
+        private readonly ValidatorInterface               $validator,
+        private readonly MessageNormalizer                $messageNormalizer
     )
     {
         parent::__construct();
@@ -92,9 +94,16 @@ final class TwitterApiRecentTweetsCommand extends Command
      */
     private function getTweetReplyMessage(string $id, string $name, string $userhandle): string
     {
-        $message = $this->tweetReplyRepository->findOneByName($id)?->getMessage($name, $userhandle, $this->communicationWebsiteUrl);
+        $message = $this->tweetReplyRepository->findOneByName($id)?->message;
+
         if (null !== $message) {
-            return $message;
+            $params = [
+                'nom' => $name,
+                'joueur' => $userhandle,
+                'site_web' => $this->communicationWebsiteUrl
+            ];
+
+            return $this->messageNormalizer->normalizeMessage($message, $params);
         }
 
         $message = $this->selectDefaultTweetReplyById($id);

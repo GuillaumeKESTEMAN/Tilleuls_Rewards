@@ -63,26 +63,10 @@ class TweetReply
         maxMessage: 'Le message ne peut pas avoir plus de {{ limit }} caractères'
     )]
     #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle mention : %@joueur%, and same for communication website link : %site_web%', types: ['https://schema.org/Message'])]
-    private ?string $message = null;
+    public ?string $message = null;
 
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    public function getMessage(?string $name = null, ?string $userhandle = null, ?string $gameLink = null): ?string
-    {
-        $params = [
-            'nom' => $name,
-            'joueur' => $userhandle,
-            'site_web' => $gameLink
-        ];
-
-        return (new MessageNormalizer())->normalizeMessage($this->message, $params);
-    }
-
-    public function setMessage(?string $message): void
-    {
-        $this->message = $message;
     }
 }
