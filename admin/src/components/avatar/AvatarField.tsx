@@ -11,7 +11,7 @@ const AvatarField = () => {
     if (!record) return null;
     return (
         <Avatar
-            src={`${ENTRYPOINT}/image/${record.filePath}?size=32x32`}
+            src={`${ENTRYPOINT}/image/${record.filePath}`}
             sx={{
                 bgcolor: 'white',
             }}

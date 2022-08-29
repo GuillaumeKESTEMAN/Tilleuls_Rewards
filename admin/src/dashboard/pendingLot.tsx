@@ -35,7 +35,7 @@ export const PendingLot = (props: Props) => {
                     </Avatar>
                 ) : (
                     <Avatar
-                        src={`${ENTRYPOINT}/image/${image.filePath}?size=32x32`}
+                        src={`${ENTRYPOINT}/image/${image.filePath}`}
                         sx={{
                             bgcolor: 'white',
                         }}
