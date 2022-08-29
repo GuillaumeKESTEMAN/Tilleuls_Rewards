@@ -101,7 +101,7 @@ class Lot
         $params = [
             'nom' => $name,
             'joueur' => $userhandle,
-            'score' => (string) $score
+            'score' => $score
         ];
 
         return (new MessageNormalizer())->normalizeMessage($this->message, $params);
