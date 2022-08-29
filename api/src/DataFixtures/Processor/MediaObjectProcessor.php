@@ -29,8 +29,8 @@ final class MediaObjectProcessor implements ProcessorInterface
 
         $fs = new Filesystem();
 
-        $fs->touch($this->kernelDir . '/fixtures/test/files/invalid_file.txt');
-        $fs->appendToFile($this->kernelDir . '/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
+        $fs->touch($this->kernelDir.'/fixtures/test/files/invalid_file.txt');
+        $fs->appendToFile($this->kernelDir.'/fixtures/test/files/invalid_file.txt', 'My invalid file !!!');
     }
 
     /**

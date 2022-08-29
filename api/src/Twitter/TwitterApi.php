@@ -16,15 +16,14 @@ final class TwitterApi
     private array $memoize = [];
 
     public function __construct(
-        private readonly string          $twitterConsumerKey,
-        private readonly string          $twitterConsumerSecret,
-        private readonly string          $twitterAccessToken,
-        private readonly string          $twitterAccessTokenSecret,
+        private readonly string $twitterConsumerKey,
+        private readonly string $twitterConsumerSecret,
+        private readonly string $twitterAccessToken,
+        private readonly string $twitterAccessTokenSecret,
         private readonly TweetRepository $tweetRepository,
-        private readonly string          $appEnv,
+        private readonly string $appEnv,
         private readonly LoggerInterface $logger
-    )
-    {
+    ) {
     }
 
     private function getConnection(): TwitterOAuth
@@ -54,7 +53,7 @@ final class TwitterApi
         }
 
         $this->logger->critical(
-            'Twitter API get request error : ' . $response->detail,
+            'Twitter API get request error : '.$response->detail,
             [
                 'response' => $response,
             ]
@@ -76,7 +75,7 @@ final class TwitterApi
         }
 
         $this->logger->critical(
-            'Twitter API post request error : ' . $response->detail,
+            'Twitter API post request error : '.$response->detail,
             [
                 'response' => $response,
             ]
@@ -105,7 +104,7 @@ final class TwitterApi
      */
     public function getUser(string $authorId): array|object
     {
-        return $this->get('users/' . $authorId);
+        return $this->get('users/'.$authorId);
     }
 
     /**
@@ -113,7 +112,7 @@ final class TwitterApi
      */
     public function getUserByUsername(string $username): array|object
     {
-        return $this->get('users/by/username/' . $username);
+        return $this->get('users/by/username/'.$username);
     }
 
     /**
@@ -140,7 +139,7 @@ final class TwitterApi
         ];
 
         $tweet = $this->tweetRepository->findLastTweet();
-        if ($this->appEnv !== 'test' && null !== $tweet) {
+        if ('test' !== $this->appEnv && null !== $tweet) {
             $params['since_id'] = $tweet->tweetId;
         }
 

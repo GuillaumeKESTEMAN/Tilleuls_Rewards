@@ -71,7 +71,7 @@ final class LotRepository extends CommonRepository
                 return $dataReturn;
             }
 
-            $lot->quantity--;
+            --$lot->quantity;
             $this->persistAndFlush($lot, true);
 
             $dataReturn[] = $lot;

@@ -11,7 +11,6 @@ use App\Repository\GameRepository;
 use DateTime;
 use Exception;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Symfony\Component\Serializer\SerializerInterface;
 
 final class StatGamesCountProvider implements ProviderInterface
@@ -22,10 +21,11 @@ final class StatGamesCountProvider implements ProviderInterface
 
     /**
      * {@inheritDoc}
+     *
      * @throws Exception
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
-        return $this->serializer->denormalize($this->gameRepository->getDaysCount(new DateTime($uriVariables['id'])), Stat::class . '[]');
+        return $this->serializer->denormalize($this->gameRepository->getDaysCount(new DateTime($uriVariables['id'])), Stat::class.'[]');
     }
 }

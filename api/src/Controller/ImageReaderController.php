@@ -31,7 +31,7 @@ final class ImageReaderController extends AbstractController
         try {
             $imageContent = $this->defaultMedia->read($image->filePath);
             $imageMimeType = $this->defaultMedia->mimeType($image->filePath);
-        } catch (FilesystemException | UnableToReadFile $e) {
+        } catch (FilesystemException|UnableToReadFile $e) {
             $this->logger->error('Error on /image/'.$image->filePath.' : "'.$e->getMessage().'"', (array) $e);
             throw $e;
         }

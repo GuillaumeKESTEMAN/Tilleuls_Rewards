@@ -10,7 +10,7 @@ class UsernameVisitor implements MessageNormalizerVisitor
 {
     public function accept(string $message, array $params = []): bool
     {
-        return str_contains($message, '%@username%') && array_key_exists('username', $params) && is_string($params['username']) && trim($params['username']) !== '';
+        return str_contains($message, '%@username%') && \array_key_exists('username', $params) && \is_string($params['username']) && '' !== trim($params['username']);
     }
 
     public function normalize(string $message, array $params): string

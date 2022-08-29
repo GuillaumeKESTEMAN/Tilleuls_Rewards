@@ -31,5 +31,4 @@ class MessageNormalizer
 
         return $message;
     }
-
 }

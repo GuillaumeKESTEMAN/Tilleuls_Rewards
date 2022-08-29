@@ -46,27 +46,26 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 final class TwitterApiRecentTweetsCommand extends Command
 {
     private const DEFAULTS_TWEETS_REPLIES = [
-        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@username%), merci de participer à notre jeu ! ' . \PHP_EOL . 'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
-        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@username%) de parler de nous.' . \PHP_EOL . 'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! ' . \PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@username%) de parler de nous. ' . \PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. ' . \PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... ' . \PHP_EOL . 'Retente ta chance un autre jour !'],
+        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@username%), merci de participer à notre jeu ! '.\PHP_EOL.'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
+        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@username%) de parler de nous.'.\PHP_EOL.'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! '.\PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@username%) de parler de nous. '.\PHP_EOL.'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. '.\PHP_EOL.'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... '.\PHP_EOL.'Retente ta chance un autre jour !'],
     ];
 
     public function __construct(
-        private readonly TwitterApi                       $twitterApi,
-        private readonly PlayerRepository                 $playerRepository,
-        private readonly TweetRepository                  $tweetRepository,
-        private readonly GameRepository                   $gameRepository,
-        private readonly LotRepository                    $lotRepository,
-        private readonly TweetReplyRepository             $tweetReplyRepository,
+        private readonly TwitterApi $twitterApi,
+        private readonly PlayerRepository $playerRepository,
+        private readonly TweetRepository $tweetRepository,
+        private readonly GameRepository $gameRepository,
+        private readonly LotRepository $lotRepository,
+        private readonly TweetReplyRepository $tweetReplyRepository,
         private readonly TwitterAccountToFollowRepository $twitterAccountToFollowRepository,
-        private readonly TwitterHashtagRepository         $twitterHashtagRepository,
-        private readonly string                           $communicationWebsiteUrl,
-        private readonly LoggerInterface                  $logger,
-        private readonly ValidatorInterface               $validator,
-        private readonly MessageNormalizer                $messageNormalizer
-    )
-    {
+        private readonly TwitterHashtagRepository $twitterHashtagRepository,
+        private readonly string $communicationWebsiteUrl,
+        private readonly LoggerInterface $logger,
+        private readonly ValidatorInterface $validator,
+        private readonly MessageNormalizer $messageNormalizer
+    ) {
         parent::__construct();
     }
 
@@ -100,7 +99,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             $params = [
                 'nom' => $name,
                 'username' => $userhandle,
-                'site_web' => $this->communicationWebsiteUrl
+                'site_web' => $this->communicationWebsiteUrl,
             ];
 
             return $this->messageNormalizer->normalize($message, $params);
@@ -111,7 +110,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             throw new TweetReplyNotFoundException();
         }
 
-        return str_replace(['%nom%', '%@username%', '%site_web%'], [$name, '@' . $userhandle, $this->communicationWebsiteUrl], $message['reply']);
+        return str_replace(['%nom%', '%@username%', '%site_web%'], [$name, '@'.$userhandle, $this->communicationWebsiteUrl], $message['reply']);
     }
 
     /**
@@ -156,7 +155,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             }
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API get request (users/) error : ' . $e->getMessage(),
+                'Twitter API get request (users/) error : '.$e->getMessage(),
                 [
                     'tweet' => $tweet,
                     'error' => $e,
@@ -181,7 +180,7 @@ final class TwitterApiRecentTweetsCommand extends Command
                 }
             } catch (BadRequestHttpException $e) {
                 $this->logger->critical(
-                    'Twitter API get request (friendships/show) error : ' . $e->getMessage(),
+                    'Twitter API get request (friendships/show) error : '.$e->getMessage(),
                     [
                         'error' => $e,
                     ]
@@ -210,7 +209,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             $this->twitterApi->reply($message, $tweetId);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API post request (tweets) error : ' . $e->getMessage(),
+                'Twitter API post request (tweets) error : '.$e->getMessage(),
                 [
                     'error' => $e,
                 ]
@@ -233,7 +232,7 @@ final class TwitterApiRecentTweetsCommand extends Command
         $databaseUpdated = false;
 
         $this->logger->notice(
-            'Command state: update-db: ' . $input->getOption('update-db') . ', reply: ' . $input->getOption('reply'),
+            'Command state: update-db: '.$input->getOption('update-db').', reply: '.$input->getOption('reply'),
             [
                 'Active hashtags for command' => $hashtags,
                 'Active Twitter accounts to follow for command' => $accountsToFollow,
@@ -259,26 +258,26 @@ final class TwitterApiRecentTweetsCommand extends Command
             $tweets = $this->getRecentTweets($stringHashtags);
         } catch (BadRequestHttpException $e) {
             $this->logger->critical(
-                'Twitter API get request (tweets/search/recent) error : ' . $e->getMessage(),
+                'Twitter API get request (tweets/search/recent) error : '.$e->getMessage(),
                 [
                     'error' => $e,
                 ]
             );
 
-            $io->error('Twitter API get request (tweets/search/recent) error : ' . $e->getMessage());
+            $io->error('Twitter API get request (tweets/search/recent) error : '.$e->getMessage());
 
             return Command::FAILURE;
         }
 
         if (null === $tweets) {
-            $io->success('Aucun tweet trouvé pour : ' . $stringHashtags);
-            $this->logger->notice('Aucun tweet trouvé pour : ' . $stringHashtags);
+            $io->success('Aucun tweet trouvé pour : '.$stringHashtags);
+            $this->logger->notice('Aucun tweet trouvé pour : '.$stringHashtags);
 
             return Command::SUCCESS;
         }
 
-        $io->success('Tweets trouvés pour : ' . $stringHashtags);
-        $this->logger->notice('Tweets trouvés pour : ' . $stringHashtags);
+        $io->success('Tweets trouvés pour : '.$stringHashtags);
+        $this->logger->notice('Tweets trouvés pour : '.$stringHashtags);
 
         if (!$input->getOption('update-db')) {
             return Command::SUCCESS;
@@ -298,7 +297,7 @@ final class TwitterApiRecentTweetsCommand extends Command
 
             $player = $this->playerRepository->findOneByTwitterAccountId($user->id);
 
-            if (null === $player || ($player->getUsername() !== '@' . $user->username || $player->name !== $user->name)) {
+            if (null === $player || ($player->getUsername() !== '@'.$user->username || $player->name !== $user->name)) {
                 if (null === $player) {
                     $player = new Player();
                     $player->twitterAccountId = $user->id;
@@ -396,7 +395,7 @@ final class TwitterApiRecentTweetsCommand extends Command
                 $this->gameRepository->persistAndFlush($game, true);
             } catch (ValidationException $e) {
                 $io->error($e->getMessage());
-                $this->logger->error($e->getMessage(), (array)$e);
+                $this->logger->error($e->getMessage(), (array) $e);
                 continue;
             }
 

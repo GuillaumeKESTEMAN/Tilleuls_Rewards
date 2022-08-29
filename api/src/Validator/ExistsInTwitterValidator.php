@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
-use function is_string;
 
 final class ExistsInTwitterValidator extends ConstraintValidator
 {
@@ -31,7 +30,7 @@ final class ExistsInTwitterValidator extends ConstraintValidator
             return;
         }
 
-        if (!is_string($username)) {
+        if (!\is_string($username)) {
             throw new UnexpectedValueException($username, 'string');
         }
 
