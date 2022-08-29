@@ -99,7 +99,7 @@ final class TwitterApiRecentTweetsCommand extends Command
         if (null !== $message) {
             $params = [
                 'nom' => $name,
-                'joueur' => $userhandle,
+                'username' => $userhandle,
                 'site_web' => $this->communicationWebsiteUrl
             ];
 

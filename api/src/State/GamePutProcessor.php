@@ -47,7 +47,7 @@ final class GamePutProcessor implements ProcessorInterface
             try {
                 $params = [
                     'nom' => $data->player->name,
-                    'joueur' => $data->player->getUsername(),
+                    'username' => $data->player->getUsername(),
                     'score' => $data->score
                 ];
 

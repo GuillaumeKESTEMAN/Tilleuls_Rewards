@@ -6,7 +6,7 @@ namespace App\Visitor\MessageNormalizer;
 
 use App\Visitor\MessageNormalizer\Visitors\NameVisitor;
 use App\Visitor\MessageNormalizer\Visitors\ScoreVisitor;
-use App\Visitor\MessageNormalizer\Visitors\UserhandleVisitor;
+use App\Visitor\MessageNormalizer\Visitors\UsernameVisitor;
 use App\Visitor\MessageNormalizer\Visitors\WebsiteVisitor;
 
 class MessageNormalizer
@@ -16,7 +16,7 @@ class MessageNormalizer
     public function __construct()
     {
         $this->visitors[] = new NameVisitor();
-        $this->visitors[] = new UserhandleVisitor();
+        $this->visitors[] = new UsernameVisitor();
         $this->visitors[] = new ScoreVisitor();
         $this->visitors[] = new WebsiteVisitor();
     }
