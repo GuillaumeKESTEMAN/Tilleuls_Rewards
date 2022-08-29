@@ -74,7 +74,7 @@ class Lot
         minMessage: 'Le message demande au moins {{ limit }} caractère',
         maxMessage: 'Le message ne peut pas avoir plus de {{ limit }} caractères'
     )]
-    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle to mention it : %@joueur% and same for the score : %score%', types: ['https://schema.org/Message'])]
+    #[ApiProperty(description: 'Message that will be sent to players. To write the player name in the message, write : %nom%, same for the userhandle to mention it : %@username% and same for the score : %score%', types: ['https://schema.org/Message'])]
     public ?string $message = null;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]

@@ -46,9 +46,9 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 final class TwitterApiRecentTweetsCommand extends Command
 {
     private const DEFAULTS_TWEETS_REPLIES = [
-        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@joueur%), merci de participer à notre jeu ! ' . \PHP_EOL . 'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
-        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous.' . \PHP_EOL . 'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! ' . \PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
-        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@joueur%) de parler de nous. ' . \PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. ' . \PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'on_new_game', 'reply' => 'Hey %nom% (%@username%), merci de participer à notre jeu ! ' . \PHP_EOL . 'Pour avoir plus d\'informations sur le jeu voici notre site web : %site_web%'],
+        ['id' => 'game_already_generated_less_than_a_day_ago', 'reply' => 'Merci %nom% (%@username%) de parler de nous.' . \PHP_EOL . 'Malheureusement tu as déjà joué il y a moins de 24h, tu pourras rejouer une fois que cela fera plus d\'une journée ! ' . \PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
+        ['id' => 'need_to_follow_us', 'reply' => 'Merci %nom% (%@username%) de parler de nous. ' . \PHP_EOL . 'Malheureusement tu n\'es pas encore éligible pour pouvoir participer au jeu. Pour l\'être tu dois suivre les comptes nécessaires. ' . \PHP_EOL . 'Pour plus d\'informations tu peux consulter notre site web : %site_web%'],
         ['id' => 'no_more_available_lots', 'reply' => 'Nous n\'avons malheureusement plus aucun lot de disponible... ' . \PHP_EOL . 'Retente ta chance un autre jour !'],
     ];
 
@@ -111,7 +111,7 @@ final class TwitterApiRecentTweetsCommand extends Command
             throw new TweetReplyNotFoundException();
         }
 
-        return str_replace(['%nom%', '%@joueur%', '%site_web%'], [$name, '@' . $userhandle, $this->communicationWebsiteUrl], $message['reply']);
+        return str_replace(['%nom%', '%@username%', '%site_web%'], [$name, '@' . $userhandle, $this->communicationWebsiteUrl], $message['reply']);
     }
 
     /**
